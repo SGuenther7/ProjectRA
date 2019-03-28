@@ -27,4 +27,16 @@ public class Parser {
 
         return sentences;
     }
+    
+    public ArrayList<String> parse(ArrayList<String> lines) {
+
+    	ArrayList<String> temp = new ArrayList<String>();
+    	for (int i = 0; i<lines.size();i++) {
+    		if (Character.isDigit(lines.get(i).charAt(0))) {
+    			temp.add(lines.get(i).substring(5,9));
+    		}
+    	}
+
+    	return temp;
+    }
 }
