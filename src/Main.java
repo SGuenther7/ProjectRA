@@ -7,7 +7,7 @@ public class Main {
         //ArrayList<String> commands = parser.load("/Users/akira/Downloads/LST/LST1.LST");
         ArrayList<String> commands = parser.load("H:\\2.Semester\\Rechnerarchitektur\\SimTest_OG\\TPicSim1.LST");
         
-        ArrayList<String> commandos = parser.parse(commands);
+        ArrayList<String> commandos = parser.cut(commands);
         for (int i = 0; i<commandos.size(); i++) {
         	System.out.println(commandos.get(i));
         }
