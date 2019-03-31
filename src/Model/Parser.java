@@ -30,7 +30,7 @@ public class Parser {
         return sentences;
     }
     
-    public ArrayList<String> parse(ArrayList<String> lines) {
+    public ArrayList<String> cut(ArrayList<String> lines) {
 
     	ArrayList<String> temp = new ArrayList<String>();
     	for (int i = 0; i<lines.size();i++) {
@@ -40,5 +40,12 @@ public class Parser {
     	}
 
     	return temp;
+    }
+    
+    public ArrayList<String> parse(ArrayList<String> lines) {
+    	
+    	
+    	
+    	return null;
     }
 }
