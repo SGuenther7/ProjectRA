@@ -1,3 +1,7 @@
+package Controller;
+
+import Model.Parser;
+
 import java.util.ArrayList;
 
 public class Main {

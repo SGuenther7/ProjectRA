@@ -1,3 +1,7 @@
+package Model;
+
+import Model.Instruction;
+
 public class Operation {
     Instruction instruction;
     int value[];

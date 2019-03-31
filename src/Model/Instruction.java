@@ -1,3 +1,5 @@
+package Model;
+
 public enum Instruction {
     ADDWF (0x0700),
     ANDWF (0x0500),
