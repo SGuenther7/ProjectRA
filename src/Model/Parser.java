@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Parser {
 
-    public ArrayList<String> load(String path){
+    public static ArrayList<String> load(String path){
 
         BufferedReader re;
         ArrayList<String> sentences = new ArrayList<String>();
@@ -22,15 +22,16 @@ public class Parser {
                     sentences.add(next);
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            return new ArrayList<>();
         } catch (IOException e) {
             e.printStackTrace();
+            return new ArrayList<>();
         }
 
         return sentences;
     }
     
-    public ArrayList<String> cut(ArrayList<String> lines) {
+    public static ArrayList<String> cut(ArrayList<String> lines) {
 
     	ArrayList<String> temp = new ArrayList<String>();
     	for (int i = 0; i<lines.size();i++) {
@@ -42,7 +43,7 @@ public class Parser {
     	return temp;
     }
     
-    public ArrayList<String> parse(ArrayList<String> lines) {
+    public static ArrayList<String> parse(ArrayList<String> lines) {
     	
     	
     	
