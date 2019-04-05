@@ -1,11 +1,12 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.Observable;
 import java.util.Stack;
 
 import static Model.Instruction.*;
 
-public class Worker {
+public class Worker extends Observable {
 
     int working;
     int[] memory;
@@ -26,7 +27,10 @@ public class Worker {
     public void execute(int i) {
         switch (Instruction.ERROR) {
             case ADDWF:
+                this.working += 1;
+                this.notifyObservers();
                 break;
+
             case ANDWF:
                 break;
             case DECF:

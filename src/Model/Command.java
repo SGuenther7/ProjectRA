@@ -16,10 +16,6 @@ public class Command {
         return instruction;
     }
 
-    public void setInstruction(Instruction instruction) {
-        this.instruction = instruction;
-    }
-
     public int[] getValue() {
         return value;
     }

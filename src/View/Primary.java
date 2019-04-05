@@ -171,6 +171,7 @@ public class Primary {
         registers.add(speed_min_label);
         registers.add(speed_max_label);
     }
+
     public void setBounds() {
         indf_label.setBounds(10, 10, 130, 14);
         indf_content.setBounds(140, 10, 130, 14);
@@ -258,8 +259,25 @@ public class Primary {
         buttons.add(load);
     }
 
-    public JList getList () {
+    public JList getList() {
         return instructions;
+    }
+
+    public JLabel[] getRegisters() {
+        return new JLabel[]{
+                indf_content,
+                tmr_content,
+                pcl_content,
+                status_content,
+                fsr_content,
+                porta_content,
+                portb_content,
+                eedatea_content,
+                eeadr_content,
+                pclath_content,
+                incton_content,
+                working_content
+        };
     }
 
     // Mache Buttons von aussen verfügtbar um ActionListener hinzuzufuegen
@@ -276,11 +294,11 @@ public class Primary {
 
         int selectedFile = files.showOpenDialog(null);
 
-        if(selectedFile == JFileChooser.CANCEL_OPTION) {
+        if (selectedFile == JFileChooser.CANCEL_OPTION) {
             return "";
         }
 
-        if(selectedFile == JFileChooser.APPROVE_OPTION) {
+        if (selectedFile == JFileChooser.APPROVE_OPTION) {
             System.out.println("Selected file : " + files.getSelectedFile().getName());
         }
 
