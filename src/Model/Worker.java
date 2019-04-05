@@ -95,4 +95,20 @@ public class Worker {
                 break;
         }
     }
+
+    public int getWorking() {
+        return working;
+    }
+
+    public int[] getMemory() {
+        return memory;
+    }
+
+    public ArrayList<String> getCounter() {
+        return counter;
+    }
+
+    public Stack getStack() {
+        return stack;
+    }
 }

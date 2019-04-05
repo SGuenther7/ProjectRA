@@ -258,6 +258,10 @@ public class Primary {
         buttons.add(load);
     }
 
+    public JList getList () {
+        return instructions;
+    }
+
     // Mache Buttons von aussen verfügtbar um ActionListener hinzuzufuegen
     public JButton[] getButtons() {
         return new JButton[]{this.run, this.stop, this.step, this.reset, this.load};

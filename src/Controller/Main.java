@@ -58,6 +58,9 @@ public class Main {
     public void load(Worker peon, Primary view) {
         //System.out.println(view.invokeFileChooser());
         peon.feed(Parser.load(view.invokeFileChooser()));
+
+        view.getList().setModel(new OperationModel(peon.getCounter()));
+        //TODO: view.getList().addListSelectionListener(new SelectionListener());
     }
 }
 

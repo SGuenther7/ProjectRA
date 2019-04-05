@@ -10,7 +10,6 @@ public class OperationList extends JCheckBox implements ListCellRenderer {
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
-        /*
         setComponentOrientation(list.getComponentOrientation());
         setFont(list.getFont());
         setBackground(list.getBackground());
@@ -19,15 +18,14 @@ public class OperationList extends JCheckBox implements ListCellRenderer {
         Command current = (Command) value;
 
 
-        setSelected(current.getSelected());
+        setSelected(current.isSelected());
 
-        if(current.getRunning()) {
+        if(current.isNext()) {
             this.setBackground(Color.BLUE);
         }
         else {
             this.setBackground(Color.WHITE);
         }
-
 
         setEnabled(list.isEnabled());
 
@@ -38,7 +36,6 @@ public class OperationList extends JCheckBox implements ListCellRenderer {
             setText(value.toString());
         }
 
-        */
         return this;
     }
 }
