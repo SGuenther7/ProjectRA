@@ -17,7 +17,7 @@ public class Main {
         /*
 
         Parser parser = new Parser();
-        ArrayList<String> commands = parser.cut(parser.load("./tests/raw/TPicSim1.LST"));
+        ArrayList<String> commands = parser.cut(parser.load("./src/tests/raw/TPicSim1.LST"));
 
         for (int i = 0; i < commands.size(); i++) {
             System.out.println(commands.get(i));
