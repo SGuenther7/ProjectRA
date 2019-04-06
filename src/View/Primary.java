@@ -74,6 +74,7 @@ public class Primary {
         instructions = new JList();
         instructions.setBackground(new Color(200, 200, 200));
 
+        instructions.setCellRenderer(new OperationList());
         instructionView.setViewportView(instructions);
         operations.add(instructionView);
 
@@ -88,7 +89,7 @@ public class Primary {
         main.setVisible(true);
     }
 
-    public void initializeRegisters() {
+    private void initializeRegisters() {
 
         indf_content = new JLabel();
         tmr_content = new JLabel();
@@ -102,6 +103,21 @@ public class Primary {
         pclath_content = new JLabel();
         incton_content = new JLabel();
         working_content = new JLabel();
+
+
+        // TODO: Entfernen. GUI debug.
+        indf_content.setText("0");
+        tmr_content.setText("0");
+        pcl_content.setText("0");
+        status_content.setText("0");
+        fsr_content.setText("0");
+        porta_content.setText("0");
+        portb_content.setText("0");
+        eedatea_content.setText("0");
+        eeadr_content.setText("0");
+        pclath_content.setText("0");
+        incton_content.setText("0");
+        working_content.setText("0");
 
         indf_label = new JLabel("INDF :");
         tmr_label = new JLabel("TMR :");
@@ -172,7 +188,7 @@ public class Primary {
         registers.add(speed_max_label);
     }
 
-    public void setBounds() {
+    private void setBounds() {
         indf_label.setBounds(10, 10, 130, 14);
         indf_content.setBounds(140, 10, 130, 14);
 
@@ -224,7 +240,7 @@ public class Primary {
 
     }
 
-    public void initializePanels() {
+    private void initializePanels() {
 
         buttons = new JPanel(null);
         operations = new JPanel(null);
@@ -239,7 +255,7 @@ public class Primary {
         main.getContentPane().add(registers);
     }
 
-    public void initializeButtons() {
+    private void initializeButtons() {
         run = new JButton("Run");
         stop = new JButton("Stop");
         step = new JButton("Step");
@@ -280,7 +296,7 @@ public class Primary {
         };
     }
 
-    // Mache Buttons von aussen verfügtbar um ActionListener hinzuzufuegen
+    // Mache Buttons von aussen verfügbar um ActionListener hinzuzufuegen
     public JButton[] getButtons() {
         return new JButton[]{this.run, this.stop, this.step, this.reset, this.load};
     }
