@@ -10,7 +10,7 @@ public class Worker extends Observable {
 
     int working;
     int[] memory;
-    ArrayList<String> counter;
+    ArrayList<Command> counter;
     Stack stack; // TODO: Ringbuffer bei pop/push
 
     public Worker() {
@@ -20,17 +20,14 @@ public class Worker extends Observable {
         this.stack = new Stack();
     }
 
-    public void feed(ArrayList<String> counter) {
-        this.counter.addAll(counter);
+    public void feed(ArrayList<Command> fresh) {
+        this.counter.addAll(fresh);
     }
 
     public void execute(int i) {
-        switch (Instruction.ERROR) {
+        switch (this.counter.get(i).getInstruction()) {
             case ADDWF:
-                this.working += 1;
-                this.notifyObservers();
                 break;
-
             case ANDWF:
                 break;
             case DECF:
@@ -100,6 +97,11 @@ public class Worker extends Observable {
         }
     }
 
+    public void next() {
+
+
+    }
+
     public int getWorking() {
         return working;
     }
@@ -108,7 +110,7 @@ public class Worker extends Observable {
         return memory;
     }
 
-    public ArrayList<String> getCounter() {
+    public ArrayList<Command> getCounter() {
         return counter;
     }
 
