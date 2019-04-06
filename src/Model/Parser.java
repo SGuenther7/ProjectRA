@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Parser {
 
-    public static ArrayList<String> load(String path){
+    public static ArrayList<String> load(String path) {
 
         BufferedReader re;
         ArrayList<String> sentences = new ArrayList<String>();
@@ -18,8 +18,8 @@ public class Parser {
 
             String next;
 
-            while ((next = re.readLine()) != null ) {
-                    sentences.add(next);
+            while ((next = re.readLine()) != null) {
+                sentences.add(next);
             }
         } catch (FileNotFoundException e) {
             return new ArrayList<>();
@@ -30,23 +30,51 @@ public class Parser {
 
         return sentences;
     }
-    
-    public static ArrayList<String> cut(ArrayList<String> lines) {
 
-    	ArrayList<String> temp = new ArrayList<String>();
-    	for (int i = 0; i<lines.size();i++) {
-    		if (Character.isDigit(lines.get(i).charAt(0))) {
-    			temp.add(lines.get(i).substring(5,9));
-    		}
-    	}
+    public static ArrayList<String> cut(ArrayList<String> lines) throws NullPointerException {
 
-    	return temp;
+        ArrayList<String> temp = new ArrayList<String>();
+        for (int i = 0; i < lines.size(); i++) {
+            if (Character.isDigit(lines.get(i).charAt(0))) {
+                temp.add(lines.get(i).substring(5, 9));
+            }
+        }
+
+        return temp;
     }
-    
-    public static ArrayList<String> parse(ArrayList<String> lines) {
-    	
-    	
-    	
-    	return null;
+
+    public static String cut(String line) throws NullPointerException {
+
+        ArrayList<String> wrapper = new ArrayList<>();
+        wrapper.add(line);
+
+        wrapper = Parser.cut(wrapper);
+
+        if(wrapper.size() == 0) {
+            return null;
+        }
+
+        return wrapper.get(0);
+
     }
+
+    public static ArrayList<Command> parse(ArrayList<String> lines) throws NullPointerException {
+
+        return new ArrayList<Command>();
+    }
+
+    public static Command parse(String line) throws NullPointerException {
+
+        ArrayList<String> wrapper = new ArrayList<>();
+        wrapper.add(line);
+
+        ArrayList<Command> result = Parser.parse(wrapper);
+
+        if(result.size() == 0) {
+            return null;
+        }
+
+        return result.get(0);
+    }
+
 }
