@@ -39,4 +39,27 @@ public class Command {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (((Command) obj).instruction != this.instruction) {
+            return false;
+        }
+
+
+        if (((Command) obj).value.length != this.value.length) {
+            return false;
+        }
+
+
+        for (int i = 0; i < this.value.length; i++) {
+
+            if (((Command) obj).value[i] != this.value[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
