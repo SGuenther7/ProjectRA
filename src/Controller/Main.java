@@ -57,7 +57,7 @@ public class Main implements Observer {
     }
 
     public void load(Worker peon, Primary view) {
-        peon.feed(Parser.parse(Parser.cut(Parser.load(view.invokeFileChooser()))));
+        peon.feed(Parser.parseMultible(Parser.cut(Parser.load(view.invokeFileChooser()))));
 
         view.getList().setModel(new OperationModel(peon.getCounter()));
         //TODO: view.getList().addListSelectionListener(new SelectionListener());

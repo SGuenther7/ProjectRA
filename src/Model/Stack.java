@@ -6,6 +6,7 @@ public class Stack extends java.util.Stack {
     public Object push(Object item) throws IndexOutOfBoundsException{
 
         if(this.size() > 8) {
+            // TODO: Exception entfernen (schlechter Kontrollfluss)
             throw new IndexOutOfBoundsException("Ueberlauf bei Stack");
         }
 
