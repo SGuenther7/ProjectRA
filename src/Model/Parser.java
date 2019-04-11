@@ -58,23 +58,22 @@ public class Parser {
 
     }
 
-    public static ArrayList<Command> parse(ArrayList<String> lines) throws NullPointerException {
+    public static ArrayList<Command> parseMultible(ArrayList<String> lines) throws NullPointerException {
 
         return new ArrayList<Command>();
     }
 
     public static Command parse(String line) throws NullPointerException {
-
-        ArrayList<String> wrapper = new ArrayList<>();
-        wrapper.add(line);
-
-        ArrayList<Command> result = Parser.parse(wrapper);
-
-        if(result.size() == 0) {
-            return null;
-        }
-
-        return result.get(0);
+	    Instruction instruction = Instruction.MOVLW;
+	    int value[] = new int[1];
+	    int temp = Integer.valueOf(line, 16).intValue();
+	    int cMask = 0b11000000000000;
+	    
+	    value[0] = (cMask^temp);
+	    
+	    Command c = new Command(instruction, value);
+	  	
+	    return c;
     }
 
 }
