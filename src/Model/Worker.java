@@ -21,7 +21,10 @@ public class Worker extends Observable {
     }
 
     public void feed(ArrayList<Command> fresh) {
-        this.counter.addAll(fresh);
+        // Programmspeicher limit von 1024
+        if(counter.size() > 1024) {
+            this.counter.addAll(fresh);
+        }
     }
 
     public void execute(int i) {
