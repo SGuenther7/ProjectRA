@@ -12,16 +12,20 @@ public class Worker extends Observable {
     ArrayList<Command> counter;
     Stack stack;
 
+    int current;
+
     public Worker() {
         this.working = 0;
         this.memory = new int[94];
         this.counter = new ArrayList<>();
         this.stack = new Stack();
+
+        this.current = 0;
     }
 
     public void feed(ArrayList<Command> fresh) {
         // Programmspeicher limit von 1024
-        if(counter.size() > 1024) {
+        if (counter.size() > 1024) {
             this.counter.addAll(fresh);
         }
     }
@@ -29,6 +33,8 @@ public class Worker extends Observable {
     public void execute(int i) {
         switch (this.counter.get(i).getInstruction()) {
             case ADDWF:
+                //C, CD, Z
+
                 break;
             case ANDWF:
                 break;
@@ -49,6 +55,8 @@ public class Worker extends Observable {
             case RRF:
                 break;
             case SUBWF:
+                //C, CD, Z
+
                 break;
             case SWAPF:
                 break;
@@ -79,6 +87,8 @@ public class Worker extends Observable {
             case BTFSC:
                 break;
             case ADDLW:
+                //C, CD, Z
+
                 break;
             case ANDLW:
                 break;
@@ -89,19 +99,70 @@ public class Worker extends Observable {
             case RETLW:
                 break;
             case SUBLW:
+                //C, CD, Z
+
                 break;
             case XORLW:
                 break;
             case CALL:
+                this.stack.push(this.current);
+                this.current = this.counter.get(i).getValue()[0];
                 break;
             case GOTO:
+                this.current = this.counter.get(i).getValue()[0];
                 break;
         }
     }
 
     public void next() {
+    }
 
+    private boolean handleZeroFlag(int value) {
+        if (value == 0) {
+            this.memory[3] = this.memory[3] | 3;
+            return true;
+        }
+        return false;
+    }
 
+    private boolean handleCarryFlagOnAdd(int base, int add) {
+        if (base + add > 25) {
+            this.memory[3] = this.memory[3] | 1;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleCarryFlagOnSub(int base, int sub) {
+        if (base - sub < 0) {
+            this.memory[3] = this.memory[3] | 1;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleDigitCarryOnAdd(int base, int add) {
+        base = base & 15;
+        add = add & 15;
+
+        if(base + add > 15) {
+            this.memory[3] = this.memory[3] | 2;
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean handleDigitCarryOnSub(int base, int sub) {
+        base = base & 15;
+        sub = sub & 15;
+
+        if(base - sub < 0) {
+            this.memory[3] = this.memory[3] | 2;
+            return true;
+        }
+
+        return false;
     }
 
     public int getWorking() {
