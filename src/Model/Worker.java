@@ -2,7 +2,6 @@ package Model;
 
 import java.util.ArrayList;
 import java.util.Observable;
-import java.util.Stack;
 
 import static Model.Instruction.*;
 
@@ -11,7 +10,7 @@ public class Worker extends Observable {
     int working;
     int[] memory;
     ArrayList<Command> counter;
-    Stack stack; // TODO: Ringbuffer bei pop/push
+    Stack stack;
 
     public Worker() {
         this.working = 0;
