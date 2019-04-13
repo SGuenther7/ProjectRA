@@ -1,11 +1,8 @@
 package Model;
 
 import java.util.ArrayList;
-import java.util.Observable;
 
-import static Model.Instruction.*;
-
-public class Worker extends Observable {
+public class Worker {
 
     int working;
     int[] memory;
@@ -23,15 +20,63 @@ public class Worker extends Observable {
         this.current = 0;
     }
 
-    public void feed(ArrayList<Command> fresh) {
-        // Programmspeicher limit von 1024
-        if (counter.size() > 1024) {
-            this.counter.addAll(fresh);
+    public Worker(int working) {
+        this();
+        this.working = working;
+    }
+
+    public Worker(int working, int memory[]) {
+        this(working);
+        this.memory = memory;
+    }
+
+    public Worker(int working, int memory[], ArrayList<Command> counter, Stack stack, int current) {
+        this.working = working;
+        this.memory = memory;
+        this.counter = counter;
+        this.stack = stack;
+        this.current = current;
+    }
+
+    public Worker (Worker clone) {
+        this();
+
+        this.working = clone.working;
+
+        for(int i = 0 ; i < clone.memory.length; i++) {
+            this.memory[i] = clone.memory[i];
         }
+
+        this.counter = new ArrayList<>();
+        this.counter.addAll(clone.counter);
+
+        this.stack = new Stack(clone.stack);
+        this.current = clone.current;
+    }
+
+    public boolean feed(ArrayList<Command> container) {
+        for (Command fresh : container) {
+            if (!feed(fresh)) {
+                return false;
+            }
+        }
+
+        counter.get(current).setNext(true);
+
+        return true;
+    }
+
+    public boolean feed(Command fresh) {
+        // Programmspeicher limit von 1024
+        if (counter.size() < 1024) {
+            counter.add(fresh);
+            return true;
+        }
+        return false;
     }
 
     public void execute(int i) {
-        switch (this.counter.get(i).getInstruction()) {
+        switch (counter.get(i).getInstruction()) {
             case ADDWF:
                 //C, CD, Z
 
@@ -105,16 +150,20 @@ public class Worker extends Observable {
             case XORLW:
                 break;
             case CALL:
-                this.stack.push(this.current);
-                this.current = this.counter.get(i).getValue()[0];
+                stack.push(current);
+                current = counter.get(i).getValue()[0];
                 break;
             case GOTO:
-                this.current = this.counter.get(i).getValue()[0];
+                current = counter.get(i).getValue()[0];
                 break;
         }
     }
 
     public void next() {
+        execute(current);
+        counter.get(current).setNext(false);
+        current++;
+        counter.get(current).setNext(true);
     }
 
     private boolean handleZeroFlag(int value) {
@@ -145,7 +194,7 @@ public class Worker extends Observable {
         base = base & 15;
         add = add & 15;
 
-        if(base + add > 15) {
+        if (base + add > 15) {
             this.memory[3] = this.memory[3] | 2;
             return true;
         }
@@ -157,7 +206,7 @@ public class Worker extends Observable {
         base = base & 15;
         sub = sub & 15;
 
-        if(base - sub < 0) {
+        if (base - sub < 0) {
             this.memory[3] = this.memory[3] | 2;
             return true;
         }
@@ -179,5 +228,37 @@ public class Worker extends Observable {
 
     public Stack getStack() {
         return stack;
+    }
+
+    public int getCurrent() {
+        return current;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Worker other = (Worker) obj;
+
+        if (other.working != this.working) {
+            return false;
+        }
+
+        if (other.memory != this.memory) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    public void print() {
+        System.out.println("Working : " + working);
+        System.out.println("Status :  " + memory[3]);
+        System.out.println("Current : " + current);
+        System.out.print("Befehle : ");
+
+        for(Command element : counter) {
+            System.out.print(element.getInstruction() + " ");
+        }
+        System.out.println();
     }
 }

@@ -5,81 +5,149 @@ import Model.Worker;
 import View.Primary;
 
 import javax.swing.*;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.ArrayList;
 
-public class Main implements Observer {
-    private Worker peon;
+public class Main {
+
+    private ArrayList<Worker> states;
     private Primary view;
-
+    private int current = 0;
 
     public void start() {
 
-        peon = new Worker();
+        states = new ArrayList<>(); // TODO: Max. groesse fuer Performance ?
         view = new Primary();
         view.initialize();
-        this.initialiseActionListeners(peon, view);
-        peon.addObserver(this);
+        this.initialiseActionListeners(view);
 
         // Mache GUI sichtbar
         view.start();
+        debug();
     }
 
-    public void initialiseActionListeners(Worker peon, Primary view) {
+    private void initialiseActionListeners(Primary view) {
         JButton buttons[] = view.getButtons();
         buttons[0].addActionListener(e -> {
-            this.run(peon);
+            this.run();
         });
         buttons[1].addActionListener(e -> {
-            this.stop(peon);
+            this.stop();
         });
         buttons[2].addActionListener(e -> {
-            this.step(peon);
+            this.forward();
         });
         buttons[3].addActionListener(e -> {
-            this.reset(peon);
+            this.back();
         });
         buttons[4].addActionListener(e -> {
-            this.load(peon, view);
+            this.reset();
+        });
+        buttons[5].addActionListener(e -> {
+            this.load(states.get(current), view);
         });
     }
 
-    public void run(Worker peon) {
+    private void run() {
+        // TODO: Execute bis Ende, dann update()
+        // TODO: in Thread auslagern
+        // TODO: Benoetigt Auto-Breakpoint bei GOTO/CALL!
     }
 
-    public void stop(Worker peon) {
+    private void stop() {
+        // TODO: Thread mit run() stoppen
     }
 
-    public void step(Worker peon) {
+    private void forward() {
+
+        // Execute current command
+        // Increment current
+        // Save result in states
+
+
+        // TODO: Heuristic von current ueberdenken (Sprungbefehle)
+
+        if (current >= states.get(current).getCounter().size() - 1) {
+            // TODO: Anzeigen das (rechtes) Ende erreicht wurde
+            return;
+        }
+
+        // Haben wir den naechsten State schon ?
+        if(current+2 <= states.size()) {
+            current++;
+        } else {
+            states.add(new Worker(states.get(current)));
+            current++;
+            states.get(current).next();
+        }
+
+        update();
     }
 
-    public void reset(Worker peon) {
+    private void back() {
+        if (current == 0) {
+            // TODO: Anzeigen das (linkes) Ende erreicht wurde
+            return;
+        }
+
+        current--;
+        update();
     }
 
-    public void load(Worker peon, Primary view) {
-        peon.feed(Parser.parseMultible(Parser.cut(Parser.load(view.invokeFileChooser()))));
-
-        view.getList().setModel(new OperationModel(peon.getCounter()));
-        //TODO: view.getList().addListSelectionListener(new SelectionListener());
+    private void reset() {
+        //TODO:
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        // TODO: Nachricht von Worker ? Dependency unschoen!
+    public void update() {
 
-        JLabel registers[] = this.view.getRegisters();
+        if (states.get(current) == null) {
+            return;
+        }
 
-        registers[0].setText(this.peon.getMemory()[0] + "");
-        registers[1].setText(this.peon.getMemory()[1] + "");
-        registers[2].setText(this.peon.getMemory()[2] + "");
-        registers[3].setText(this.peon.getMemory()[3] + "");
-        registers[4].setText(this.peon.getMemory()[4] + "");
-        registers[5].setText(this.peon.getMemory()[5] + "");
-        registers[6].setText(this.peon.getMemory()[6] + "");
-        registers[7].setText(this.peon.getMemory()[8] + "");
-        registers[7].setText(this.peon.getMemory()[9] + "");
-        registers[8].setText(this.peon.getMemory()[10] + "");
-        registers[11].setText(this.peon.getWorking() + "");
+        System.out.println();
+        // Print currents von jedem state
+        for(Worker peon : states) {
+            System.out.println(peon.getCurrent());
+        }
+        System.out.println();
+
+        // DEBUG: Korregiere alle isNext
+        for (int i = 0; i < states.get(current).getCounter().size(); i++) {
+            states.get(current).getCounter().get(i).setNext((i == states.get(current).getCurrent()));
+        }
+
+        // Setze Register
+        JLabel registers[] = view.getRegisters();
+
+        registers[0].setText(states.get(current).getMemory()[0] + "");
+        registers[1].setText(states.get(current).getMemory()[1] + "");
+        registers[2].setText(states.get(current).getMemory()[2] + "");
+        registers[3].setText(states.get(current).getMemory()[3] + "");
+        registers[4].setText(states.get(current).getMemory()[4] + "");
+        registers[5].setText(states.get(current).getMemory()[5] + "");
+        registers[6].setText(states.get(current).getMemory()[6] + "");
+        registers[7].setText(states.get(current).getMemory()[8] + "");
+        registers[7].setText(states.get(current).getMemory()[9] + "");
+        registers[8].setText(states.get(current).getMemory()[10] + "");
+        registers[11].setText(states.get(current).getWorking() + "");
+
+        // Setze JList
+        view.getList().setModel(new OperationModel(states.get(current).getCounter()));
+        view.getList().updateUI();
+    }
+
+    private void load(Worker peon, Primary view) {
+        reset();
+        states.get(current).feed(Parser.parseMultible(Parser.cut(Parser.load(view.invokeFileChooser()))));
+        update();
+    }
+
+    private void debug() {
+        // TODO: Entfernen
+        Worker temp = new Worker();
+        temp.feed(Parser.parseMultible(Parser.cut(Parser.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST"))));
+        states.add(temp); //TODO: Aedern (reset bei nicht 0 eintragen ??)
+        current = 0;
+        update();
     }
 
     public static void main(String args[]) {

@@ -8,7 +8,6 @@ public class SelectionListener implements ListSelectionListener {
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        //TODO: Aendere current in Worker zu selectionIndex
     }
 
     public void changeSelection(ListSelectionEvent e) {

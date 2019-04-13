@@ -4,6 +4,18 @@ public class Stack extends java.util.Stack {
 
     private boolean overflow = false;
 
+    public Stack() {
+        super();
+    }
+
+    public Stack(Stack stack) {
+        this();
+
+        for(Object obj : stack) {
+            super.push(obj);
+        }
+    }
+
     @Override
     public Object push(Object item) {
 
