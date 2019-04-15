@@ -6,7 +6,7 @@ public class Worker {
 
     int working;
     int[] memory;
-    ArrayList<Command> counter;
+    ArrayList<Command> counter; // TODO: In Main auslagern (um mehrfachspeicherung zu vermeiden)
     Stack stack;
 
     int current;

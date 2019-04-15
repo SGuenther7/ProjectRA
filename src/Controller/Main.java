@@ -22,7 +22,6 @@ public class Main {
 
         // Mache GUI sichtbar
         view.start();
-        debug();
     }
 
     private void initialiseActionListeners(Primary view) {
@@ -43,7 +42,7 @@ public class Main {
             this.reset();
         });
         buttons[5].addActionListener(e -> {
-            this.load(states.get(current), view);
+            this.load();
         });
     }
 
@@ -59,6 +58,10 @@ public class Main {
 
     private void forward() {
 
+        if (states.size() == 0) {
+            return;
+        }
+
         // TODO: Heuristic von current ueberdenken (Sprungbefehle)
 
         // Gibt es etwas zum ausfuehren ?
@@ -72,26 +75,32 @@ public class Main {
                 current++;
                 states.get(current).next();
             }
-            update();
+            update(states, view, current);
         }
     }
 
     private void back() {
-        if (current == 0) {
+        if (current == 0 || states.get(current) == null) {
             return;
         }
 
         current--;
-        update();
+        update(states, view, current);
     }
 
-    private void reset() {
-        //TODO:
-    }
+    public void update(ArrayList<Worker> states, Primary view, int current) {
 
-    public void update() {
+        if (states == null || states.size() == 0) {
 
-        if (states.get(current) == null) {
+            view.getButtons()[2].setEnabled(false);
+            view.getButtons()[3].setEnabled(false);
+
+            resetRegisters(view);
+
+            // Setze JList
+            view.getList().setModel(new OperationModel());
+            view.getList().updateUI();
+
             return;
         }
 
@@ -107,7 +116,7 @@ public class Main {
             view.getButtons()[2].setEnabled(false);
         }
 
-        // DEBUG: Korregiere alle isNext
+        // TODO: Brute-force von Markierung isNext()
         for (int i = 0; i < states.get(current).getCounter().size(); i++) {
             states.get(current).getCounter().get(i).setNext((i == states.get(current).getCurrent()));
         }
@@ -132,26 +141,43 @@ public class Main {
         view.getList().updateUI();
     }
 
-    private void load(Worker peon, Primary view) {
-        reset();
-        states.get(current).feed(Parser.parseMultible(Parser.cut(Parser.load(view.invokeFileChooser()))));
-        update();
+    private void resetRegisters(Primary view) {
+        JLabel registers[] = view.getRegisters();
+
+        registers[0].setText("0");
+        registers[1].setText("0");
+        registers[2].setText("0");
+        registers[3].setText("0");
+        registers[4].setText("0");
+        registers[5].setText("0");
+        registers[6].setText("0");
+        registers[7].setText("0");
+        registers[7].setText("0");
+        registers[8].setText("0");
+        registers[11].setText("0");
     }
 
-    private void debug() {
-        // TODO: Entfernen
-        Worker temp = new Worker();
-        //temp.feed(Parser.parseMultible(Parser.cut(Parser.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST"))));
-        temp.feed(Parser.parseMultible(Parser.cut(Parser.load("./src/tests/raw/TPicSim1.LST"))));
-        states.add(temp); //TODO: Aedern (reset bei nicht 0 eintragen ??)
+    private void reset() {
+        states = new ArrayList<Worker>();
         current = 0;
-        update();
+        update(states, view, current);
+    }
+
+    private void load() {
+        String url =  view.invokeFileChooser();
+
+        if(url == "") return;
+        Worker temp = new Worker();
+        temp.feed(Parser.parseMultible(Parser.cut(Parser.load(url))));
+
+        reset();
+        states.add(temp);
+        update(states, view, current);
     }
 
     public static void main(String args[]) {
         Main manager = new Main();
         manager.start();
     }
-
 }
 

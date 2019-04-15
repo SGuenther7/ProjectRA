@@ -280,6 +280,9 @@ public class Primary {
         reset.setBounds(370, 5, 90, 30);
         load.setBounds(450, 5, 90, 30);
 
+        forward.setEnabled(false);
+        back.setEnabled(false);
+
         buttons.add(run);
         buttons.add(stop);
         buttons.add(forward);
