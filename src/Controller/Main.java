@@ -59,33 +59,25 @@ public class Main {
 
     private void forward() {
 
-        // Execute current command
-        // Increment current
-        // Save result in states
-
-
         // TODO: Heuristic von current ueberdenken (Sprungbefehle)
 
-        if (current >= states.get(current).getCounter().size() - 1) {
-            // TODO: Anzeigen das (rechtes) Ende erreicht wurde
-            return;
+        // Gibt es etwas zum ausfuehren ?
+        if (states.get(current).hasNext()) {
+            // Haben wir den naechsten State schon ?
+            if (current + 1 <= states.size() - 1) {
+                current++;
+            } else {
+                // Naechsten Befehl ausfuehren
+                states.add(new Worker(states.get(current)));
+                current++;
+                states.get(current).next();
+            }
+            update();
         }
-
-        // Haben wir den naechsten State schon ?
-        if(current+2 <= states.size()) {
-            current++;
-        } else {
-            states.add(new Worker(states.get(current)));
-            current++;
-            states.get(current).next();
-        }
-
-        update();
     }
 
     private void back() {
         if (current == 0) {
-            // TODO: Anzeigen das (linkes) Ende erreicht wurde
             return;
         }
 
@@ -103,12 +95,17 @@ public class Main {
             return;
         }
 
-        System.out.println();
-        // Print currents von jedem state
-        for(Worker peon : states) {
-            System.out.println(peon.getCurrent());
+        view.getButtons()[2].setEnabled(true);
+        view.getButtons()[3].setEnabled(true);
+
+        // Update Button
+        if (current == 0) {
+            view.getButtons()[3].setEnabled(false);
         }
-        System.out.println();
+
+        if (!states.get(current).hasNext()) {
+            view.getButtons()[2].setEnabled(false);
+        }
 
         // DEBUG: Korregiere alle isNext
         for (int i = 0; i < states.get(current).getCounter().size(); i++) {
@@ -144,7 +141,8 @@ public class Main {
     private void debug() {
         // TODO: Entfernen
         Worker temp = new Worker();
-        temp.feed(Parser.parseMultible(Parser.cut(Parser.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST"))));
+        //temp.feed(Parser.parseMultible(Parser.cut(Parser.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST"))));
+        temp.feed(Parser.parseMultible(Parser.cut(Parser.load("./src/tests/raw/TPicSim1.LST"))));
         states.add(temp); //TODO: Aedern (reset bei nicht 0 eintragen ??)
         current = 0;
         update();

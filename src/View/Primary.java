@@ -51,6 +51,9 @@ public class Primary {
     private JLabel speed_min_label;
     private JLabel speed_max_label;
 
+
+    private JLabel status;
+
     private JSlider speed;
     private JList instructions;
 
@@ -70,8 +73,15 @@ public class Primary {
 
         //Inhalt von Code Panel
         instructionView = new JScrollPane();
-        instructionView.setBounds(10, 10, 300, 400);
+        instructionView.setBounds(10, 10, 300, 378);
         instructionView.setBackground(new Color(200, 200, 200));
+
+        status = new JLabel();
+        status.setBounds(14,392, 300, 16);
+
+        status.setBackground(Color.WHITE);
+        status.setForeground(Color.RED);
+        operations.add(status);
 
         instructions = new JList();
         instructions.setBackground(new Color(200, 200, 200));
@@ -322,5 +332,9 @@ public class Primary {
         }
 
         return files.getSelectedFile().getAbsolutePath();
+    }
+
+    public JLabel getStatus() {
+        return status;
     }
 }

@@ -166,6 +166,10 @@ public class Worker {
         counter.get(current).setNext(true);
     }
 
+    public boolean hasNext() {
+        return (current < counter.size() - 1);
+    }
+
     private boolean handleZeroFlag(int value) {
         if (value == 0) {
             this.memory[3] = this.memory[3] | 3;
