@@ -3,22 +3,21 @@ package Controller;
 import Model.Parser;
 import Model.Worker;
 import View.Primary;
-
 import javax.swing.*;
 import java.util.ArrayList;
 
 public class Main {
-
-    private ArrayList<Worker> states;
+    private ArrayList<Worker> states; // TODO: Groesse einschraenken (performance).
     private Primary view;
     private int current = 0;
 
     public void start() {
+        reset();
 
-        states = new ArrayList<>(); // TODO: Max. groesse fuer Performance ?
         view = new Primary();
         view.initialize();
         this.initialiseActionListeners(view);
+        update();
 
         // Mache GUI sichtbar
         view.start();
@@ -28,21 +27,27 @@ public class Main {
         JButton buttons[] = view.getButtons();
         buttons[0].addActionListener(e -> {
             this.run();
+            this.update();
         });
         buttons[1].addActionListener(e -> {
             this.stop();
+            this.update();
         });
         buttons[2].addActionListener(e -> {
             this.forward();
+            this.update();
         });
         buttons[3].addActionListener(e -> {
             this.back();
+            this.update();
         });
         buttons[4].addActionListener(e -> {
             this.reset();
+            this.update();
         });
         buttons[5].addActionListener(e -> {
             this.load();
+            this.update();
         });
     }
 
@@ -57,12 +62,9 @@ public class Main {
     }
 
     private void forward() {
-
         if (states.size() == 0) {
             return;
         }
-
-        // TODO: Heuristic von current ueberdenken (Sprungbefehle)
 
         // Gibt es etwas zum ausfuehren ?
         if (states.get(current).hasNext()) {
@@ -75,27 +77,41 @@ public class Main {
                 current++;
                 states.get(current).next();
             }
-            update(states, view, current);
         }
     }
 
     private void back() {
-        if (current == 0 || states.get(current) == null) {
+        if (current == 0 || states.size() == 0) {
             return;
         }
 
         current--;
-        update(states, view, current);
     }
 
-    public void update(ArrayList<Worker> states, Primary view, int current) {
+    /**
+     * Aktualisiert Befehls Liste, Highlighting der Liste, Button Verfuegbarkeit und Register Inhalte.
+     */
+    public void update() {
+        //  Haben wir etwas das geladen werden kann ?
+        if (states.size() == 0) {
 
-        if (states == null || states.size() == 0) {
-
+            // Buttons inaktiv machen
             view.getButtons()[2].setEnabled(false);
             view.getButtons()[3].setEnabled(false);
 
-            resetRegisters(view);
+            JLabel registers[] = view.getRegisters();
+
+            registers[0].setText("0");
+            registers[1].setText("0");
+            registers[2].setText("0");
+            registers[3].setText("0");
+            registers[4].setText("0");
+            registers[5].setText("0");
+            registers[6].setText("0");
+            registers[7].setText("0");
+            registers[7].setText("0");
+            registers[8].setText("0");
+            registers[11].setText("0");
 
             // Setze JList
             view.getList().setModel(new OperationModel());
@@ -104,10 +120,10 @@ public class Main {
             return;
         }
 
+        // Update Button
         view.getButtons()[2].setEnabled(true);
         view.getButtons()[3].setEnabled(true);
 
-        // Update Button
         if (current == 0) {
             view.getButtons()[3].setEnabled(false);
         }
@@ -116,7 +132,7 @@ public class Main {
             view.getButtons()[2].setEnabled(false);
         }
 
-        // TODO: Brute-force von Markierung isNext()
+        // Highlighting von Ausgeawaehlten Befehl
         for (int i = 0; i < states.get(current).getCounter().size(); i++) {
             states.get(current).getCounter().get(i).setNext((i == states.get(current).getCurrent()));
         }
@@ -141,38 +157,24 @@ public class Main {
         view.getList().updateUI();
     }
 
-    private void resetRegisters(Primary view) {
-        JLabel registers[] = view.getRegisters();
-
-        registers[0].setText("0");
-        registers[1].setText("0");
-        registers[2].setText("0");
-        registers[3].setText("0");
-        registers[4].setText("0");
-        registers[5].setText("0");
-        registers[6].setText("0");
-        registers[7].setText("0");
-        registers[7].setText("0");
-        registers[8].setText("0");
-        registers[11].setText("0");
-    }
-
+    /**
+     * Setze internen Speicher zurueck.
+     */
     private void reset() {
         states = new ArrayList<Worker>();
         current = 0;
-        update(states, view, current);
     }
 
     private void load() {
-        String url =  view.invokeFileChooser();
+        String url = view.invokeFileChooser();
 
-        if(url == "") return;
-        Worker temp = new Worker();
-        temp.feed(Parser.parseMultible(Parser.cut(Parser.load(url))));
+        if (url != "") {
+            Worker temp = new Worker();
+            temp.feed(Parser.parseMultible(Parser.cut(Parser.load(url))));
 
-        reset();
-        states.add(temp);
-        update(states, view, current);
+            reset();
+            states.add(temp);
+        }
     }
 
     public static void main(String args[]) {
