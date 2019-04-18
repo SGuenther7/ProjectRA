@@ -1,34 +1,85 @@
 package Model;
 
 import java.util.ArrayList;
-import java.util.Observable;
 
-import static Model.Instruction.*;
-
-public class Worker extends Observable {
+public class Worker {
 
     int working;
     int[] memory;
-    ArrayList<Command> counter;
+    ArrayList<Command> counter; // TODO: In Main auslagern (um mehrfachspeicherung zu vermeiden)
     Stack stack;
+
+    int current;
 
     public Worker() {
         this.working = 0;
         this.memory = new int[94];
         this.counter = new ArrayList<>();
         this.stack = new Stack();
+
+        this.current = 0;
     }
 
-    public void feed(ArrayList<Command> fresh) {
-        // Programmspeicher limit von 1024
-        if(counter.size() > 1024) {
-            this.counter.addAll(fresh);
+    public Worker(int working) {
+        this();
+        this.working = working;
+    }
+
+    public Worker(int working, int memory[]) {
+        this(working);
+        this.memory = memory;
+    }
+
+    public Worker(int working, int memory[], ArrayList<Command> counter, Stack stack, int current) {
+        this.working = working;
+        this.memory = memory;
+        this.counter = counter;
+        this.stack = stack;
+        this.current = current;
+    }
+
+    public Worker (Worker clone) {
+        this();
+
+        this.working = clone.working;
+
+        for(int i = 0 ; i < clone.memory.length; i++) {
+            this.memory[i] = clone.memory[i];
         }
+
+        this.counter = new ArrayList<>();
+        this.counter.addAll(clone.counter);
+
+        this.stack = new Stack(clone.stack);
+        this.current = clone.current;
+    }
+
+    public boolean feed(ArrayList<Command> container) {
+        for (Command fresh : container) {
+            if (!feed(fresh)) {
+                return false;
+            }
+        }
+
+        counter.get(current).setNext(true);
+
+        return true;
+    }
+
+    public boolean feed(Command fresh) {
+        // Programmspeicher limit von 1024
+        if (counter.size() < 1024) {
+            counter.add(fresh);
+            return true;
+        }
+        return false;
     }
 
     public void execute(int i) {
-        switch (this.counter.get(i).getInstruction()) {
+        switch (counter.get(i).getInstruction()) {
             case ADDWF:
+                //C, CD, Z
+
                 break;
             case ANDWF:
                 break;
@@ -49,6 +100,8 @@ public class Worker extends Observable {
             case RRF:
                 break;
             case SUBWF:
+                //C, CD, Z
+
                 break;
             case SWAPF:
                 break;
@@ -79,6 +132,8 @@ public class Worker extends Observable {
             case BTFSC:
                 break;
             case ADDLW:
+                //C, CD, Z
+
                 break;
             case ANDLW:
                 break;
@@ -89,19 +144,78 @@ public class Worker extends Observable {
             case RETLW:
                 break;
             case SUBLW:
+                //C, CD, Z
+
                 break;
             case XORLW:
                 break;
             case CALL:
+                stack.push(current);
+                current = counter.get(i).getValue()[0];
                 break;
             case GOTO:
+                current = counter.get(i).getValue()[0];
                 break;
         }
     }
 
     public void next() {
+        execute(current);
+        counter.get(current).setNext(false);
+        current++;
+        counter.get(current).setNext(true);
+    }
 
+    public boolean hasNext() {
+        return (current < counter.size() - 1);
+    }
 
+    private boolean handleZeroFlag(int value) {
+        if (value == 0) {
+            this.memory[3] = this.memory[3] | 3;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleCarryFlagOnAdd(int base, int add) {
+        if (base + add > 25) {
+            this.memory[3] = this.memory[3] | 1;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleCarryFlagOnSub(int base, int sub) {
+        if (base - sub < 0) {
+            this.memory[3] = this.memory[3] | 1;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleDigitCarryOnAdd(int base, int add) {
+        base = base & 15;
+        add = add & 15;
+
+        if (base + add > 15) {
+            this.memory[3] = this.memory[3] | 2;
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean handleDigitCarryOnSub(int base, int sub) {
+        base = base & 15;
+        sub = sub & 15;
+
+        if (base - sub < 0) {
+            this.memory[3] = this.memory[3] | 2;
+            return true;
+        }
+
+        return false;
     }
 
     public int getWorking() {
@@ -118,5 +232,37 @@ public class Worker extends Observable {
 
     public Stack getStack() {
         return stack;
+    }
+
+    public int getCurrent() {
+        return current;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Worker other = (Worker) obj;
+
+        if (other.working != this.working) {
+            return false;
+        }
+
+        if (other.memory != this.memory) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    public void print() {
+        System.out.println("Working : " + working);
+        System.out.println("Status :  " + memory[3]);
+        System.out.println("Current : " + current);
+        System.out.print("Befehle : ");
+
+        for(Command element : counter) {
+            System.out.print(element.getInstruction() + " ");
+        }
+        System.out.println();
     }
 }

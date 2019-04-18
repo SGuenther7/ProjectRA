@@ -15,7 +15,8 @@ public class Primary {
 
     private JButton run;
     private JButton stop;
-    private JButton step;
+    private JButton forward;
+    private JButton back;
     private JButton reset;
     private JButton load;
 
@@ -50,6 +51,9 @@ public class Primary {
     private JLabel speed_min_label;
     private JLabel speed_max_label;
 
+
+    private JLabel status;
+
     private JSlider speed;
     private JList instructions;
 
@@ -57,6 +61,7 @@ public class Primary {
 
         main = new JFrame();
         main.setLayout(null);
+        main.setLocationRelativeTo(null);
 
         main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         main.setSize(new Dimension(640, 480));
@@ -68,8 +73,15 @@ public class Primary {
 
         //Inhalt von Code Panel
         instructionView = new JScrollPane();
-        instructionView.setBounds(10, 10, 300, 400);
+        instructionView.setBounds(10, 10, 300, 378);
         instructionView.setBackground(new Color(200, 200, 200));
+
+        status = new JLabel();
+        status.setBounds(14,392, 300, 16);
+
+        status.setBackground(Color.WHITE);
+        status.setForeground(Color.RED);
+        operations.add(status);
 
         instructions = new JList();
         instructions.setBackground(new Color(200, 200, 200));
@@ -104,8 +116,6 @@ public class Primary {
         incton_content = new JLabel();
         working_content = new JLabel();
 
-
-        // TODO: Entfernen. GUI debug.
         indf_content.setText("0");
         tmr_content.setText("0");
         pcl_content.setText("0");
@@ -134,7 +144,7 @@ public class Primary {
         cycles_name_label = new JLabel("Cycles : ");
         cycles_content_label = new JLabel("0");
 
-        //TODO:
+        //TODO: Slider entfernen oder Lables anpassen
         speed = new JSlider(0, 5);
 
         speed_name_label = new JLabel("Speed : ");
@@ -258,19 +268,25 @@ public class Primary {
     private void initializeButtons() {
         run = new JButton("Run");
         stop = new JButton("Stop");
-        step = new JButton("Step");
+        forward = new JButton("Forward");
+        back = new JButton("Backwards");
         reset = new JButton("Reset");
         load = new JButton("Load...");
 
         run.setBounds(10, 5, 90, 30);
-        stop.setBounds(110, 5, 90, 30);
-        step.setBounds(210, 5, 90, 30);
-        reset.setBounds(310, 5, 90, 30);
-        load.setBounds(410, 5, 90, 30);
+        stop.setBounds(90, 5, 90, 30);
+        forward.setBounds(185, 5, 90, 30);
+        back.setBounds(265, 5, 90, 30);
+        reset.setBounds(370, 5, 90, 30);
+        load.setBounds(450, 5, 90, 30);
+
+        forward.setEnabled(false);
+        back.setEnabled(false);
 
         buttons.add(run);
         buttons.add(stop);
-        buttons.add(step);
+        buttons.add(forward);
+        buttons.add(back);
         buttons.add(reset);
         buttons.add(load);
     }
@@ -298,7 +314,7 @@ public class Primary {
 
     // Mache Buttons von aussen verfügbar um ActionListener hinzuzufuegen
     public JButton[] getButtons() {
-        return new JButton[]{this.run, this.stop, this.step, this.reset, this.load};
+        return new JButton[]{run, stop, forward, back, reset, load};
     }
 
     public String invokeFileChooser() {
@@ -319,5 +335,9 @@ public class Primary {
         }
 
         return files.getSelectedFile().getAbsolutePath();
+    }
+
+    public JLabel getStatus() {
+        return status;
     }
 }

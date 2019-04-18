@@ -3,89 +3,183 @@ package Controller;
 import Model.Parser;
 import Model.Worker;
 import View.Primary;
-
 import javax.swing.*;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.ArrayList;
 
-public class Main implements Observer {
-    private Worker peon;
+public class Main {
+    private ArrayList<Worker> states; // TODO: Groesse einschraenken (performance).
     private Primary view;
-
+    private int current = 0;
 
     public void start() {
+        reset();
 
-        peon = new Worker();
         view = new Primary();
         view.initialize();
-        this.initialiseActionListeners(peon, view);
-        peon.addObserver(this);
+        this.initialiseActionListeners(view);
+        update();
 
         // Mache GUI sichtbar
         view.start();
     }
 
-    public void initialiseActionListeners(Worker peon, Primary view) {
+    private void initialiseActionListeners(Primary view) {
         JButton buttons[] = view.getButtons();
         buttons[0].addActionListener(e -> {
-            this.run(peon);
+            this.run();
+            this.update();
         });
         buttons[1].addActionListener(e -> {
-            this.stop(peon);
+            this.stop();
+            this.update();
         });
         buttons[2].addActionListener(e -> {
-            this.step(peon);
+            this.forward();
+            this.update();
         });
         buttons[3].addActionListener(e -> {
-            this.reset(peon);
+            this.back();
+            this.update();
         });
         buttons[4].addActionListener(e -> {
-            this.load(peon, view);
+            this.reset();
+            this.update();
+        });
+        buttons[5].addActionListener(e -> {
+            this.load();
+            this.update();
         });
     }
 
-    public void run(Worker peon) {
+    private void run() {
+        // TODO: Execute bis Ende, dann update()
+        // TODO: in Thread auslagern
+        // TODO: Benoetigt Auto-Breakpoint bei GOTO/CALL!
     }
 
-    public void stop(Worker peon) {
+    private void stop() {
+        // TODO: Thread mit run() stoppen
     }
 
-    public void step(Worker peon) {
+    private void forward() {
+        if (states.size() == 0) {
+            return;
+        }
+
+        // Gibt es etwas zum ausfuehren ?
+        if (states.get(current).hasNext()) {
+            // Haben wir den naechsten State schon ?
+            if (current + 1 <= states.size() - 1) {
+                current++;
+            } else {
+                // Naechsten Befehl ausfuehren
+                states.add(new Worker(states.get(current)));
+                current++;
+                states.get(current).next();
+            }
+        }
     }
 
-    public void reset(Worker peon) {
+    private void back() {
+        if (current == 0 || states.size() == 0) {
+            return;
+        }
+
+        current--;
     }
 
-    public void load(Worker peon, Primary view) {
-        peon.feed(Parser.parseMultible(Parser.cut(Parser.load(view.invokeFileChooser()))));
+    /**
+     * Aktualisiert Befehls Liste, Highlighting der Liste, Button Verfuegbarkeit und Register Inhalte.
+     */
+    public void update() {
+        //  Haben wir etwas das geladen werden kann ?
+        if (states.size() == 0) {
 
-        view.getList().setModel(new OperationModel(peon.getCounter()));
-        //TODO: view.getList().addListSelectionListener(new SelectionListener());
+            // Buttons inaktiv machen
+            view.getButtons()[2].setEnabled(false);
+            view.getButtons()[3].setEnabled(false);
+
+            JLabel registers[] = view.getRegisters();
+
+            registers[0].setText("0");
+            registers[1].setText("0");
+            registers[2].setText("0");
+            registers[3].setText("0");
+            registers[4].setText("0");
+            registers[5].setText("0");
+            registers[6].setText("0");
+            registers[7].setText("0");
+            registers[7].setText("0");
+            registers[8].setText("0");
+            registers[11].setText("0");
+
+            // Setze JList
+            view.getList().setModel(new OperationModel());
+            view.getList().updateUI();
+
+            return;
+        }
+
+        // Update Button
+        view.getButtons()[2].setEnabled(true);
+        view.getButtons()[3].setEnabled(true);
+
+        if (current == 0) {
+            view.getButtons()[3].setEnabled(false);
+        }
+
+        if (!states.get(current).hasNext()) {
+            view.getButtons()[2].setEnabled(false);
+        }
+
+        // Highlighting von Ausgeawaehlten Befehl
+        for (int i = 0; i < states.get(current).getCounter().size(); i++) {
+            states.get(current).getCounter().get(i).setNext((i == states.get(current).getCurrent()));
+        }
+
+        // Setze Register
+        JLabel registers[] = view.getRegisters();
+
+        registers[0].setText(states.get(current).getMemory()[0] + "");
+        registers[1].setText(states.get(current).getMemory()[1] + "");
+        registers[2].setText(states.get(current).getMemory()[2] + "");
+        registers[3].setText(states.get(current).getMemory()[3] + "");
+        registers[4].setText(states.get(current).getMemory()[4] + "");
+        registers[5].setText(states.get(current).getMemory()[5] + "");
+        registers[6].setText(states.get(current).getMemory()[6] + "");
+        registers[7].setText(states.get(current).getMemory()[8] + "");
+        registers[7].setText(states.get(current).getMemory()[9] + "");
+        registers[8].setText(states.get(current).getMemory()[10] + "");
+        registers[11].setText(states.get(current).getWorking() + "");
+
+        // Setze JList
+        view.getList().setModel(new OperationModel(states.get(current).getCounter()));
+        view.getList().updateUI();
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        // TODO: Nachricht von Worker ? Dependency unschoen!
+    /**
+     * Setze internen Speicher zurueck.
+     */
+    private void reset() {
+        states = new ArrayList<Worker>();
+        current = 0;
+    }
 
-        JLabel registers[] = this.view.getRegisters();
+    private void load() {
+        String url = view.invokeFileChooser();
 
-        registers[0].setText(this.peon.getMemory()[0] + "");
-        registers[1].setText(this.peon.getMemory()[1] + "");
-        registers[2].setText(this.peon.getMemory()[2] + "");
-        registers[3].setText(this.peon.getMemory()[3] + "");
-        registers[4].setText(this.peon.getMemory()[4] + "");
-        registers[5].setText(this.peon.getMemory()[5] + "");
-        registers[6].setText(this.peon.getMemory()[6] + "");
-        registers[7].setText(this.peon.getMemory()[8] + "");
-        registers[7].setText(this.peon.getMemory()[9] + "");
-        registers[8].setText(this.peon.getMemory()[10] + "");
-        registers[11].setText(this.peon.getWorking() + "");
+        if (url != "") {
+            Worker temp = new Worker();
+            temp.feed(Parser.parseMultible(Parser.cut(Parser.load(url))));
+
+            reset();
+            states.add(temp);
+        }
     }
 
     public static void main(String args[]) {
         Main manager = new Main();
         manager.start();
     }
-
 }
 
