@@ -192,7 +192,6 @@ public class Parser {
 					} else
 						instruction = Instruction.NOP;
 					break;
-
 				}
 			}
 			break;
@@ -221,7 +220,6 @@ public class Parser {
 			}
 			value = new int[] { (code & 0b11111111111) };
 			break;
-
 		case 3:
 			switch (tempX2) {
 
@@ -248,10 +246,8 @@ public class Parser {
 						instruction = Instruction.MOVLW;
 				}
 			} 
-
 			value = new int[] { (code & kMask) };
 			break;
-
 		}
 
 		Command c = new Command(instruction, value);
