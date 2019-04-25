@@ -1,5 +1,8 @@
 package tests;
 
+import Model.Command;
+import Model.Instruction;
+import Model.Worker;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,6 +49,14 @@ public class MiscTests {
     void digitCarryResetTest() {
         // TODO: imp.
     }
+
+    @Test
+    void DestinationBitTest() {
+        // TODO: imp.
+    }
+
+
+
 }
 
 

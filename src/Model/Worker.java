@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 public class Worker {
 
-    int working;
-    int[] memory;
-    ArrayList<Command> counter; // TODO: In Main auslagern (um mehrfachspeicherung zu vermeiden)
-    Stack stack;
+    private int working;
+    private int[] memory;
+    private ArrayList<Command> counter; // TODO: In Main auslagern (um mehrfachspeicherung zu vermeiden)
+    private Stack stack;
 
-    int current;
+    private int current;
 
     public Worker() {
         this.working = 0;
@@ -76,18 +76,36 @@ public class Worker {
     }
 
     public void execute(int i) {
-        switch (counter.get(i).getInstruction()) {
+
+        Command command = counter.get(i);
+
+        switch (command.getInstruction()) {
             case ADDWF:
                 //C, CD, Z
 
+                int result = working + memory[command.getValue()[1]];
+
+                handleCarryFlagOnAdd(working, memory[command.getValue()[1]]);
+                handleDigitCarryOnAdd(working, memory[command.getValue()[1]]);
+                handleZeroFlag(working);
+
+                // Destination Bit gesetzt ?
+                if(command.getValue()[0] == 1) {
+                    memory[command.getValue()[1]] = result;
+                } else {
+                    working = result;
+                }
                 break;
             case ANDWF:
+                // Z
                 break;
             case DECF:
+                // Z
                 break;
             case DECFSZ:
                 break;
             case INCF:
+                // Z
                 break;
             case INCFSZ:
                 break;
@@ -106,12 +124,16 @@ public class Worker {
             case SWAPF:
                 break;
             case XORWF:
+                // Z
                 break;
             case CLRF:
+                // Z
                 break;
             case MOVWF:
+                memory[command.getValue()[0]] = working;
                 break;
             case CLRW:
+                // Z
                 break;
             case NOP:
                 break;
@@ -136,8 +158,10 @@ public class Worker {
 
                 break;
             case ANDLW:
+                // Z
                 break;
             case IORLW:
+                // Z
                 break;
             case MOVLW:
                 break;
@@ -148,6 +172,7 @@ public class Worker {
 
                 break;
             case XORLW:
+                // Z
                 break;
             case CALL:
                 stack.push(current);
@@ -242,12 +267,20 @@ public class Worker {
     public boolean equals(Object obj) {
         Worker other = (Worker) obj;
 
-        if (other.working != this.working) {
+        if (other.getWorking() != this.working) {
             return false;
         }
 
-        if (other.memory != this.memory) {
+        if (other.getMemory().length != this.memory.length) {
             return false;
+        }
+
+        // Check Speicher
+        for(int i = 0 ; i < other.getMemory().length ; i++) {
+
+            if(other.getMemory()[i] != this.memory[i]) {
+                return false;
+            }
         }
 
         return true;

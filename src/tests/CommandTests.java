@@ -1,10 +1,28 @@
 package tests;
 
+import Model.Command;
+import Model.Instruction;
+import Model.Worker;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class CommandTest {
     @Test
     void ADDWFTest() {
+        // W = 0Ah, C=x, DC=x, Z=0
+        Worker expected = new Worker(10);
+        expected.getMemory()[13] = 5;
+
+        // Lade 5 in W und in 13
+        // Erwarte 10 in W
+        Worker peon = new Worker(5);
+        peon.getMemory()[13] = 5;
+
+        peon.feed(new Command(Instruction.ADDWF,new int[]{0,13}));
+        peon.execute(0);
+
+        assertEquals(expected,peon);
     }
 
     @Test
@@ -49,6 +67,15 @@ class CommandTest {
 
     @Test
     void MOVWFTest() {
+        // W = 10h, C=x, DC=x, Z=0
+        Worker expected = new Worker(17);
+        expected.getMemory()[13] = 17;
+
+        Worker peon = new Worker(17);
+        peon.feed(new Command(Instruction.MOVWF,new int[]{13}));
+        peon.execute(0);
+
+        assertEquals(expected,peon);
     }
 
     @Test
@@ -109,6 +136,15 @@ class CommandTest {
 
     @Test
     void MOVLWTest() {
+        // W = 10h, C=x, DC=x, Z=0
+        Worker expected = new Worker(17,new int[94]);
+        Worker peon = new Worker();
+        Command target = new Command(Instruction.MOVLW,new int[]{0x11});
+
+        peon.feed(target);
+        peon.execute(0);
+
+        assertEquals(expected,peon);
     }
 
     @Test
