@@ -30,14 +30,15 @@ public class Memory {
                 // Linke Duplikate Register von
                 // Bank Zwei zu Bank eins
                 switch (index) {
-                    case 0:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 10:
-                    case 11:
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
                         target = 0;
                         break;
+                    default :
+                        target = 0;
 
                 }
         }
