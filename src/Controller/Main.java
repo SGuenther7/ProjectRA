@@ -137,19 +137,16 @@ public class Main {
             states.get(current).getCounter().get(i).setNext((i == states.get(current).getCurrent()));
         }
 
+
         // Setze Register
         JLabel registers[] = view.getRegisters();
 
-        registers[0].setText(states.get(current).getMemory()[0] + "");
-        registers[1].setText(states.get(current).getMemory()[1] + "");
-        registers[2].setText(states.get(current).getMemory()[2] + "");
-        registers[3].setText(states.get(current).getMemory()[3] + "");
-        registers[4].setText(states.get(current).getMemory()[4] + "");
-        registers[5].setText(states.get(current).getMemory()[5] + "");
-        registers[6].setText(states.get(current).getMemory()[6] + "");
-        registers[7].setText(states.get(current).getMemory()[8] + "");
-        registers[7].setText(states.get(current).getMemory()[9] + "");
-        registers[8].setText(states.get(current).getMemory()[10] + "");
+        // TODO: Richtige Register aussuchen
+        for(int i = 0 ; i < 12 ; i++) {
+
+            registers[i].setText(states.get(current).getMemory().get(states.get(current).getBank(),i) + "");
+        }
+
         registers[11].setText(states.get(current).getWorking() + "");
 
         // Setze JList

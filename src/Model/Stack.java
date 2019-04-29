@@ -11,7 +11,7 @@ public class Stack extends java.util.Stack {
     public Stack(Stack stack) {
         this();
 
-        for(Object obj : stack) {
+        for (Object obj : stack) {
             super.push(obj);
         }
     }

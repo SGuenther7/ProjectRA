@@ -10,6 +10,15 @@ public class Memory {
         memory = new int[2][48];
     }
 
+    public Memory(Memory clone) {
+        this();
+
+        for (int y = 0; y < clone.content().length; y++) {
+            for (int x = 0; x < clone.content()[0].length; x++) {
+                memory[y][x] = clone.content()[y][x];
+            }
+        }
+    }
 
     // Internes get() um korrekte Bank fuer Index zu finden.
     // Da manche Register in allen Baenken vorhanden sind.
@@ -35,11 +44,10 @@ public class Memory {
                     case 6:
                     case 7:
                     case 8:
-                        target = 0;
+                        target = 1;
                         break;
-                    default :
+                    default:
                         target = 0;
-
                 }
         }
 
@@ -47,23 +55,26 @@ public class Memory {
     }
 
 
-    // Check ob indirekt Adr. und liefere korrekten Index
+    /* Check ob indirekt Adr. und liefere korrekten Index
+     * @param Index
+     * @return Ziel Index in Bank
+     */
     private int resolveAddressing(int index) {
 
         if (index == 0) {
-            return memory[0][3];
+            return memory[0][4];
         }
 
         return index;
     }
 
     public int get(int bank, int index) {
-        return memory[resolveBank(bank,index)][resolveAddressing(index)];
+        return memory[resolveBank(bank, index)][resolveAddressing(index)];
     }
 
     public void set(int bank, int index, int value) {
         // TODO: Check ob korrekte Indirekte Adrr.
-        memory[resolveBank(bank,index)][resolveAddressing(index)] = value;
+        memory[resolveBank(bank, index)][resolveAddressing(index)] = value;
     }
 
 
@@ -71,8 +82,25 @@ public class Memory {
         return memory;
     }
 
+    public void print() {
+        for (int y = 0; y < memory.length; y++) {
+            for (int x = 0; x < memory[0].length; x++) {
+                System.out.println(memory[y][x]);
+            }
+        }
+    }
+
     @Override
     public boolean equals(Object obj) {
-        return Arrays.equals(memory, ((Memory) obj).content());
+
+        for (int y = 0; y < memory.length; y++) {
+            for (int x = 0; x < memory[0].length; x++) {
+                if(memory[y][x] != ((Memory) obj).content()[y][x]){
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

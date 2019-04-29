@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Worker {
 
     private int working;
-    private int[] memory;
+    private Memory memory;
     private ArrayList<Command> counter; // TODO: In Main auslagern (um mehrfachspeicherung zu vermeiden)
     private Stack stack;
 
@@ -13,7 +13,7 @@ public class Worker {
 
     public Worker() {
         this.working = 0;
-        this.memory = new int[94];
+        this.memory = new Memory();
         this.counter = new ArrayList<>();
         this.stack = new Stack();
 
@@ -25,12 +25,12 @@ public class Worker {
         this.working = working;
     }
 
-    public Worker(int working, int memory[]) {
+    public Worker(int working, Memory memory) {
         this(working);
         this.memory = memory;
     }
 
-    public Worker(int working, int memory[], ArrayList<Command> counter, Stack stack, int current) {
+    public Worker(int working, Memory memory, ArrayList<Command> counter, Stack stack, int current) {
         this.working = working;
         this.memory = memory;
         this.counter = counter;
@@ -38,14 +38,12 @@ public class Worker {
         this.current = current;
     }
 
-    public Worker (Worker clone) {
+    public Worker(Worker clone) {
         this();
 
         this.working = clone.working;
 
-        for(int i = 0 ; i < clone.memory.length; i++) {
-            this.memory[i] = clone.memory[i];
-        }
+        this.memory = new Memory(clone.getMemory());
 
         this.counter = new ArrayList<>();
         this.counter.addAll(clone.counter);
@@ -83,15 +81,15 @@ public class Worker {
             case ADDWF:
                 //C, CD, Z
 
-                int result = working + memory[command.getValue()[1]];
+                int result = working + memory.get(getBank(), command.getValue()[1]);
 
-                handleCarryFlagOnAdd(working, memory[command.getValue()[1]]);
-                handleDigitCarryOnAdd(working, memory[command.getValue()[1]]);
+                handleCarryFlagOnAdd(working, memory.get(getBank(), command.getValue()[1]));
+                handleDigitCarryOnAdd(working, memory.get(getBank(), command.getValue()[1]));
                 handleZeroFlag(working);
 
                 // Destination Bit gesetzt ?
-                if(command.getValue()[0] == 1) {
-                    memory[command.getValue()[1]] = result;
+                if (command.getValue()[0] == 1) {
+                    memory.set(getBank(), command.getValue()[1], result);
                 } else {
                     working = result;
                 }
@@ -130,7 +128,7 @@ public class Worker {
                 // Z
                 break;
             case MOVWF:
-                memory[command.getValue()[0]] = working;
+                memory.set(getBank(), command.getValue()[0], working);
                 break;
             case CLRW:
                 // Z
@@ -164,6 +162,7 @@ public class Worker {
                 // Z
                 break;
             case MOVLW:
+                working = command.getValue()[0];
                 break;
             case RETLW:
                 break;
@@ -191,13 +190,20 @@ public class Worker {
         counter.get(current).setNext(true);
     }
 
+    public void run() {
+
+        for (int i = 0; i < counter.size() - 1; i++) {
+            next();
+        }
+    }
+
     public boolean hasNext() {
         return (current < counter.size() - 1);
     }
 
     private boolean handleZeroFlag(int value) {
         if (value == 0) {
-            this.memory[3] = this.memory[3] | 3;
+            memory.set(getBank(), 3, memory.get(getBank(), 3) | 3);
             return true;
         }
         return false;
@@ -205,7 +211,7 @@ public class Worker {
 
     private boolean handleCarryFlagOnAdd(int base, int add) {
         if (base + add > 25) {
-            this.memory[3] = this.memory[3] | 1;
+            memory.set(getBank(), 3, memory.get(getBank(), 3) | 1);
             return true;
         }
         return false;
@@ -213,7 +219,7 @@ public class Worker {
 
     private boolean handleCarryFlagOnSub(int base, int sub) {
         if (base - sub < 0) {
-            this.memory[3] = this.memory[3] | 1;
+            memory.set(getBank(), 3, memory.get(getBank(), 3) | 1);
             return true;
         }
         return false;
@@ -224,7 +230,7 @@ public class Worker {
         add = add & 15;
 
         if (base + add > 15) {
-            this.memory[3] = this.memory[3] | 2;
+            memory.set(getBank(), 3, memory.get(getBank(), 3) | 2);
             return true;
         }
 
@@ -236,7 +242,7 @@ public class Worker {
         sub = sub & 15;
 
         if (base - sub < 0) {
-            this.memory[3] = this.memory[3] | 2;
+            memory.set(getBank(), 3, memory.get(getBank(), 3) | 2);
             return true;
         }
 
@@ -247,8 +253,12 @@ public class Worker {
         return working;
     }
 
-    public int[] getMemory() {
+    public Memory getMemory() {
         return memory;
+    }
+
+    public int getBank() {
+        return 0;
     }
 
     public ArrayList<Command> getCounter() {
@@ -268,32 +278,27 @@ public class Worker {
         Worker other = (Worker) obj;
 
         if (other.getWorking() != this.working) {
-            return false;
-        }
-
-        if (other.getMemory().length != this.memory.length) {
+            System.out.println("Falcher Inhalt in Working.");
             return false;
         }
 
         // Check Speicher
-        for(int i = 0 ; i < other.getMemory().length ; i++) {
-
-            if(other.getMemory()[i] != this.memory[i]) {
-                return false;
-            }
+        if (other.getMemory().equals(memory) != true) {
+            System.out.println("Memory Inhalt unterschiedlich.");
+            return false;
         }
 
         return true;
     }
 
-
     public void print() {
         System.out.println("Working : " + working);
-        System.out.println("Status :  " + memory[3]);
+        System.out.print("Status :  ");
+        memory.print();
         System.out.println("Current : " + current);
         System.out.print("Befehle : ");
 
-        for(Command element : counter) {
+        for (Command element : counter) {
             System.out.print(element.getInstruction() + " ");
         }
         System.out.println();
