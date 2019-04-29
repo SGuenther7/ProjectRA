@@ -79,7 +79,8 @@ public class Worker {
 
         switch (command.getInstruction()) {
             case ADDWF:
-                //C, CD, Z
+                // Var : f, d
+                // Flag : C, CD, Z
 
                 int result = working + memory.get(getBank(), command.getValue()[1]);
 
@@ -95,89 +96,115 @@ public class Worker {
                 }
                 break;
             case ANDWF:
-                // Z
+                // Var : f, d
+                // Flag : Z
                 break;
             case DECF:
-                // Z
+                // Var : f, d
+                // Flag : Z
                 break;
             case DECFSZ:
+                // Var : f, d
                 break;
             case INCF:
-                // Z
+                // Var : f, d
+                // Flag : Z
                 break;
             case INCFSZ:
+                // Var : f, d
                 break;
             case IORWF:
+                // Var : f, d
                 break;
             case MOVF:
+                // Var : f
                 break;
             case RLF:
+                // Var : f, d
                 break;
             case RRF:
+                // Var : f, d
                 break;
             case SUBWF:
-                //C, CD, Z
-
+                // Var : f, d
+                // Flag : C, CD, Z
                 break;
             case SWAPF:
+                // Var : f, d
                 break;
             case XORWF:
-                // Z
+                // Var : f, d
+                // Flag : Z
                 break;
             case CLRF:
-                // Z
+                // Var : f
+                // Flag : Z
                 break;
             case MOVWF:
+                // Var : f
                 memory.set(getBank(), command.getValue()[0], working);
                 break;
             case CLRW:
-                // Z
+                // Flag : Z
                 break;
             case NOP:
                 break;
             case CLRWDT:
+                // Flag : TO, TP
                 break;
             case RETFIE:
                 break;
             case RETURN:
                 break;
             case SLEEP:
+                // Flag : TO, TP
                 break;
             case BCF:
+                // Var : f, b
                 break;
             case BSF:
+                // Var : f, b
                 break;
             case BTFSS:
+                // Var : f, b
                 break;
             case BTFSC:
+                // Var : f, b
                 break;
             case ADDLW:
+                // Var : k
                 //C, CD, Z
-
                 break;
             case ANDLW:
-                // Z
+                // Var : k
+                // Flag : Z
                 break;
             case IORLW:
-                // Z
+                // Var : k
+                // Flag : Z
                 break;
             case MOVLW:
+                // Var : k
                 working = command.getValue()[0];
                 break;
             case RETLW:
+                // Var : k
                 break;
             case SUBLW:
-                //C, CD, Z
-
+                // Var : k
+                // Flag : C, CD, Z
                 break;
             case XORLW:
-                // Z
+                // Var : k
+                // Flag : Z
                 break;
             case CALL:
+                // Var : k
                 stack.push(current);
                 current = counter.get(i).getValue()[0];
                 break;
             case GOTO:
+                // Var : k
                 current = counter.get(i).getValue()[0];
                 break;
         }
