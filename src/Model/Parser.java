@@ -67,7 +67,9 @@ public class Parser {
 
 		Instruction instruction = null;
 
-		int temp = Integer.valueOf(line, 16).intValue();
+		int code = Integer.valueOf(line, 16).intValue();
+		int tempX1 = (code & 0b1100000000) >>> 8;
+		int tempX2 = (code & 0b11110000) >>> 4;
 		int value[] = null;
 
 		int fMask = 0b1111111;
@@ -75,309 +77,177 @@ public class Parser {
 		int kMask = 0b11111111;
 		int destBit = 0b10000000;
 
-		int addwf  =  0b11100000000;
-		int andwf  =  0b10100000000;
-		int clrf   =    0b110000000;
-		int clrw   =    0b100000000;
-		int comf   = 0b100100000000;
-		int decf   =   0b1100000000;
-		int decfsz = 0b101100000000;
-		int incf   = 0b101000000000;
-		int incfsz = 0b111100000000;
-		int iorwf  =  0b10000000000;
-		int movf   = 0b100000000000;
-		int movwf  =     0b10000000;
-		int nop = 0;
-		int rlf    = 0b110100000000;
-		int rrf    = 0b110000000000;
-		int subwf  =   0b1000000000;
-		int swapf  = 0b111000000000;
-		int xorwf  =  0b11000000000;
+		int addwf = 0b00011100000000;
+		int andwf = 0b00010100000000;
+		int clrf = 0b00000110000000;
+		int clrw = 0b00000100000000;
+		int comf = 0b00100100000000;
+		int decf = 0b00001100000000;
+		int decfsz = 0b00101100000000;
+		int incf = 0b00101000000000;
+		int incfsz = 0b00111100000000;
+		int iorwf = 0b00010000000000;
+		int movf = 0b00100000000000;
+		int movwf = 0b00000010000000;
+		int rlf = 0b00110100000000;
+		int rrf = 0b00110000000000;
+		int subwf = 0b00001000000000;
+		int swapf = 0b00111000000000;
+		int xorwf = 0b00011000000000;
 
-		int bcf    = 0b1000000000000;
-		int bsf    = 0b1010000000000;
-		int btfsc  = 0b1100000000000;
-		int btfss  = 0b1110000000000;
+		int bcf = 0b01000000000000;
+		int bsf = 0b01010000000000;
+		int btfsc = 0b01100000000000;
+		int btfss = 0b01110000000000;
 
-		int addlw  = 0b11111000000000;
-		int andlw  = 0b11100100000000;
-		int call   = 0b10000000000000;
-		int clrwdt = 0b1100100;
-		int goTo   = 0b10100000000000;
-		int iorlw  = 0b11100000000000;
-		int movlw  = 0b11000000000000;
-		int retfie = 0b1001;
-		int retlw  = 0b11010000000000;
-		int reTurn = 0b1000;
-		int sleep = 0b1100011;
-		int sublw  = 0b11110000000000;
-		int xorlw  = 0b11101000000000;		
+		int addlw = 0b11111000000000;
+		int andlw = 0b11100100000000;
+		int call = 0b10000000000000;
+		int clrwdt = 0b00000001100100;
+		int goTo = 0b10100000000000;
+		int iorlw = 0b11100000000000;
+		int movlw = 0b11000000000000;
+		int retfie = 0b00000000001001;
+		int retlw = 0b11010000000000;
+		int reTurn = 0b00000000001000;
+		int sleep = 0b00000001100011;
+		int sublw = 0b11110000000000;
+		int xorlw = 0b11101000000000;
 
-		
-		// komplette Masken
-		if (temp == clrwdt) {
-			instruction = Instruction.CLRWDT;
-		} else
+		switch (tempX1) {
 
-		if (temp == retfie) {
-			instruction = Instruction.RETFIE;
-		} else
+		case 0:
+			if (tempX2 > 0) {
+				switch (tempX2) {
+				case 0b1:
+					if ((code >>> 7) == 3) {
+						instruction = Instruction.CLRF;
+						value = new int[] { (fMask & code) };
+					} else
+						instruction = Instruction.CLRW;
+					break;
+				case 0b0010:
+					instruction = Instruction.SUBWF;
+					break;
+				case 0b0011:
+					instruction = Instruction.DECF;
+					break;
+				case 0b0100:
+					instruction = Instruction.IORWF;
+					break;
+				case 0b0101:
+					instruction = Instruction.ANDWF;
+					break;
+				case 0b0110:
+					instruction = Instruction.XORWF;
+					break;
+				case 0b0111:
+					instruction = Instruction.ADDWF;
+					break;
+				case 0b1000:
+					instruction = Instruction.MOVF;
+					break;
+				case 0b1001:
+					instruction = Instruction.COMF;
+					break;
+				case 0b1010:
+					instruction = Instruction.INCF;
+					break;
+				case 0b1011:
+					instruction = Instruction.DECFSZ;
+					break;
+				case 0b1100:
+					instruction = Instruction.RRF;
+					break;
+				case 0b1101:
+					instruction = Instruction.RLF;
+					break;
+				case 0b1110:
+					instruction = Instruction.SWAPF;
+					break;
+				case 0b1111:
+					instruction = Instruction.INCFSZ;
+					break;
+				}
+				value = new int[] { (fMask & code), ((destBit & code) >>> 7) };
 
-		if (temp == reTurn) {
-			instruction = Instruction.RETURN;
-		} else
-
-		if (temp == sleep) {
-			instruction = Instruction.SLEEP;
-		} else
-			
-		// mit f und d
-		if ((temp & addwf) == addwf) {
-			instruction = Instruction.ADDWF;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = 0b0;
-			if ((destBit & temp) == destBit) {
-				value[1] = 1;
+			} else {
+				switch (code) {
+				case 0x0008:
+					instruction = Instruction.RETURN;
+					break;
+				case 0x0009:
+					instruction = Instruction.RETFIE;
+					break;
+				case 0x0063:
+					instruction = Instruction.SLEEP;
+					break;
+				case 0x0064:
+					instruction = Instruction.CLRWDT;
+					break;
+				default:
+					if ((code >>> 7) == 1) {
+						instruction = Instruction.MOVWF;
+						value = new int[] { (fMask & code) };
+					} else
+						instruction = Instruction.NOP;
+					break;
+				}
 			}
-		} else
+			break;
+		case 1:
+			switch (tempX2>>>2) {
+			case 0b0100:
+				instruction = Instruction.BCF;
+				break;
+			case 0b0101:
+				instruction = Instruction.BSF;
+				break;
+			case 0b0110:
+				instruction = Instruction.BTFSC;
+				break;
+			case 0b0111:
+				instruction = Instruction.BTFSS;
+				break;
+			}
+			value = new int[] { (fMask & code), ((bMask & code) >>> 7) };
+			break;
+		case 2:
+			if ((code >>> 11) == 0x100) {
+				instruction = Instruction.CALL;
+			} else {
+				instruction = Instruction.GOTO;
+			}
+			value = new int[] { (code & 0b11111111111) };
+			break;
+		case 3:
+			switch (tempX2) {
 
-		if ((temp & andwf) == andwf) {
-			instruction = Instruction.ANDWF;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = 0b0;
-			if ((destBit & temp) == destBit) {
-				value[1] = 1;
+			case 0b1000:
+				instruction = Instruction.IORLW;
+				break;
+			case 0b1010:
+				instruction = Instruction.XORLW;
+				break;
+			case 0b1001:
+				instruction = Instruction.ANDLW;
+				break;
+			default:
+				int tempCode = tempX2 >>> 1;
+				if (tempCode == 0b111) {
+					instruction = Instruction.ADDLW;
+				} else if (tempCode == 0b110) {
+					instruction = Instruction.SUBLW;
+				} else {
+					tempCode = tempCode >>> 1;
+					if (tempCode == 1) {
+						instruction = Instruction.RETLW;
+					} else if (tempCode == 0)
+						instruction = Instruction.MOVLW;
+				}
 			} 
-		} else
-
-		if ((temp & clrf) == clrf) {
-			instruction = Instruction.CLRF;
-			value = new int[1];
-			value[0] = (fMask & temp);
-		} else
-
-		if ((temp & clrw) == clrw) {
-			instruction = Instruction.CLRW;
-		} else
-
-		if ((temp & comf) == comf) {
-			instruction = Instruction.COMF;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = 0b0;
-			if ((destBit & temp) == destBit) {
-				value[1] = 1;
-			}
-		} else
-
-		if ((temp & decf) == decf) {
-			instruction = Instruction.DECF;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = 0b0;
-			if ((destBit & temp) == destBit) {
-				value[1] = 1;
-			}
-		} else
-
-		if ((temp & decfsz) == decfsz) {
-			instruction = Instruction.DECFSZ;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = 0b0;
-			if ((destBit & temp) == destBit) {
-				value[1] = 1;
-			}
-		} else
-
-		if ((temp & incf) == incf) {
-			instruction = Instruction.INCF;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = 0b0;
-			if ((destBit & temp) == destBit) {
-				value[1] = 1;
-			}
-		} else
-
-		if ((temp & incfsz) == incfsz) {
-			instruction = Instruction.INCFSZ;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = 0b0;
-			if ((destBit & temp) == destBit) {
-				value[1] = 1;
-			}
-		} else
-
-		if ((temp & iorwf) == iorwf) {
-			instruction = Instruction.IORWF;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = 0b0;
-			if ((destBit & temp) == destBit) {
-				value[1] = 1;
-			}
-		} else
-
-		if ((temp & movf) == movf) {
-			instruction = Instruction.MOVF;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = 0b0;
-			if ((destBit & temp) == destBit) {
-				value[1] = 1;
-			}
-		} else
-
-		if ((temp & movwf) == movwf) {
-			instruction = Instruction.MOVWF;
-			value = new int[1];
-			value[0] = (fMask & temp);
-		} else
-
-		if ((temp & nop) == nop) {
-			instruction = Instruction.NOP;
-		} else
-
-		if ((temp & rlf) == rlf) {
-			instruction = Instruction.RLF;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = 0b0;
-			if ((destBit & temp) == destBit) {
-				value[1] = 1;
-			}
-		} else
-
-		if ((temp & rrf) == rrf) {
-			instruction = Instruction.RRF;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = 0b0;
-			if ((destBit & temp) == destBit) {
-				value[1] = 1;
-			}
-		} else
-
-		if ((temp & subwf) == subwf) {
-			instruction = Instruction.SUBWF;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = 0b0;
-			if ((destBit & temp) == destBit) {
-				value[1] = 1;
-			}
-		} else
-
-		if ((temp & swapf) == swapf) {
-			instruction = Instruction.SWAPF;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = 0b0;
-			if ((destBit & temp) == destBit) {
-				value[1] = 1;
-			}
-		} else
-
-		if ((temp & xorwf) == xorwf) {
-			instruction = Instruction.XORWF;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = 0b0;
-			if ((destBit & temp) == destBit) {
-				value[1] = 1;
-			}
-		}
-
-		// mit f und b
-		else
-
-		if ((temp & bcf) == bcf) {
-			instruction = Instruction.BCF;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = (bMask & temp) >>> 7;
-		} else
-
-		if ((temp & bsf) == bsf) {
-			instruction = Instruction.BSF;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = (bMask & temp) >>> 7;
-		} else
-
-		if ((temp & btfsc) == btfsc) {
-			instruction = Instruction.BTFSC;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = (bMask & temp) >>> 7;
-		} else
-
-		if ((temp & btfss) == btfss) {
-			instruction = Instruction.BTFSS;
-			value = new int[2];
-			value[0] = (fMask & temp);
-			value[1] = (bMask & temp) >>> 7;
-		}
-
-		// mit k
-		else
-
-		if ((temp & addlw) == addlw) {
-			instruction = Instruction.ADDLW;
-			value = new int[1];
-			value[0] = (kMask & temp);
-		} else
-
-		if ((temp & andlw) == andlw) {
-			instruction = Instruction.ANDLW;
-			value = new int[1];
-			value[0] = (kMask & temp);
-		} else
-
-		if ((temp & call) == call) {
-			instruction = Instruction.CALL;
-			value = new int[1];
-			value[0] = (0b11111111111 & temp);
-		} else
-
-		if ((temp & goTo) == goTo) {
-			instruction = Instruction.GOTO;
-			value = new int[1];
-			value[0] = (0b11111111111 & temp);
-		} else
-
-		if ((temp & iorlw) == iorlw) {
-			instruction = Instruction.IORLW;
-			value = new int[1];
-			value[0] = (kMask & temp);
-		} else
-
-		if ((temp & movlw) == movlw) {
-			instruction = Instruction.MOVLW;
-			value = new int[1];
-			value[0] = (kMask & temp);
-		} else
-			
-		if ((temp & retlw) == retlw) {
-			instruction = Instruction.RETLW;
-			value = new int[1];
-			value[0] = (kMask & temp);
-		} else
-
-		if ((temp & sublw) == sublw) {
-			instruction = Instruction.SUBLW;
-			value = new int[1];
-			value[0] = (kMask & temp);
-		} else
-
-		if ((temp & xorlw) == xorlw) {
-			instruction = Instruction.XORLW;
-			value = new int[1];
-			value[0] = (kMask & temp);
+			value = new int[] { (code & kMask) };
+			break;
 		}
 
 		Command c = new Command(instruction, value);
