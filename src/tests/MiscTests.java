@@ -50,7 +50,6 @@ public class MiscTests {
 
     @Test
     void memoryCloneTest() {
-        // TODO memory testen
         Memory wild = new Memory();
         Memory clone = new Memory(wild);
 

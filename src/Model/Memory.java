@@ -73,7 +73,6 @@ public class Memory {
     }
 
     public void set(int bank, int index, int value) {
-        // TODO: Check ob korrekte Indirekte Adrr.
         memory[resolveBank(bank, index)][resolveAddressing(index)] = value;
     }
 

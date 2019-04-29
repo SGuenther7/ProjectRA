@@ -98,47 +98,60 @@ public class Worker {
             case ANDWF:
                 // Var : f, d
                 // Flag : Z
+                // TODO: imp. + test
                 break;
             case DECF:
                 // Var : f, d
                 // Flag : Z
+                // TODO: imp. + test
                 break;
             case DECFSZ:
                 // Var : f, d
+                // TODO: imp. + test
                 break;
             case INCF:
                 // Var : f, d
                 // Flag : Z
+                // TODO: imp. + test
                 break;
             case INCFSZ:
                 // Var : f, d
+                // TODO: imp. + test
                 break;
             case IORWF:
                 // Var : f, d
+                // TODO: imp. + test
                 break;
             case MOVF:
                 // Var : f
+                // TODO: imp. + test
                 break;
             case RLF:
                 // Var : f, d
+                // TODO: imp. + test
                 break;
             case RRF:
                 // Var : f, d
+                // TODO: imp. + test
                 break;
             case SUBWF:
                 // Var : f, d
                 // Flag : C, CD, Z
+                // TODO: imp. + test
                 break;
             case SWAPF:
                 // Var : f, d
+                // TODO: imp. + test
                 break;
             case XORWF:
                 // Var : f, d
                 // Flag : Z
+                // TODO: imp. + test
                 break;
             case CLRF:
                 // Var : f
                 // Flag : Z
+                // TODO: imp. + test
                 break;
             case MOVWF:
                 // Var : f
@@ -146,42 +159,54 @@ public class Worker {
                 break;
             case CLRW:
                 // Flag : Z
+                // TODO: imp. + test
                 break;
             case NOP:
                 break;
             case CLRWDT:
                 // Flag : TO, TP
+                // TODO: imp. + test
                 break;
             case RETFIE:
+                // TODO: imp. + test
                 break;
             case RETURN:
+                // TODO: imp. + test
                 break;
             case SLEEP:
                 // Flag : TO, TP
+                // TODO: imp. + test
                 break;
             case BCF:
                 // Var : f, b
+                // TODO: imp. + test
                 break;
             case BSF:
                 // Var : f, b
+                // TODO: imp. + test
                 break;
             case BTFSS:
                 // Var : f, b
+                // TODO: imp. + test
                 break;
             case BTFSC:
                 // Var : f, b
+                // TODO: imp. + test
                 break;
             case ADDLW:
                 // Var : k
                 //C, CD, Z
+                // TODO: imp. + test
                 break;
             case ANDLW:
                 // Var : k
                 // Flag : Z
+                // TODO: imp. + test
                 break;
             case IORLW:
                 // Var : k
                 // Flag : Z
+                // TODO: imp. + test
                 break;
             case MOVLW:
                 // Var : k
@@ -189,14 +214,17 @@ public class Worker {
                 break;
             case RETLW:
                 // Var : k
+                // TODO: imp. + test
                 break;
             case SUBLW:
                 // Var : k
                 // Flag : C, CD, Z
+                // TODO: imp. + test
                 break;
             case XORLW:
                 // Var : k
                 // Flag : Z
+                // TODO: imp. + test
                 break;
             case CALL:
                 // Var : k
