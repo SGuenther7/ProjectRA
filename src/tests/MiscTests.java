@@ -18,17 +18,17 @@ public class MiscTests {
 
     @Test
     void memoryEqualsFalseTest() {
-        Memory wild = new Memory();
+        Memory wild = new Memory(new Worker());
         wild.set(0,5,3);
         wild.set(1,7,9);
-        Memory base = new Memory();
+        Memory base = new Memory(new Worker());
 
         assertFalse(wild.equals(base));
     }
 
     @Test
     void memoryEqualsCloneTrueTest() {
-        Memory base = new Memory();
+        Memory base = new Memory(new Worker());
         base.set(0,5,3);
         base.set(1,7,9);
 
@@ -37,11 +37,12 @@ public class MiscTests {
 
     @Test
     void memoryEqualsTrueTest() {
-        Memory base = new Memory();
+
+        Memory base = new Memory(new Worker());
         base.set(0,15,3);
         base.set(1,17,9);
 
-        Memory other = new Memory();
+        Memory other = new Memory(new Worker());
         other.set(0,15,3);
         other.set(1,17,9);
 
@@ -50,7 +51,7 @@ public class MiscTests {
 
     @Test
     void memoryCloneTest() {
-        Memory wild = new Memory();
+        Memory wild = new Memory(new Worker());
         Memory clone = new Memory(wild);
 
         assertEquals(wild,clone);

@@ -4,16 +4,18 @@ import java.util.ArrayList;
 
 public class Worker {
 
+    public static int PC_MAX_VALUE = 1024;
+
     private int working;
     private Memory memory;
-    private ArrayList<Command> counter; // TODO: In Main auslagern (um mehrfachspeicherung zu vermeiden)
+    private ArrayList<Command> counter;
     private Stack stack;
 
     private int current;
 
     public Worker() {
         this.working = 0;
-        this.memory = new Memory();
+        this.memory = new Memory(this);
         this.counter = new ArrayList<>();
         this.stack = new Stack();
 
@@ -49,7 +51,7 @@ public class Worker {
         this.counter.addAll(clone.counter);
 
         this.stack = new Stack(clone.stack);
-        this.current = clone.current;
+        this.current = clone.getCurrent();
     }
 
     public boolean feed(ArrayList<Command> container) {
@@ -59,7 +61,7 @@ public class Worker {
             }
         }
 
-        counter.get(current).setNext(true);
+        counter.get(getCurrent()).setNext(true);
 
         return true;
     }
@@ -228,32 +230,39 @@ public class Worker {
                 break;
             case CALL:
                 // Var : k
-                stack.push(current);
-                current = counter.get(i).getValue()[0];
-                break;
+                stack.push(getCurrent());
             case GOTO:
                 // Var : k
-                current = counter.get(i).getValue()[0];
+                memory.content()[0][2] = counter.get(i).getValue()[0];
+                updateCurrent();
                 break;
         }
     }
 
     public void next() {
-        execute(current);
-        counter.get(current).setNext(false);
-        current++;
-        counter.get(current).setNext(true);
+        execute(getCurrent());
+        counter.get(getCurrent()).setNext(false);
+
+        // Wird ein zaehler ueberlauf stattfinden ?
+        if(getCurrent() >= (PC_MAX_VALUE - 1)) {
+            current = 0;
+            // TODO: Fehlermeldung : PC ueberflauf
+        } else {
+            current++;
+        }
+        counter.get(getCurrent()).setNext(true);
     }
 
     public void run() {
 
-        for (int i = 0; i < counter.size() - 1; i++) {
+        // TODO: Break points (?)
+        while(hasNext() && getCurrent() != counter.size() - 1 ) {
             next();
         }
     }
 
     public boolean hasNext() {
-        return (current < counter.size() - 1);
+        return (getCurrent() < counter.size() - 1);
     }
 
     private boolean handleZeroFlag(int value) {
@@ -322,6 +331,13 @@ public class Worker {
 
     public Stack getStack() {
         return stack;
+    }
+
+    public void updateCurrent() {
+        int temp = memory.content()[0][10];
+        temp = temp << 8;
+        temp += memory.content()[0][2];
+        current = temp;
     }
 
     public int getCurrent() {

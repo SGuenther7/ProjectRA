@@ -5,13 +5,15 @@ import java.util.Arrays;
 public class Memory {
 
     private int[][] memory;
+    private Worker peon;
 
-    public Memory() {
+    public Memory(Worker peon) {
         memory = new int[2][48];
+        this.peon = peon;
     }
 
     public Memory(Memory clone) {
-        this();
+        this(clone.getWorker());
 
         for (int y = 0; y < clone.content().length; y++) {
             for (int x = 0; x < clone.content()[0].length; x++) {
@@ -68,12 +70,21 @@ public class Memory {
         return index;
     }
 
+    public Worker getWorker() {
+        return this.peon;
+    }
+
     public int get(int bank, int index) {
         return memory[resolveBank(bank, index)][resolveAddressing(index)];
     }
 
     public void set(int bank, int index, int value) {
         memory[resolveBank(bank, index)][resolveAddressing(index)] = value;
+
+        // PCL wurde beschrieben
+        if(index == 10) {
+            peon.updateCurrent();
+        }
     }
 
 
