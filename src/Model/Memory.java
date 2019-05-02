@@ -83,6 +83,12 @@ public class Memory {
 
         // PCL oder PCLATH wurde beschrieben
         switch (index) {
+            // Zugriff auf TMR0
+            case 1:
+                // TODO: Benoetigt zwei extra Zyklen
+                // TODO: Setzt Vorteiler zurueck falls
+                //       TMR0 ihn hat.
+                break;
             case 2:
             case 10:
                 peon.updateCurrent();
@@ -108,7 +114,7 @@ public class Memory {
 
         for (int y = 0; y < memory.length; y++) {
             for (int x = 0; x < memory[0].length; x++) {
-                if(memory[y][x] != ((Memory) obj).content()[y][x]){
+                if (memory[y][x] != ((Memory) obj).content()[y][x]) {
                     return false;
                 }
             }
