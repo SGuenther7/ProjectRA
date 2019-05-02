@@ -81,9 +81,12 @@ public class Memory {
     public void set(int bank, int index, int value) {
         memory[resolveBank(bank, index)][resolveAddressing(index)] = value;
 
-        // PCL wurde beschrieben
-        if(index == 10) {
-            peon.updateCurrent();
+        // PCL oder PCLATH wurde beschrieben
+        switch (index) {
+            case 2:
+            case 10:
+                peon.updateCurrent();
+                break;
         }
     }
 
