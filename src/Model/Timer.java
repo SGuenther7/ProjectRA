@@ -90,7 +90,7 @@ public class Timer {
     private void resetTMR0() {
         // Wurde tmrCounter schon beladen ?
         if (getAssignd() == 0) {
-            tmrCounter = getScale();
+            tmrCounter = scale();
         } else {
             tmrCounter = 1;
         }
@@ -100,7 +100,7 @@ public class Timer {
 
         // Haben wir den Vorteiler ?
         if (getAssignd() == 1) {
-            wdtCounter = getScale();
+            wdtCounter = scale();
         } else {
             wdtCounter = 1;
         }
