@@ -11,6 +11,8 @@ public class Worker {
     private ArrayList<Command> counter;
     private Stack stack;
 
+    private Timer timer;
+
     private int current;
 
     public Worker() {
@@ -18,6 +20,7 @@ public class Worker {
         this.memory = new Memory(this);
         this.counter = new ArrayList<>();
         this.stack = new Stack();
+        this.timer = new Timer(this);
 
         this.current = 0;
     }
@@ -237,6 +240,9 @@ public class Worker {
                 updateCurrent();
                 break;
         }
+
+        // Timer updaten
+        timer.tick();
     }
 
     public void next() {
