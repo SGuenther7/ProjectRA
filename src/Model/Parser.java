@@ -68,63 +68,27 @@ public class Parser {
 		Instruction instruction = null;
 
 		int code = Integer.valueOf(line, 16).intValue();
-		int tempX1 = (code & 0b1100000000) >>> 8;
-		int tempX2 = (code & 0b11110000) >>> 4;
 		int value[] = null;
+
+		int tempX1 = (code & 0b11000000000000) >>> 12;
+		int tempX2 = (code & 0b00111100000000) >>> 8;
 
 		int fMask = 0b1111111;
 		int bMask = 0b1110000000;
 		int kMask = 0b11111111;
 		int destBit = 0b10000000;
 
-		int addwf = 0b00011100000000;
-		int andwf = 0b00010100000000;
-		int clrf = 0b00000110000000;
-		int clrw = 0b00000100000000;
-		int comf = 0b00100100000000;
-		int decf = 0b00001100000000;
-		int decfsz = 0b00101100000000;
-		int incf = 0b00101000000000;
-		int incfsz = 0b00111100000000;
-		int iorwf = 0b00010000000000;
-		int movf = 0b00100000000000;
-		int movwf = 0b00000010000000;
-		int rlf = 0b00110100000000;
-		int rrf = 0b00110000000000;
-		int subwf = 0b00001000000000;
-		int swapf = 0b00111000000000;
-		int xorwf = 0b00011000000000;
-
-		int bcf = 0b01000000000000;
-		int bsf = 0b01010000000000;
-		int btfsc = 0b01100000000000;
-		int btfss = 0b01110000000000;
-
-		int addlw = 0b11111000000000;
-		int andlw = 0b11100100000000;
-		int call = 0b10000000000000;
-		int clrwdt = 0b00000001100100;
-		int goTo = 0b10100000000000;
-		int iorlw = 0b11100000000000;
-		int movlw = 0b11000000000000;
-		int retfie = 0b00000000001001;
-		int retlw = 0b11010000000000;
-		int reTurn = 0b00000000001000;
-		int sleep = 0b00000001100011;
-		int sublw = 0b11110000000000;
-		int xorlw = 0b11101000000000;
-
 		switch (tempX1) {
-
 		case 0:
 			if (tempX2 > 0) {
 				switch (tempX2) {
-				case 0b1:
+				case 0b0001:
 					if ((code >>> 7) == 3) {
 						instruction = Instruction.CLRF;
 						value = new int[] { (fMask & code) };
-					} else
+					} else {
 						instruction = Instruction.CLRW;
+					}
 					break;
 				case 0b0010:
 					instruction = Instruction.SUBWF;
@@ -169,8 +133,9 @@ public class Parser {
 					instruction = Instruction.INCFSZ;
 					break;
 				}
-				value = new int[] { (fMask & code), ((destBit & code) >>> 7) };
-
+				if (value == null) {
+					value = new int[] { (fMask & code), ((destBit & code) >>> 7) };
+				}
 			} else {
 				switch (code) {
 				case 0x0008:
@@ -196,24 +161,24 @@ public class Parser {
 			}
 			break;
 		case 1:
-			switch (tempX2>>>2) {
-			case 0b0100:
+			switch (tempX2 >>> 2) {
+			case 0b00:
 				instruction = Instruction.BCF;
 				break;
-			case 0b0101:
+			case 0b001:
 				instruction = Instruction.BSF;
 				break;
-			case 0b0110:
+			case 0b010:
 				instruction = Instruction.BTFSC;
 				break;
-			case 0b0111:
+			case 0b011:
 				instruction = Instruction.BTFSS;
 				break;
 			}
 			value = new int[] { (fMask & code), ((bMask & code) >>> 7) };
 			break;
 		case 2:
-			if ((code >>> 11) == 0x100) {
+			if ((code >>> 11) == 0b100) {
 				instruction = Instruction.CALL;
 			} else {
 				instruction = Instruction.GOTO;
@@ -245,7 +210,7 @@ public class Parser {
 					} else if (tempCode == 0)
 						instruction = Instruction.MOVLW;
 				}
-			} 
+			}
 			value = new int[] { (code & kMask) };
 			break;
 		}
