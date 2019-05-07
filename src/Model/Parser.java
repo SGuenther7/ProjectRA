@@ -60,7 +60,15 @@ public class Parser {
 
 	public static ArrayList<Command> parseMultible(ArrayList<String> lines) throws NullPointerException {
 
-		return new ArrayList<Command>();
+	    ArrayList<Command> result = new ArrayList<>();
+
+		for (String line : lines) {
+
+			result.add(parse(line));
+
+		}
+
+		return result;
 	}
 
 	public static Command parse(String line) throws NullPointerException {
