@@ -13,7 +13,7 @@ class CommandTests {
         // W = 0Ah, C=x, DC=x, Z=0
         Worker expected = new Worker(10);
         expected.getMemory().set(expected.getBank(),13,5);
-
+        
         // Lade 5 in W und in 13
         // Erwarte 10 in W
         Worker peon = new Worker(5);
