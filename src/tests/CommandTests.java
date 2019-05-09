@@ -27,6 +27,16 @@ class CommandTests {
 
     @Test
     void ANDWFTest() {
+    	Worker expected = new Worker(1);
+        expected.getMemory().set(expected.getBank(),13,3);
+        
+        Worker peon = new Worker(5);
+        peon.getMemory().set(peon.getBank(),13,3);
+
+        peon.feed(new Command(Instruction.ANDWF, new int[]{0, 13}));
+        peon.execute(0);
+
+        assertEquals(expected.getWorking(), peon.getWorking());
     }
 
     @Test
@@ -43,6 +53,16 @@ class CommandTests {
 
     @Test
     void DECFTest() {
+    	Worker expected = new Worker();
+        expected.getMemory().set(expected.getBank(),13,4);
+        
+        Worker peon = new Worker();
+        peon.getMemory().set(peon.getBank(),13,5);
+
+        peon.feed(new Command(Instruction.DECF, new int[]{1, 5}));
+        peon.execute(0);
+
+        assertEquals(expected.getWorking(), peon.getWorking());
     }
 
     @Test
@@ -51,6 +71,16 @@ class CommandTests {
 
     @Test
     void INCFTest() {
+    	Worker expected = new Worker(5);
+        expected.getMemory().set(expected.getBank(),13,4);
+        
+        Worker peon = new Worker(4);
+        peon.getMemory().set(peon.getBank(),13,4);
+
+        peon.feed(new Command(Instruction.INCF, new int[]{0, 4}));
+        peon.execute(0);
+
+        assertEquals(expected.getWorking(), peon.getWorking());
     }
 
     @Test

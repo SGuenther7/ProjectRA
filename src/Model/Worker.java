@@ -4,380 +4,404 @@ import java.util.ArrayList;
 
 public class Worker {
 
-    public static int PC_MAX_VALUE = 1024;
+	public static int PC_MAX_VALUE = 1024;
 
-    private int working;
-    private Memory memory;
-    private ArrayList<Command> counter;
-    private Stack stack;
+	private int working;
+	private Memory memory;
+	private ArrayList<Command> counter;
+	private Stack stack;
 
-    private Timer timer;
+	private Timer timer;
 
-    private int current;
+	private int current;
 
-    public Worker() {
-        this.working = 0;
-        this.memory = new Memory(this);
-        this.counter = new ArrayList<>();
-        this.stack = new Stack();
-        this.timer = new Timer(this);
+	public Worker() {
+		this.working = 0;
+		this.memory = new Memory(this);
+		this.counter = new ArrayList<>();
+		this.stack = new Stack();
+		this.timer = new Timer(this);
 
-        this.current = 0;
-    }
+		this.current = 0;
+	}
 
-    public Worker(int working) {
-        this();
-        this.working = working;
-    }
+	public Worker(int working) {
+		this();
+		this.working = working;
+	}
 
-    public Worker(int working, Memory memory) {
-        this(working);
-        this.memory = memory;
-    }
+	public Worker(int working, Memory memory) {
+		this(working);
+		this.memory = memory;
+	}
 
-    public Worker(int working, Memory memory, ArrayList<Command> counter, Stack stack, int current) {
-        this.working = working;
-        this.memory = memory;
-        this.counter = counter;
-        this.stack = stack;
-        this.current = current;
-    }
+	public Worker(int working, Memory memory, ArrayList<Command> counter, Stack stack, int current) {
+		this.working = working;
+		this.memory = memory;
+		this.counter = counter;
+		this.stack = stack;
+		this.current = current;
+	}
 
-    public Worker(Worker clone) {
-        this();
+	public Worker(Worker clone) {
+		this();
 
-        this.working = clone.working;
+		this.working = clone.working;
 
-        this.memory = new Memory(clone.getMemory());
+		this.memory = new Memory(clone.getMemory());
 
-        this.counter = new ArrayList<>();
-        this.counter.addAll(clone.counter);
+		this.counter = new ArrayList<>();
+		this.counter.addAll(clone.counter);
 
-        this.stack = new Stack(clone.stack);
-        this.current = clone.getCurrent();
-    }
+		this.stack = new Stack(clone.stack);
+		this.current = clone.getCurrent();
+	}
 
-    public boolean feed(ArrayList<Command> container) {
-        for (Command fresh : container) {
-            if (!feed(fresh)) {
-                return false;
-            }
-        }
+	public boolean feed(ArrayList<Command> container) {
+		for (Command fresh : container) {
+			if (!feed(fresh)) {
+				return false;
+			}
+		}
 
-        counter.get(getCurrent()).setNext(true);
+		counter.get(getCurrent()).setNext(true);
 
-        return true;
-    }
+		return true;
+	}
 
-    public boolean feed(Command fresh) {
-        // Programmspeicher limit von 1024
-        if (counter.size() < 1024) {
-            counter.add(fresh);
-            return true;
-        }
-        return false;
-    }
+	public boolean feed(Command fresh) {
+		// Programmspeicher limit von 1024
+		if (counter.size() < 1024) {
+			counter.add(fresh);
+			return true;
+		}
+		return false;
+	}
 
-    public void execute(int i) {
+	public void execute(int i) {
 
-        Command command = counter.get(i);
+		Command command = counter.get(i);
+		int result;
+		
+		switch (command.getInstruction()) {
+		case ADDWF:
+			// Var : f, d
+			// Flag : C, CD, Z
 
-        switch (command.getInstruction()) {
-            case ADDWF:
-                // Var : f, d
-                // Flag : C, CD, Z
+			result = working + memory.get(getBank(), command.getValue()[1]);
 
-                int result = working + memory.get(getBank(), command.getValue()[1]);
+			handleCarryFlagOnAdd(working, memory.get(getBank(), command.getValue()[1]));
+			handleDigitCarryOnAdd(working, memory.get(getBank(), command.getValue()[1]));
+			handleZeroFlag(working);
 
-                handleCarryFlagOnAdd(working, memory.get(getBank(), command.getValue()[1]));
-                handleDigitCarryOnAdd(working, memory.get(getBank(), command.getValue()[1]));
-                handleZeroFlag(working);
+			// Destination Bit gesetzt ?
+			if (command.getValue()[0] == 1) {
+				memory.set(getBank(), command.getValue()[1], result);
+			} else {
+				working = result;
+			}
+			break;
+		case ANDWF:
+			// Var : f, d
+			// Flag : Z
+			
+			result = working & memory.get(getBank(), command.getValue()[1]);
+			handleZeroFlag(working);
 
-                // Destination Bit gesetzt ?
-                if (command.getValue()[0] == 1) {
-                    memory.set(getBank(), command.getValue()[1], result);
-                } else {
-                    working = result;
-                }
-                break;
-            case ANDWF:
-                // Var : f, d
-                // Flag : Z
-                // TODO: imp. + test
-                break;
-            case DECF:
-                // Var : f, d
-                // Flag : Z
-                // TODO: imp. + test
-                break;
-            case DECFSZ:
-                // Var : f, d
-                // TODO: imp. + test
-                break;
-            case INCF:
-                // Var : f, d
-                // Flag : Z
-                // TODO: imp. + test
-                break;
-            case INCFSZ:
-                // Var : f, d
-                // TODO: imp. + test
-                break;
-            case IORWF:
-                // Var : f, d
-                // TODO: imp. + test
-                break;
-            case MOVF:
-                // Var : f
-                // TODO: imp. + test
-                break;
-            case RLF:
-                // Var : f, d
-                // TODO: imp. + test
-                break;
-            case RRF:
-                // Var : f, d
-                // TODO: imp. + test
-                break;
-            case SUBWF:
-                // Var : f, d
-                // Flag : C, CD, Z
-                // TODO: imp. + test
-                break;
-            case SWAPF:
-                // Var : f, d
-                // TODO: imp. + test
-                break;
-            case XORWF:
-                // Var : f, d
-                // Flag : Z
-                // TODO: imp. + test
-                break;
-            case CLRF:
-                // Var : f
-                // Flag : Z
-                // TODO: imp. + test
-                break;
-            case MOVWF:
-                // Var : f
-                memory.set(getBank(), command.getValue()[0], working);
-                break;
-            case CLRW:
-                // Flag : Z
-                // TODO: imp. + test
-                break;
-            case NOP:
-                break;
-            case CLRWDT:
-                // Flag : TO, TP
-                // TODO: imp. + test
-                break;
-            case RETFIE:
-                // TODO: imp. + test
-                break;
-            case RETURN:
-                // TODO: imp. + test
-                break;
-            case SLEEP:
-                // Flag : TO, TP
-                // TODO: imp. + test
-                break;
-            case BCF:
-                // Var : f, b
-                // TODO: imp. + test
-                break;
-            case BSF:
-                // Var : f, b
-                // TODO: imp. + test
-                break;
-            case BTFSS:
-                // Var : f, b
-                // TODO: imp. + test
-                break;
-            case BTFSC:
-                // Var : f, b
-                // TODO: imp. + test
-                break;
-            case ADDLW:
-                // Var : k
-                //C, CD, Z
-                // TODO: imp. + test
-                break;
-            case ANDLW:
-                // Var : k
-                // Flag : Z
-                // TODO: imp. + test
-                break;
-            case IORLW:
-                // Var : k
-                // Flag : Z
-                // TODO: imp. + test
-                break;
-            case MOVLW:
-                // Var : k
-                working = command.getValue()[0];
-                break;
-            case RETLW:
-                // Var : k
-                // TODO: imp. + test
-                break;
-            case SUBLW:
-                // Var : k
-                // Flag : C, CD, Z
-                // TODO: imp. + test
-                break;
-            case XORLW:
-                // Var : k
-                // Flag : Z
-                // TODO: imp. + test
-                break;
-            case CALL:
-                // Var : k
-                stack.push(getCurrent());
-            case GOTO:
-                // Var : k
-                memory.content()[0][2] = counter.get(i).getValue()[0];
-                updateCurrent();
-                break;
-        }
+			if (command.getValue()[0] == 1) {
+				memory.set(getBank(), command.getValue()[1], result);
+			} else {
+				working = result;
+			}
+			break;
+		case DECF:
+			// Var : f, d
+			// Flag : Z
 
-        // Timer updaten
-        timer.tick();
-    }
+			result = memory.get(getBank(), command.getValue()[1]) - 1;
+			handleZeroFlag(working);
 
-    public void next() {
-        execute(getCurrent());
-        counter.get(getCurrent()).setNext(false);
+			if (command.getValue()[0] == 1) {
+				memory.set(getBank(), command.getValue()[1], result);
+			} else {
+				working = result;
+			}
+			break;
+		case DECFSZ:
+			// Var : f, d
+			// TODO: imp. + test
+			break;
+		case INCF:
+			// Var : f, d
+			// Flag : Z
+			result = memory.get(getBank(), command.getValue()[1]) + 1;
+			handleZeroFlag(working);
 
-        // Wird ein zaehler ueberlauf stattfinden ?
-        if(getCurrent() >= (PC_MAX_VALUE - 1)) {
-            current = 0;
-            // TODO: Fehlermeldung : PC ueberflauf
-        } else {
-            current++;
-        }
-        counter.get(getCurrent()).setNext(true);
-    }
+			if (command.getValue()[0] == 1) {
+				memory.set(getBank(), command.getValue()[1], result);
+			} else {
+				working = result;
+			}
+			break;
+		case INCFSZ:
+			// Var : f, d
+			// TODO: imp. + test
+			break;
+		case IORWF:
+			// Var : f, d
+			// TODO: imp. + test
+			break;
+		case MOVF:
+			// Var : f
+			// TODO: imp. + test
+			break;
+		case RLF:
+			// Var : f, d
+			// TODO: imp. + test
+			break;
+		case RRF:
+			// Var : f, d
+			// TODO: imp. + test
+			break;
+		case SUBWF:
+			// Var : f, d
+			// Flag : C, CD, Z
+			// TODO: imp. + test
+			break;
+		case SWAPF:
+			// Var : f, d
+			// TODO: imp. + test
+			break;
+		case XORWF:
+			// Var : f, d
+			// Flag : Z
+			// TODO: imp. + test
+			break;
+		case CLRF:
+			// Var : f
+			// Flag : Z
+			// TODO: imp. + test
+			break;
+		case MOVWF:
+			// Var : f
+			memory.set(getBank(), command.getValue()[0], working);
+			break;
+		case CLRW:
+			// Flag : Z
+			// TODO: imp. + test
+			break;
+		case NOP:
+			break;
+		case CLRWDT:
+			// Flag : TO, TP
+			// TODO: imp. + test
+			break;
+		case RETFIE:
+			// TODO: imp. + test
+			break;
+		case RETURN:
+			// TODO: imp. + test
+			break;
+		case SLEEP:
+			// Flag : TO, TP
+			// TODO: imp. + test
+			break;
+		case BCF:
+			// Var : f, b
+			// TODO: imp. + test
+			break;
+		case BSF:
+			// Var : f, b
+			// TODO: imp. + test
+			break;
+		case BTFSS:
+			// Var : f, b
+			// TODO: imp. + test
+			break;
+		case BTFSC:
+			// Var : f, b
+			// TODO: imp. + test
+			break;
+		case ADDLW:
+			// Var : k
+			// C, CD, Z
+			// TODO: imp. + test
+			break;
+		case ANDLW:
+			// Var : k
+			// Flag : Z
+			// TODO: imp. + test
+			break;
+		case IORLW:
+			// Var : k
+			// Flag : Z
+			// TODO: imp. + test
+			break;
+		case MOVLW:
+			// Var : k
+			working = command.getValue()[0];
+			break;
+		case RETLW:
+			// Var : k
+			// TODO: imp. + test
+			break;
+		case SUBLW:
+			// Var : k
+			// Flag : C, CD, Z
+			// TODO: imp. + test
+			break;
+		case XORLW:
+			// Var : k
+			// Flag : Z
+			// TODO: imp. + test
+			break;
+		case CALL:
+			// Var : k
+			stack.push(getCurrent());
+		case GOTO:
+			// Var : k
+			memory.content()[0][2] = counter.get(i).getValue()[0];
+			updateCurrent();
+			break;
+		}
 
-    public void run() {
+		// Timer updaten
+		timer.tick();
+	}
 
-        // TODO: Break points (?)
-        while(hasNext() && getCurrent() != counter.size() - 1 ) {
-            next();
-        }
-    }
+	public void next() {
+		execute(getCurrent());
+		counter.get(getCurrent()).setNext(false);
 
-    public boolean hasNext() {
-        return (getCurrent() < counter.size() - 1);
-    }
+		// Wird ein zaehler ueberlauf stattfinden ?
+		if (getCurrent() >= (PC_MAX_VALUE - 1)) {
+			current = 0;
+			// TODO: Fehlermeldung : PC ueberflauf
+		} else {
+			current++;
+		}
+		counter.get(getCurrent()).setNext(true);
+	}
 
-    private boolean handleZeroFlag(int value) {
-        if (value == 0) {
-            memory.set(getBank(), 3, memory.get(getBank(), 3) | 3);
-            return true;
-        }
-        return false;
-    }
+	public void run() {
 
-    private boolean handleCarryFlagOnAdd(int base, int add) {
-        if (base + add > 25) {
-            memory.set(getBank(), 3, memory.get(getBank(), 3) | 1);
-            return true;
-        }
-        return false;
-    }
+		// TODO: Break points (?)
+		while (hasNext() && getCurrent() != counter.size() - 1) {
+			next();
+		}
+	}
 
-    private boolean handleCarryFlagOnSub(int base, int sub) {
-        if (base - sub < 0) {
-            memory.set(getBank(), 3, memory.get(getBank(), 3) | 1);
-            return true;
-        }
-        return false;
-    }
+	public boolean hasNext() {
+		return (getCurrent() < counter.size() - 1);
+	}
 
-    private boolean handleDigitCarryOnAdd(int base, int add) {
-        base = base & 15;
-        add = add & 15;
+	private boolean handleZeroFlag(int value) {
+		if (value == 0) {
+			memory.set(getBank(), 3, memory.get(getBank(), 3) | 3);
+			return true;
+		}
+		return false;
+	}
 
-        if (base + add > 15) {
-            memory.set(getBank(), 3, memory.get(getBank(), 3) | 2);
-            return true;
-        }
+	private boolean handleCarryFlagOnAdd(int base, int add) {
+		if (base + add > 25) {
+			memory.set(getBank(), 3, memory.get(getBank(), 3) | 1);
+			return true;
+		}
+		return false;
+	}
 
-        return false;
-    }
+	private boolean handleCarryFlagOnSub(int base, int sub) {
+		if (base - sub < 0) {
+			memory.set(getBank(), 3, memory.get(getBank(), 3) | 1);
+			return true;
+		}
+		return false;
+	}
 
-    private boolean handleDigitCarryOnSub(int base, int sub) {
-        base = base & 15;
-        sub = sub & 15;
+	private boolean handleDigitCarryOnAdd(int base, int add) {
+		base = base & 15;
+		add = add & 15;
 
-        if (base - sub < 0) {
-            memory.set(getBank(), 3, memory.get(getBank(), 3) | 2);
-            return true;
-        }
+		if (base + add > 15) {
+			memory.set(getBank(), 3, memory.get(getBank(), 3) | 2);
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    public int getWorking() {
-        return working;
-    }
+	private boolean handleDigitCarryOnSub(int base, int sub) {
+		base = base & 15;
+		sub = sub & 15;
 
-    public Memory getMemory() {
-        return memory;
-    }
+		if (base - sub < 0) {
+			memory.set(getBank(), 3, memory.get(getBank(), 3) | 2);
+			return true;
+		}
 
-    public int getBank() {
-        return 0;
-    }
+		return false;
+	}
 
-    public ArrayList<Command> getCounter() {
-        return counter;
-    }
+	public int getWorking() {
+		return working;
+	}
 
-    public Stack getStack() {
-        return stack;
-    }
+	public Memory getMemory() {
+		return memory;
+	}
 
-    public void updateCurrent() {
-        int temp = memory.content()[0][10];
-        temp = temp << 8;
-        temp += memory.content()[0][2];
-        current = temp;
-    }
+	public int getBank() {
+		return 0;
+	}
 
-    public int getCurrent() {
-        return current;
-    }
+	public ArrayList<Command> getCounter() {
+		return counter;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        Worker other = (Worker) obj;
+	public Stack getStack() {
+		return stack;
+	}
 
-        if (other.getWorking() != this.working) {
-            System.out.println("Falcher Inhalt in Working.");
-            return false;
-        }
+	public void updateCurrent() {
+		int temp = memory.content()[0][10];
+		temp = temp << 8;
+		temp += memory.content()[0][2];
+		current = temp;
+	}
 
-        // Check Speicher
-        if (other.getMemory().equals(memory) != true) {
-            System.out.println("Memory Inhalt unterschiedlich.");
-            return false;
-        }
+	public int getCurrent() {
+		return current;
+	}
 
-        return true;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		Worker other = (Worker) obj;
 
-    public void print() {
-        System.out.println("Working : " + working);
-        System.out.print("Status :  ");
-        memory.print();
-        System.out.println("Current : " + current);
-        System.out.print("Befehle : ");
+		if (other.getWorking() != this.working) {
+			System.out.println("Falcher Inhalt in Working.");
+			return false;
+		}
 
-        for (Command element : counter) {
-            System.out.print(element.getInstruction() + " ");
-        }
-        System.out.println();
-    }
+		// Check Speicher
+		if (other.getMemory().equals(memory) != true) {
+			System.out.println("Memory Inhalt unterschiedlich.");
+			return false;
+		}
+
+		return true;
+	}
+
+	public void print() {
+		System.out.println("Working : " + working);
+		System.out.print("Status :  ");
+		memory.print();
+		System.out.println("Current : " + current);
+		System.out.print("Befehle : ");
+
+		for (Command element : counter) {
+			System.out.print(element.getInstruction() + " ");
+		}
+		System.out.println();
+	}
 }
