@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CommandTest {
+class CommandTests {
     @Test
     void ADDWFTest() {
         // W = 0Ah, C=x, DC=x, Z=0
