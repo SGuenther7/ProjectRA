@@ -17,12 +17,12 @@ class CommandTest {
         // Lade 5 in W und in 13
         // Erwarte 10 in W
         Worker peon = new Worker(5);
-        expected.getMemory().set(expected.getBank(),13,5);
+        peon.getMemory().set(peon.getBank(),13,5);
 
         peon.feed(new Command(Instruction.ADDWF, new int[]{0, 13}));
         peon.execute(0);
 
-        assertEquals(expected, peon);
+        assertEquals(expected.getWorking(), peon.getWorking());
     }
 
     @Test
