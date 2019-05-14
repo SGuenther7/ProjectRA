@@ -49,14 +49,8 @@ public class Primary {
     private JLabel working_label;
     private JLabel cycles_name_label;
     private JLabel cycles_content_label;
-    private JLabel speed_name_label;
-    private JLabel speed_min_label;
-    private JLabel speed_max_label;
-
 
     private JLabel status;
-
-    private JSlider speed;
     private JList instructions;
 
     public void initialize() {
@@ -72,14 +66,13 @@ public class Primary {
         initializeButtons();
         initializeRegisters();
 
-
         //Inhalt von Code Panel
         instructionView = new JScrollPane();
         instructionView.setBounds(10, 10, 300, 378);
         instructionView.setBackground(new Color(200, 200, 200));
 
         status = new JLabel();
-        status.setBounds(14,392, 300, 16);
+        status.setBounds(14, 392, 300, 16);
 
         status.setBackground(Color.WHITE);
         status.setForeground(Color.RED);
@@ -89,16 +82,11 @@ public class Primary {
         instructions.setBackground(new Color(200, 200, 200));
 
         instructions.setCellRenderer(new OperationList());
-
-
-
-
-
         instructionView.setViewportView(instructions);
         operations.add(instructionView);
 
-        this.setBounds();
-        //main.pack();
+        setBounds();
+        main.pack();
         main.setResizable(false);
         main.setVisible(false);
     }
@@ -150,15 +138,6 @@ public class Primary {
         working_label = new JLabel("WORKING :");
         cycles_name_label = new JLabel("Cycles : ");
         cycles_content_label = new JLabel("0");
-
-        //TODO: Slider entfernen oder Lables anpassen
-        speed = new JSlider(0, 5);
-
-        speed_name_label = new JLabel("Speed : ");
-        speed_min_label = new JLabel("");
-        speed_max_label = new JLabel("");
-
-        speed_max_label.setForeground(Color.RED);
 
         registers.add(indf_label);
         registers.add(indf_content);
