@@ -72,7 +72,7 @@ public class Primary {
         instructionView.setBackground(new Color(200, 200, 200));
 
         status = new JLabel();
-        status.setBounds(14, 392, 300, 16);
+        status.setBounds(14,392, 300, 16);
 
         status.setBackground(Color.WHITE);
         status.setForeground(Color.RED);
@@ -86,7 +86,6 @@ public class Primary {
         operations.add(instructionView);
 
         setBounds();
-        main.pack();
         main.setResizable(false);
         main.setVisible(false);
     }
@@ -177,11 +176,6 @@ public class Primary {
 
         registers.add(cycles_name_label);
         registers.add(cycles_content_label);
-
-        registers.add(speed);
-        registers.add(speed_name_label);
-        registers.add(speed_min_label);
-        registers.add(speed_max_label);
     }
 
     private void setBounds() {
@@ -224,16 +218,9 @@ public class Primary {
 
         cycles_name_label.setBounds(10, 238, 130, 14);
         cycles_content_label.setBounds(145, 238, 130, 14);
-
-        speed.setBounds(140, 270, 130, 14);
-        speed_name_label.setBounds(10, 270, 130, 14);
-        speed_min_label.setBounds(130, 270, 30, 14);
-        speed_max_label.setBounds(280, 270, 30, 14);
-
         buttons.setBounds(0, 0, 640, 40);
         operations.setBounds(0, 40, 320, 440);
         registers.setBounds(320, 40, 320, 440);
-
     }
 
     private void initializePanels() {
