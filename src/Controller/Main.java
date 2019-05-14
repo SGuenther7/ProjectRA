@@ -14,6 +14,11 @@ public class Main {
     private Primary view;
     private int current = 0;
 
+
+    private void debug() {
+        this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST");
+    }
+
     public void start() {
         reset();
 
@@ -200,7 +205,7 @@ public class Main {
     public static void main(String args[]) {
         Main manager = new Main();
         manager.start();
-        manager.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST");
+        //manager.debug();
     }
 }
 
