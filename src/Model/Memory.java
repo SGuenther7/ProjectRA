@@ -1,7 +1,5 @@
 package Model;
 
-import java.util.Arrays;
-
 public class Memory {
 
     private int[][] memory;
@@ -79,23 +77,55 @@ public class Memory {
     }
 
     public void set(int bank, int index, int value) {
-        memory[resolveBank(bank, index)][resolveAddressing(index)] = value;
-
-        // PCL oder PCLATH wurde beschrieben
+        // Extra Funktionen bei Speicherzugriff
         switch (index) {
-            // Zugriff auf TMR0
             case 1:
+                // Zugriff auf TMR0
                 // TODO: Benoetigt zwei extra Zyklen
                 // TODO: Setzt Vorteiler zurueck falls
                 //       TMR0 ihn hat.
                 break;
             case 2:
             case 10:
+                // PCL oder PCLATH wurde beschrieben
                 peon.updateCurrent();
                 break;
+            case 5:
+            case 6:
+                // TRIS Zugriff
+                if(bank == 1) {
+                    // Update Port Register mit Port Zwischenspeicher (an TRIS bits)
+                    memory[0][index] = memory[0][index] & (memory[1][index] & resolvePort(index).get());
+                }
+
+                // Port Register Zugriff
+                if(bank == 0) {
+                    // Speichere Bits die auch in TRIS gesetzt sind zu Port Register
+                    // Speicher Rest in Zwischenspeicher
+                    memory[0][index] = memory[1][index] & value;
+                    resolvePort(index).set((258 - memory[1][index]) & value);
+                    return;
+                }
+                break;
         }
+
+        // Aenderung von Wert
+        memory[resolveBank(bank, index)][resolveAddressing(index)] = value;
     }
 
+    private Port resolvePort(int index) {
+        switch (index) {
+            case 5:
+                return peon.getPortA();
+            case 6:
+                return peon.getPortB();
+        }
+            return null;
+    }
+
+    private boolean accessesTris(int bank, int index) {
+        return (bank == 0 && (index == 5 ||index == 6));
+    }
 
     public int[][] content() {
         return memory;

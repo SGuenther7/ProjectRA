@@ -1,9 +1,12 @@
 package Controller;
 
 import Model.Parser;
+import Model.Port;
 import Model.Worker;
 import View.Primary;
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Main {
@@ -46,9 +49,28 @@ public class Main {
             this.update();
         });
         buttons[5].addActionListener(e -> {
-            this.load();
+            this.load(getURL());
             this.update();
         });
+
+        // JList
+        view.getJList().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                JList list = (JList) e.getSource();
+                int index = list.locationToIndex(e.getPoint());
+
+                try {
+
+                states.get(current).getCounter().get(index).toggleBreakpoint();
+                } catch (IndexOutOfBoundsException b) {
+                    System.out.println("lol");
+                }
+
+                super.mouseReleased(e);
+            }
+        });
+
     }
 
     private void run() {
@@ -162,9 +184,7 @@ public class Main {
         current = 0;
     }
 
-    private void load() {
-        String url = view.invokeFileChooser();
-
+    private void load(String url) {
         if (url != "") {
             Worker temp = new Worker();
             temp.feed(Parser.parseMultible(Parser.cut(Parser.load(url))));
@@ -173,10 +193,14 @@ public class Main {
             states.add(temp);
         }
     }
+    private String getURL() {
+        return view.invokeFileChooser();
+    }
 
     public static void main(String args[]) {
         Main manager = new Main();
         manager.start();
+        manager.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST");
     }
 }
 

@@ -3,6 +3,8 @@ package View;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Primary {
 
@@ -87,6 +89,11 @@ public class Primary {
         instructions.setBackground(new Color(200, 200, 200));
 
         instructions.setCellRenderer(new OperationList());
+
+
+
+
+
         instructionView.setViewportView(instructions);
         operations.add(instructionView);
 
@@ -315,6 +322,10 @@ public class Primary {
     // Mache Buttons von aussen verfügbar um ActionListener hinzuzufuegen
     public JButton[] getButtons() {
         return new JButton[]{run, stop, forward, back, reset, load};
+    }
+
+    public JList getJList() {
+        return instructions;
     }
 
     public String invokeFileChooser() {
