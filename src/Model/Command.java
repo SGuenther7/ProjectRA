@@ -6,6 +6,7 @@ public class Command {
 
     private boolean next;
     private boolean selected;
+    private boolean breakpoint = false;
 
     public Command(Instruction instruction, int value[]) {
         this.instruction = instruction;
@@ -38,6 +39,14 @@ public class Command {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public void toggleBreakpoint() {
+        breakpoint = !breakpoint;
+    }
+
+    public boolean isBreakpoint() {
+        return breakpoint;
     }
 
     @Override

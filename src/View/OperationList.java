@@ -19,7 +19,9 @@ public class OperationList extends JCheckBox implements ListCellRenderer {
             this.setBackground(Color.WHITE);
         }
 
-        setSelected(current.isSelected());
+        current.toggleBreakpoint();
+        setSelected(current.isBreakpoint());
+
         setEnabled(list.isEnabled());
         setText(current.getInstruction().toString());
 

@@ -11,6 +11,9 @@ public class Worker {
 	private ArrayList<Command> counter;
 	private Stack stack;
 
+	private Port portA;
+	private Port portB;
+
 	private Timer timer;
 
 	private int current;
@@ -446,6 +449,14 @@ public class Worker {
 		}
 
 		return true;
+	}
+
+	public Port getPortA() {
+		return portA;
+	}
+
+	public Port getPortB() {
+		return portB;
 	}
 
 	public void print() {

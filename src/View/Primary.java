@@ -3,6 +3,8 @@ package View;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Primary {
 
@@ -47,14 +49,8 @@ public class Primary {
     private JLabel working_label;
     private JLabel cycles_name_label;
     private JLabel cycles_content_label;
-    private JLabel speed_name_label;
-    private JLabel speed_min_label;
-    private JLabel speed_max_label;
-
 
     private JLabel status;
-
-    private JSlider speed;
     private JList instructions;
 
     public void initialize() {
@@ -69,7 +65,6 @@ public class Primary {
         initializePanels();
         initializeButtons();
         initializeRegisters();
-
 
         //Inhalt von Code Panel
         instructionView = new JScrollPane();
@@ -90,8 +85,7 @@ public class Primary {
         instructionView.setViewportView(instructions);
         operations.add(instructionView);
 
-        this.setBounds();
-        //main.pack();
+        setBounds();
         main.setResizable(false);
         main.setVisible(false);
     }
@@ -144,15 +138,6 @@ public class Primary {
         cycles_name_label = new JLabel("Cycles : ");
         cycles_content_label = new JLabel("0");
 
-        //TODO: Slider entfernen oder Lables anpassen
-        speed = new JSlider(0, 5);
-
-        speed_name_label = new JLabel("Speed : ");
-        speed_min_label = new JLabel("");
-        speed_max_label = new JLabel("");
-
-        speed_max_label.setForeground(Color.RED);
-
         registers.add(indf_label);
         registers.add(indf_content);
 
@@ -191,11 +176,6 @@ public class Primary {
 
         registers.add(cycles_name_label);
         registers.add(cycles_content_label);
-
-        registers.add(speed);
-        registers.add(speed_name_label);
-        registers.add(speed_min_label);
-        registers.add(speed_max_label);
     }
 
     private void setBounds() {
@@ -238,16 +218,9 @@ public class Primary {
 
         cycles_name_label.setBounds(10, 238, 130, 14);
         cycles_content_label.setBounds(145, 238, 130, 14);
-
-        speed.setBounds(140, 270, 130, 14);
-        speed_name_label.setBounds(10, 270, 130, 14);
-        speed_min_label.setBounds(130, 270, 30, 14);
-        speed_max_label.setBounds(280, 270, 30, 14);
-
         buttons.setBounds(0, 0, 640, 40);
         operations.setBounds(0, 40, 320, 440);
         registers.setBounds(320, 40, 320, 440);
-
     }
 
     private void initializePanels() {
@@ -315,6 +288,10 @@ public class Primary {
     // Mache Buttons von aussen verfügbar um ActionListener hinzuzufuegen
     public JButton[] getButtons() {
         return new JButton[]{run, stop, forward, back, reset, load};
+    }
+
+    public JList getJList() {
+        return instructions;
     }
 
     public String invokeFileChooser() {

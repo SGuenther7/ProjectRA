@@ -94,7 +94,7 @@ class ParserTests {
 
 	@Test
 	void decFSZTest() {
-		String raw = "0012 0B8C           00059           decfsz wert1        ;wert1=08h, wert1=07h, ... DC,C und Z bleiben unverändert";
+		String raw = "0012 0B8C           00059           decfsz wert1        ;wert1=08h, wert1=07h, ... DC,C und Z bleiben unverï¿½ndert";
 		Command result = Parser.parse(Parser.cut(raw));
 		assertEquals(result, new Command(Instruction.DECFSZ, new int[] { 12,1 }));
 		}
@@ -108,7 +108,7 @@ class ParserTests {
 
 	@Test
 	void incFSZTest() {
-		String raw = "001A 0F8C           00101           incfsz wert1        ;wert1=F1h, F2h, F3h .. FFh, 00h, wert2 und Flags bleiben unverändert";
+		String raw = "001A 0F8C           00101           incfsz wert1        ;wert1=F1h, F2h, F3h .. FFh, 00h, wert2 und Flags bleiben unverï¿½ndert";
 		Command result = Parser.parse(Parser.cut(raw));
 		assertEquals(result, new Command(Instruction.INCFSZ, new int[] { 12,1 }));
 	}
@@ -178,7 +178,7 @@ class ParserTests {
 
 	@Test
 	void BCFTest() {
-		String raw = "0002 1283           00025           bcf       status,rp0          ;zurück auf Bank 0";
+		String raw = "0002 1283           00025           bcf       status,rp0          ;zurï¿½ck auf Bank 0";
 		Command result = Parser.parse(Parser.cut(raw));
 		assertEquals(new Command(Instruction.BCF, new int[] { 3,5 }), result);
 	}
@@ -220,7 +220,7 @@ class ParserTests {
 
 	@Test
 	void callTest() {
-		String raw = "0001 2006           00017           call up1            ;beim Call wird Rücksprungadresse auf Stack gelegt";
+		String raw = "0001 2006           00017           call up1            ;beim Call wird Rï¿½cksprungadresse auf Stack gelegt";
 		Command result = Parser.parse(Parser.cut(raw));
 		assertEquals(new Command(Instruction.CALL, new int[] { 6 }), result);
 	}
@@ -293,5 +293,16 @@ class ParserTests {
 		String raw = "0004 3A20           00021           xorlw 20h           ;W = 00h, C=1, DC=1, Z=1";
 		Command result = Parser.parse(Parser.cut(raw));
 		assertEquals(new Command(Instruction.XORLW, new int[] { 0x20 }),result);
+	}
+	@Test
+	void LST1Test() {
+	    String lines[] = new String[7];
+		lines[0] = "0000 3011           00017           movlw 11h           ";
+		lines[1] = "0001 3930           00018           andlw 30h           ";
+		lines[2] = "0002 380D           00019           iorlw 0Dh           ";
+		lines[3] = "0003 3C3D           00020           sublw 3Dh           ";
+		lines[4] = "0004 3A20           00021           xorlw 20h           ";
+		lines[5] = "0005 3E25           00022           addlw 25h           ";
+		lines[6] = "0006 2806           00026           goto ende           ";
 	}
 }
