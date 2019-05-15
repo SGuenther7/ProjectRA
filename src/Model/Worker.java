@@ -82,21 +82,21 @@ public class Worker {
 
 		Command command = counter.get(i);
 		int result;
-		
+
 		switch (command.getInstruction()) {
 		case ADDWF:
 			// Var : f, d
 			// Flag : C, CD, Z
 
-			result = working + memory.get(getBank(), command.getValue()[1]);
+			result = working + memory.get(getBank(), command.getValue()[0]);
 
-			handleCarryFlagOnAdd(working, memory.get(getBank(), command.getValue()[1]));
-			handleDigitCarryOnAdd(working, memory.get(getBank(), command.getValue()[1]));
+			handleCarryFlagOnAdd(working, memory.get(getBank(), command.getValue()[0]));
+			handleDigitCarryOnAdd(working, memory.get(getBank(), command.getValue()[0]));
 			handleZeroFlag(working);
 
 			// Destination Bit gesetzt ?
-			if (command.getValue()[0] == 1) {
-				memory.set(getBank(), command.getValue()[1], result);
+			if (command.getValue()[1] == 1) {
+				memory.set(getBank(), command.getValue()[0], result);
 			} else {
 				working = result;
 			}
@@ -104,12 +104,12 @@ public class Worker {
 		case ANDWF:
 			// Var : f, d
 			// Flag : Z
-			
-			result = working & memory.get(getBank(), command.getValue()[1]);
+
+			result = working & memory.get(getBank(), command.getValue()[0]);
 			handleZeroFlag(working);
 
-			if (command.getValue()[0] == 1) {
-				memory.set(getBank(), command.getValue()[1], result);
+			if (command.getValue()[1] == 1) {
+				memory.set(getBank(), command.getValue()[0], result);
 			} else {
 				working = result;
 			}
@@ -118,11 +118,11 @@ public class Worker {
 			// Var : f, d
 			// Flag : Z
 
-			result = memory.get(getBank(), command.getValue()[1]) - 1;
+			result = memory.get(getBank(), command.getValue()[0]) - 1;
 			handleZeroFlag(working);
 
-			if (command.getValue()[0] == 1) {
-				memory.set(getBank(), command.getValue()[1], result);
+			if (command.getValue()[1] == 1) {
+				memory.set(getBank(), command.getValue()[0], result);
 			} else {
 				working = result;
 			}
@@ -134,11 +134,12 @@ public class Worker {
 		case INCF:
 			// Var : f, d
 			// Flag : Z
-			result = memory.get(getBank(), command.getValue()[1]) + 1;
+
+			result = memory.get(getBank(), command.getValue()[0]) + 1;
 			handleZeroFlag(working);
 
-			if (command.getValue()[0] == 1) {
-				memory.set(getBank(), command.getValue()[1], result);
+			if (command.getValue()[1] == 1) {
+				memory.set(getBank(), command.getValue()[0], result);
 			} else {
 				working = result;
 			}
@@ -149,11 +150,24 @@ public class Worker {
 			break;
 		case IORWF:
 			// Var : f, d
-			// TODO: imp. + test
+
+			result = working | memory.get(getBank(), command.getValue()[0]);
+
+			if (command.getValue()[1] == 1) {
+				memory.set(getBank(), command.getValue()[0], result);
+			} else {
+				working = result;
+			}
 			break;
 		case MOVF:
-			// Var : f
-			// TODO: imp. + test
+			// Var : f, d
+			result = memory.get(getBank(), command.getValue()[0]);
+
+			if (command.getValue()[1] == 1) {
+				memory.set(getBank(), command.getValue()[0], result);
+			} else {
+				working = result;
+			}
 			break;
 		case RLF:
 			// Var : f, d
@@ -166,7 +180,18 @@ public class Worker {
 		case SUBWF:
 			// Var : f, d
 			// Flag : C, CD, Z
-			// TODO: imp. + test
+			result = memory.get(getBank(), command.getValue()[0]) - working;
+
+			handleCarryFlagOnSub(working, memory.get(getBank(), command.getValue()[0]));
+			handleDigitCarryOnSub(working, memory.get(getBank(), command.getValue()[0]));
+			handleZeroFlag(working);
+
+			// Destination Bit gesetzt ?
+			if (command.getValue()[1] == 1) {
+				memory.set(getBank(), command.getValue()[0], result);
+			} else {
+				working = result;
+			}
 			break;
 		case SWAPF:
 			// Var : f, d
@@ -175,12 +200,23 @@ public class Worker {
 		case XORWF:
 			// Var : f, d
 			// Flag : Z
-			// TODO: imp. + test
+			
+			result = working ^ memory.get(getBank(), command.getValue()[0]);
+
+			handleZeroFlag(working);
+			
+			if (command.getValue()[1] == 1) {
+				memory.set(getBank(), command.getValue()[0], result);
+			} else {
+				working = result;
+			}
 			break;
 		case CLRF:
 			// Var : f
 			// Flag : Z
-			// TODO: imp. + test
+			memory.set(getBank(), command.getValue()[0], 0);
+
+			handleZeroFlag(working);
 			break;
 		case MOVWF:
 			// Var : f
@@ -188,7 +224,9 @@ public class Worker {
 			break;
 		case CLRW:
 			// Flag : Z
-			// TODO: imp. + test
+			handleZeroFlag(working);
+			working = 0;
+			
 			break;
 		case NOP:
 			break;
@@ -221,21 +259,32 @@ public class Worker {
 		case BTFSC:
 			// Var : f, b
 			// TODO: imp. + test
+		
 			break;
 		case ADDLW:
 			// Var : k
 			// C, CD, Z
-			// TODO: imp. + test
+			result = working + command.getValue()[0];
+
+			handleCarryFlagOnAdd(working, memory.get(getBank(), command.getValue()[0]));
+			handleDigitCarryOnAdd(working, memory.get(getBank(), command.getValue()[0]));
+			handleZeroFlag(working);
+			
+			working = result;
 			break;
 		case ANDLW:
 			// Var : k
 			// Flag : Z
-			// TODO: imp. + test
+			result = working & command.getValue()[0];
+			handleZeroFlag(working);
+			working = result;
 			break;
 		case IORLW:
 			// Var : k
 			// Flag : Z
-			// TODO: imp. + test
+			result = working | command.getValue()[0];
+			handleZeroFlag(working);
+			working = result;
 			break;
 		case MOVLW:
 			// Var : k
@@ -248,12 +297,19 @@ public class Worker {
 		case SUBLW:
 			// Var : k
 			// Flag : C, CD, Z
-			// TODO: imp. + test
+			result = command.getValue()[0] - working;
+			
+			handleCarryFlagOnSub(working, memory.get(getBank(), command.getValue()[0]));
+			handleDigitCarryOnSub(working, memory.get(getBank(), command.getValue()[0]));
+			handleZeroFlag(working);
+
+			working = result;
 			break;
 		case XORLW:
 			// Var : k
 			// Flag : Z
-			// TODO: imp. + test
+			working = working ^ command.getValue()[0];
+			handleZeroFlag(working);
 			break;
 		case CALL:
 			// Var : k
