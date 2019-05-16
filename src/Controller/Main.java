@@ -1,9 +1,9 @@
 package Controller;
 
 import Model.Parser;
-import Model.Port;
 import Model.Worker;
 import View.Primary;
+
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -14,9 +14,9 @@ public class Main {
     private Primary view;
     private int current = 0;
 
-
     private void debug() {
         this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST");
+        this.update();
     }
 
     public void start() {
@@ -66,8 +66,7 @@ public class Main {
                 int index = list.locationToIndex(e.getPoint());
 
                 try {
-
-                states.get(current).getCounter().get(index).toggleBreakpoint();
+                    states.get(current).getCounter().get(index).toggleBreakpoint();
                 } catch (IndexOutOfBoundsException b) {
                     System.out.println("lol");
                 }
@@ -115,30 +114,41 @@ public class Main {
         current--;
     }
 
+    private void updateLabels() {
+        JLabel[] labels = view.getLabels();
+
+        labels[0].setText("" + getCurrentState().getWorking());
+        labels[2].setText("" + getCurrentState().getMemory().content()[0][2]);
+        labels[4].setText("" + getCurrentState().getMemory().content()[0][10]);
+        labels[6].setText("" + getCurrentState().getCurrent()); // TODO: prob. falsch
+        labels[8].setText("" + getCurrentState().getMemory().content()[0][0]);
+        labels[10].setText("" + getCurrentState().getMemory().getRP1());
+        labels[12].setText("" + getCurrentState().getMemory().getRP0());
+        labels[14].setText("" + getCurrentState().getMemory().getZero());
+        labels[16].setText("" + getCurrentState().getMemory().getDitgitCarry());
+        labels[18].setText("" + getCurrentState().getMemory().getCarry());
+        labels[20].setText("" + getCurrentState().getMemory().getT0CS());
+        labels[22].setText("" + getCurrentState().getMemory().getPSA());
+        labels[24].setText("" + getCurrentState().getMemory().getPS0());
+        labels[26].setText("" + getCurrentState().getMemory().getPS1());
+        labels[28].setText("" + getCurrentState().getMemory().getPS2());
+    }
+
     /**
      * Aktualisiert Befehls Liste, Highlighting der Liste, Button Verfuegbarkeit und Register Inhalte.
      */
     public void update() {
+
+        if(states.size() > 0) {
+            updateLabels();
+        }
+
         //  Haben wir etwas das geladen werden kann ?
         if (states.size() == 0) {
 
             // Buttons inaktiv machen
             view.getButtons()[2].setEnabled(false);
             view.getButtons()[3].setEnabled(false);
-
-            JLabel registers[] = view.getRegisters();
-
-            registers[0].setText("0");
-            registers[1].setText("0");
-            registers[2].setText("0");
-            registers[3].setText("0");
-            registers[4].setText("0");
-            registers[5].setText("0");
-            registers[6].setText("0");
-            registers[7].setText("0");
-            registers[7].setText("0");
-            registers[8].setText("0");
-            registers[11].setText("0");
 
             // Setze JList
             view.getList().setModel(new OperationModel());
@@ -164,17 +174,8 @@ public class Main {
             states.get(current).getCounter().get(i).setNext((i == states.get(current).getCurrent()));
         }
 
-
         // Setze Register
-        JLabel registers[] = view.getRegisters();
-
-        // TODO: Richtige Register aussuchen
-        for(int i = 0 ; i < 12 ; i++) {
-
-            registers[i].setText(states.get(current).getMemory().get(states.get(current).getBank(),i) + "");
-        }
-
-        registers[11].setText(states.get(current).getWorking() + "");
+        updateLabels();
 
         // Setze JList
         view.getList().setModel(new OperationModel(states.get(current).getCounter()));
@@ -189,6 +190,10 @@ public class Main {
         current = 0;
     }
 
+    private Worker getCurrentState() {
+        return states.get(current);
+    }
+
     private void load(String url) {
         if (url != "") {
             Worker temp = new Worker();
@@ -198,6 +203,7 @@ public class Main {
             states.add(temp);
         }
     }
+
     private String getURL() {
         return view.invokeFileChooser();
     }

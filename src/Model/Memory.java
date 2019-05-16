@@ -131,6 +131,37 @@ public class Memory {
         return memory;
     }
 
+    public int getRP1() {
+        return memory[0][3] & 64;
+    }
+    public int getRP0() {
+        return memory[0][3] & 32;
+    }
+    public int getZero() {
+        return memory[0][3] & 4;
+    }
+    public int getDitgitCarry() {
+        return memory[0][3] & 2;
+    }
+    public int getCarry() {
+        return memory[0][3] & 1;
+    }
+    public int getT0CS() {
+        return memory[1][3] & 64;
+    }
+    public int getPSA() {
+        return memory[1][1] & 8;
+    }
+    public int getPS0() {
+        return memory[1][1] & 1;
+    }
+    public int getPS1() {
+        return memory[1][1] & 2;
+    }
+    public int getPS2() {
+        return memory[1][1] & 4;
+    }
+
     public void print() {
         for (int y = 0; y < memory.length; y++) {
             for (int x = 0; x < memory[0].length; x++) {

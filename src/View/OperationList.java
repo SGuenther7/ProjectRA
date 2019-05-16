@@ -11,6 +11,7 @@ public class OperationList extends JCheckBox implements ListCellRenderer {
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
         Command current = (Command) value;
+        System.out.println();
 
         if(current.isNext()) {
             this.setBackground(Color.BLUE);
@@ -18,8 +19,6 @@ public class OperationList extends JCheckBox implements ListCellRenderer {
         else {
             this.setBackground(Color.WHITE);
         }
-
-        current.toggleBreakpoint();
         setSelected(current.isBreakpoint());
 
         setEnabled(list.isEnabled());
