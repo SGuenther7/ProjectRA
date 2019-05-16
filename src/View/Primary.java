@@ -151,24 +151,36 @@ public class Primary {
     }
 
     private void initializeRegisters() {
-        WorkingContent = new JLabel("0");
-        WorkingLabel = new JLabel("W");
-        PCLContent = new JLabel("0");
-        PCLLabel = new JLabel("PCL");
-        PCLATHContent = new JLabel("0");
-        PCLATHLabel = new JLabel("PCLATH");
-        PCContent = new JLabel("0");
-        PCLabel = new JLabel("PC");
-        INDFContent = new JLabel("0");
-        INDFLabel = new JLabel("INDF");
 
+        initializeSystemLabels();
         initializeStatusLabels();
         initializeOptionLabels();
 
-        // Fuege Labes zu JPane
-        for (JLabel label : getLabels()) {
-            registers.add(label);
-        }
+    }
+
+    private void initializeSystemLabels() {
+        WorkingLabel = new JLabel("W");
+        PCLLabel = new JLabel("PCL");
+        PCLATHLabel = new JLabel("PCLATH");
+        PCLabel = new JLabel("PC");
+        INDFLabel = new JLabel("INDF");
+
+        WorkingContent = new JLabel("0");
+        PCLContent = new JLabel("0");
+        PCLATHContent = new JLabel("0");
+        PCContent = new JLabel("0");
+        INDFContent = new JLabel("0");
+
+        systemPanel.add(WorkingContent);
+        systemPanel.add(WorkingLabel);
+        systemPanel.add(PCLContent);
+        systemPanel.add(PCLLabel);
+        systemPanel.add(PCLATHContent);
+        systemPanel.add(PCLATHLabel);
+        systemPanel.add(PCContent);
+        systemPanel.add(PCLabel);
+        systemPanel.add(INDFContent);
+        systemPanel.add(INDFLabel);
     }
 
     private void initializeStatusLabels() {
@@ -182,6 +194,17 @@ public class Primary {
         DCLabel = new JLabel("DC");
         CContent = new JLabel("0");
         CLabel = new JLabel("C");
+
+        statusPanel.add(RP1Content);
+        statusPanel.add(RP1Label);
+        statusPanel.add(RP0Content);
+        statusPanel.add(RP0Label);
+        statusPanel.add(ZContent);
+        statusPanel.add(ZLabel);
+        statusPanel.add(DCContent);
+        statusPanel.add(DCLabel);
+        statusPanel.add(CContent);
+        statusPanel.add(CLabel);
     }
 
     private void initializeOptionLabels() {
@@ -195,6 +218,17 @@ public class Primary {
         PS1Label = new JLabel("PS1");
         PS2Content = new JLabel("0");
         PS2Label = new JLabel("PS2");
+
+        optionPanel.add(TOCSContent);
+        optionPanel.add(TOCSLabel);
+        optionPanel.add(PSAContent);
+        optionPanel.add(PSALabel);
+        optionPanel.add(PS0Content);
+        optionPanel.add(PS0Label);
+        optionPanel.add(PS1Content);
+        optionPanel.add(PS1Label);
+        optionPanel.add(PS2Content);
+        optionPanel.add(PS2Label);
     }
 
     private void initializePorts() {
@@ -331,12 +365,12 @@ public class Primary {
         buttons.setBounds(0, 0, 640, 40);
         operations.setBounds(0, 40, 320, 440);
         registers.setBounds(320, 40, 320, 440);
-        ports.setBounds(0, 320, 300, 40);
+        ports.setBounds(0, 120, 300, 40);
         portA.setBounds(0, 0, 135, 40);
         portB.setBounds(150, 0, 135, 40);
-        systemPanel.setBounds(0, 0, 130, 14);
-        statusPanel.setBounds(0, 0, 130, 14);
-        optionPanel.setBounds(0, 0, 130, 14);
+        systemPanel.setBounds(0, 0, 100, 100);
+        statusPanel.setBounds(105, 0, 190, 35);
+        optionPanel.setBounds(105, 40, 190, 35);
     }
 
     private void setBoundsRegister() {
@@ -346,43 +380,42 @@ public class Primary {
     }
 
     private void setBoundsSystemPanel() {
-        WorkingContent.setBounds(100, 10, 130, 14);
-        WorkingLabel.setBounds(10, 10, 130, 14);
-        PCLContent.setBounds(100, 30, 130, 14);
-        PCLLabel.setBounds(10, 30, 130, 14);
-        PCLATHContent.setBounds(100, 50, 130, 14);
-        PCLATHLabel.setBounds(10, 50, 130, 14);
-        PCContent.setBounds(100, 70, 130, 14);
-        PCLabel.setBounds(10, 70, 130, 14);
-        INDFContent.setBounds(100, 90, 130, 14);
-        INDFLabel.setBounds(10, 90, 130, 14);
-
+        WorkingLabel.setBounds(0, 0, 15, 15);
+        WorkingContent.setBounds(75, 0, 60, 15);
+        PCLLabel.setBounds(0, 20, 45, 15);
+        PCLContent.setBounds(75, 20, 60, 15);
+        PCLATHLabel.setBounds(0, 40, 60, 15);
+        PCLATHContent.setBounds(75, 40, 60, 15);
+        PCLabel.setBounds(0, 60, 30, 15);
+        PCContent.setBounds(75, 60, 60, 15);
+        INDFLabel.setBounds(0, 80, 60, 15);
+        INDFContent.setBounds(75, 80, 60, 15);
     }
 
     private void setBoundsStatusPanel() {
-        RP1Content.setBounds(100, 110, 130, 14);
-        RP1Label.setBounds(10, 110, 130, 14);
-        RP0Content.setBounds(100, 130, 130, 14);
-        RP0Label.setBounds(10, 130, 130, 14);
-        ZContent.setBounds(100, 150, 130, 14);
-        ZLabel.setBounds(10, 150, 130, 14);
-        DCContent.setBounds(100, 170, 130, 14);
-        DCLabel.setBounds(10, 170, 130, 14);
-        CContent.setBounds(100, 190, 130, 14);
-        CLabel.setBounds(10, 190, 130, 14);
+        RP1Label.setBounds(0, 0, 40, 15);
+        RP1Content.setBounds(0, 20, 15, 15);
+        RP0Label.setBounds(40, 0, 40, 15);
+        RP0Content.setBounds(40, 20, 15, 15);
+        ZLabel.setBounds(80, 0, 40, 15);
+        ZContent.setBounds(80, 20, 15, 15);
+        DCLabel.setBounds(120, 0, 40, 15);
+        DCContent.setBounds(120, 20, 15, 15);
+        CLabel.setBounds(160, 0, 40, 15);
+        CContent.setBounds(160, 20, 15, 15);
     }
 
     private void setBoundsOptionPanel() {
-        TOCSContent.setBounds(100, 210, 130, 14);
-        TOCSLabel.setBounds(10, 210, 130, 14);
-        PSAContent.setBounds(100, 230, 130, 14);
-        PSALabel.setBounds(10, 230, 130, 14);
-        PS0Content.setBounds(100, 250, 130, 14);
-        PS0Label.setBounds(10, 250, 130, 14);
-        PS1Content.setBounds(100, 270, 130, 14);
-        PS1Label.setBounds(10, 270, 130, 14);
-        PS2Content.setBounds(100, 290, 130, 14);
-        PS2Label.setBounds(10, 290, 130, 14);
+        TOCSLabel.setBounds(0, 0, 40, 15);
+        TOCSContent.setBounds(0, 20, 15, 15);
+        PSALabel.setBounds(40, 0, 40, 15);
+        PSAContent.setBounds(40, 20, 15, 15);
+        PS0Label.setBounds(80, 0, 40, 15);
+        PS0Content.setBounds(80, 20, 15, 15);
+        PS1Label.setBounds(120, 0, 40, 15);
+        PS1Content.setBounds(120, 20, 15, 15);
+        PS2Label.setBounds(160, 0, 40, 15);
+        PS2Content.setBounds(160, 20, 15, 15);
     }
 
     private void initializePanels() {
