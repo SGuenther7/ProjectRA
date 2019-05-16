@@ -15,6 +15,10 @@ public class Primary {
     private JPanel portA;
     private JPanel portB;
 
+    private JPanel systemPanel;
+    private JPanel statusPanel;
+    private JPanel optionPanel;
+
     private JScrollPane instructionView;
 
     private JButton run;
@@ -157,6 +161,17 @@ public class Primary {
         PCLabel = new JLabel("PC");
         INDFContent = new JLabel("0");
         INDFLabel = new JLabel("INDF");
+
+        initializeStatusLabels();
+        initializeOptionLabels();
+
+        // Fuege Labes zu JPane
+        for (JLabel label : getLabels()) {
+            registers.add(label);
+        }
+    }
+
+    private void initializeStatusLabels() {
         RP1Content = new JLabel("0");
         RP1Label = new JLabel("RP1");
         RP0Content = new JLabel("0");
@@ -167,6 +182,9 @@ public class Primary {
         DCLabel = new JLabel("DC");
         CContent = new JLabel("0");
         CLabel = new JLabel("C");
+    }
+
+    private void initializeOptionLabels() {
         TOCSContent = new JLabel("0");
         TOCSLabel = new JLabel("TOCS");
         PSAContent = new JLabel("0");
@@ -177,11 +195,6 @@ public class Primary {
         PS1Label = new JLabel("PS1");
         PS2Content = new JLabel("0");
         PS2Label = new JLabel("PS2");
-
-        // Fuege Labes zu JPane
-        for (JLabel label : getLabels()) {
-            registers.add(label);
-        }
     }
 
     private void initializePorts() {
@@ -221,6 +234,7 @@ public class Primary {
             portA.add(pins);
         }
     }
+
     private void initializePortB() {
         portBTrisBit0 = new JButton("0");
         portBTrisBit1 = new JButton("0");
@@ -318,11 +332,20 @@ public class Primary {
         operations.setBounds(0, 40, 320, 440);
         registers.setBounds(320, 40, 320, 440);
         ports.setBounds(0, 320, 300, 40);
-        portA.setBounds(0,0,135,40);
-        portB.setBounds(150,0,135,40);
+        portA.setBounds(0, 0, 135, 40);
+        portB.setBounds(150, 0, 135, 40);
+        systemPanel.setBounds(0, 0, 130, 14);
+        statusPanel.setBounds(0, 0, 130, 14);
+        optionPanel.setBounds(0, 0, 130, 14);
     }
 
     private void setBoundsRegister() {
+        setBoundsSystemPanel();
+        setBoundsStatusPanel();
+        setBoundsOptionPanel();
+    }
+
+    private void setBoundsSystemPanel() {
         WorkingContent.setBounds(100, 10, 130, 14);
         WorkingLabel.setBounds(10, 10, 130, 14);
         PCLContent.setBounds(100, 30, 130, 14);
@@ -333,6 +356,10 @@ public class Primary {
         PCLabel.setBounds(10, 70, 130, 14);
         INDFContent.setBounds(100, 90, 130, 14);
         INDFLabel.setBounds(10, 90, 130, 14);
+
+    }
+
+    private void setBoundsStatusPanel() {
         RP1Content.setBounds(100, 110, 130, 14);
         RP1Label.setBounds(10, 110, 130, 14);
         RP0Content.setBounds(100, 130, 130, 14);
@@ -343,6 +370,9 @@ public class Primary {
         DCLabel.setBounds(10, 170, 130, 14);
         CContent.setBounds(100, 190, 130, 14);
         CLabel.setBounds(10, 190, 130, 14);
+    }
+
+    private void setBoundsOptionPanel() {
         TOCSContent.setBounds(100, 210, 130, 14);
         TOCSLabel.setBounds(10, 210, 130, 14);
         PSAContent.setBounds(100, 230, 130, 14);
@@ -365,6 +395,10 @@ public class Primary {
         portA = new JPanel(null);
         portB = new JPanel(null);
 
+        systemPanel = new JPanel(null);
+        statusPanel = new JPanel(null);
+        optionPanel = new JPanel(null);
+
         buttons.setBackground(new Color(200, 200, 200));
         operations.setBackground(new Color(200, 200, 200));
         registers.setBackground(new Color(200, 200, 200));
@@ -373,12 +407,21 @@ public class Primary {
         portA.setBackground(new Color(200, 200, 200));
         portB.setBackground(new Color(200, 200, 200));
 
-        main.getContentPane().add(buttons);
-        main.getContentPane().add(operations);
-        main.getContentPane().add(registers);
+        statusPanel.setBackground(new Color(200, 200, 200));
+        optionPanel.setBackground(new Color(200, 200, 200));
+        systemPanel.setBackground(new Color(200, 200, 200));
+
+        registers.add(systemPanel);
+        registers.add(statusPanel);
+        registers.add(optionPanel);
+
         ports.add(portA);
         ports.add(portB);
         registers.add(ports);
+
+        main.getContentPane().add(buttons);
+        main.getContentPane().add(operations);
+        main.getContentPane().add(registers);
     }
 
     private void initializeButtons() {
