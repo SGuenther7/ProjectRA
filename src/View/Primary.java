@@ -1,8 +1,14 @@
 package View;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class Primary {
 
@@ -464,7 +470,25 @@ public class Primary {
         back = new JButton("Backwards");
         reset = new JButton("Reset");
         load = new JButton("Load...");
-        watchdog = new JButton("WTD");
+
+        try {
+            BufferedImage idleWTD = ImageIO.read(new File("./src/img/idle.png"));
+            BufferedImage enabledWTD = ImageIO.read(new File("./src/img/enabled.png"));
+            watchdog = new JButton(new ImageIcon(idleWTD.getScaledInstance(24,24,Image.SCALE_SMOOTH)));
+            watchdog.setBorder(BorderFactory.createEmptyBorder());
+            watchdog.setContentAreaFilled(false);
+
+            watchdog.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    watchdog.setIcon(new ImageIcon(enabledWTD.getScaledInstance(24,24,Image.SCALE_SMOOTH)));
+                    super.mouseClicked(e);
+                }
+            });
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            watchdog = new JButton("WDT");
+        }
 
         run.setBounds(10, 5, 90, 30);
         stop.setBounds(90, 5, 90, 30);
