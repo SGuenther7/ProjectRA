@@ -67,6 +67,7 @@ public class Primary {
     private JLabel PS2Label;
 
     // Port A
+    private JLabel portALabel;
     private JLabel portATrisLabel;
     private JButton portATrisBit0;
     private JButton portATrisBit1;
@@ -88,6 +89,7 @@ public class Primary {
     private JButton portAPinBit7;
 
     // Port B
+    private JLabel portBLabel;
     private JLabel portBTrisLabel;
     private JButton portBTrisBit0;
     private JButton portBTrisBit1;
@@ -126,6 +128,10 @@ public class Primary {
 
         initializeButtons();
         initializeRegisters();
+
+        portALabel = new JLabel("Port A");
+        portBLabel = new JLabel("Port B");
+
         initializePorts();
 
         //Inhalt von Code Panel
@@ -148,6 +154,13 @@ public class Primary {
         operations.add(instructionView);
 
         setBounds();
+
+        // TODO: Richtig in Code platzieren
+        registers.add(portALabel);
+        registers.add(portBLabel);
+        portALabel.setBounds(0,100,100,15);
+        portBLabel.setBounds(155,100,100,15);
+
         main.setResizable(false);
         main.setVisible(false);
     }
@@ -259,6 +272,7 @@ public class Primary {
         portAPinBit6 = new JButton("0");
         portAPinBit7 = new JButton("0");
 
+
         portATrisLabel = new JLabel("Tris");
         portA.add(portATrisLabel);
 
@@ -291,6 +305,7 @@ public class Primary {
         portBPinBit5 = new JButton("0");
         portBPinBit6 = new JButton("0");
         portBPinBit7 = new JButton("0");
+
 
         portBTrisLabel = new JLabel("Tris");
         portB.add(portBTrisLabel);
@@ -452,6 +467,7 @@ public class Primary {
         registers.add(systemPanel);
         registers.add(statusPanel);
         registers.add(optionPanel);
+
 
         ports.add(portA);
         ports.add(portB);

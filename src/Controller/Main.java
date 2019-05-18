@@ -5,6 +5,7 @@ import Model.Worker;
 import View.Primary;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -75,6 +76,106 @@ public class Main {
             }
         });
 
+
+        // Ports
+        // TRIS A
+        buttons = view.getPortATRIS();
+
+        for (int i = 0; i < buttons.length; i++) {
+            final int temp = i;
+            buttons[i].addActionListener(e -> {
+                if (states.size() == 0) {
+                    // TODO: Fehlermeldung/Bitanweisung vorspeichern
+                    return;
+                }
+
+                invertPortBit(0, true, calculatePortBit(temp));
+                updateButtons();
+            });
+        }
+
+        // TRIS B
+        buttons = view.getPortAPins();
+
+        for (int i = 0; i < buttons.length; i++) {
+            final int temp = i;
+            buttons[i].addActionListener(e -> {
+                if (states.size() == 0) {
+                    // TODO: Fehlermeldung/Bitanweisung vorspeichern
+                    return;
+                }
+
+                invertPortBit(0, false, calculatePortBit(temp));
+                updateButtons();
+            });
+        }
+
+        // Port A
+        buttons = view.getPortBTRIS();
+
+        for (int i = 0; i < buttons.length; i++) {
+            final int temp = i;
+            buttons[i].addActionListener(e -> {
+                if (states.size() == 0) {
+                    // TODO: Fehlermeldung/Bitanweisung vorspeichern
+                    return;
+                }
+
+                invertPortBit(1, true, calculatePortBit(temp));
+                updateButtons();
+            });
+        }
+
+        // Port B
+        buttons = view.getPortBPins();
+
+        for (int i = 0; i < buttons.length; i++) {
+            final int temp = i;
+            buttons[i].addActionListener(e -> {
+                if (states.size() == 0) {
+                    // TODO: Fehlermeldung/Bitanweisung vorspeichern
+                    return;
+                }
+
+                invertPortBit(1, false, calculatePortBit(temp));
+                updateButtons();
+            });
+        }
+
+    }
+
+    /**
+     * Helfer Funktion um aus einem Index (0-7) ein Bit des Registers zu machen
+     */
+    private int calculatePortBit(int index) {
+        return (int) Math.pow(2, (8 - index));
+    }
+
+    /**
+     * Helfer Funktion um genau ein Bit in den Port Registern zu invertieren
+     */
+    private void invertPortBit(int port, boolean tris, int bit) {
+
+
+        int register = 5 + port;
+        int bank = 0;
+
+        if (tris) {
+            bank = 1;
+        }
+
+        int value = getCurrentState().getMemory().content()[bank][register];
+        int result = value;
+
+        if ((value & bit) > 0) {
+            result -= bit;
+        } else {
+            result += bit;
+        }
+
+        // TODO: Fehler bei Bit uebersetzung. Letztes Bit nicht
+        //       Adressierbar wenn auf 0xFF limitiert
+        getCurrentState().getMemory().content()[bank][register] = result & 0x1FF;
     }
 
     private void run() {
@@ -134,12 +235,61 @@ public class Main {
         labels[28].setText("" + getCurrentState().getMemory().getPS2());
     }
 
+    private void updateButtons() {
+
+        JButton buttons[] = view.getPortATRIS();
+        for (int i = 0; i < buttons.length; i++) {
+            if (checkPortBit(1, 5, (int) Math.pow(2, 8 - i))) {
+                buttons[i].setText("1");
+            } else {
+                buttons[i].setText("0");
+            }
+        }
+
+        buttons = view.getPortAPins();
+        for (int i = 0; i < buttons.length; i++) {
+            if (checkPortBit(0, 5, (int) Math.pow(2, 8 - i))) {
+                buttons[i].setText("1");
+            } else {
+                buttons[i].setText("0");
+            }
+        }
+
+        buttons = view.getPortBTRIS();
+        for (int i = 0; i < buttons.length; i++) {
+            if (checkPortBit(1, 6, (int) Math.pow(2, 8 - i))) {
+                buttons[i].setText("1");
+            } else {
+                buttons[i].setText("0");
+            }
+        }
+
+        buttons = view.getPortBPins();
+        for (int i = 0; i < buttons.length; i++) {
+            if (checkPortBit(0, 6, (int) Math.pow(2, 8 - i))) {
+                buttons[i].setText("1");
+            } else {
+                buttons[i].setText("0");
+            }
+        }
+    }
+
+    /**
+     * Helfer Funktion fuer das setzen der Ports
+     */
+    private boolean checkPortBit(int bank, int register, int bit) {
+        if ((getCurrentState().getMemory().content()[bank][register] & bit) > 0) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Aktualisiert Befehls Liste, Highlighting der Liste, Button Verfuegbarkeit und Register Inhalte.
      */
     public void update() {
 
-        if(states.size() > 0) {
+        if (states.size() > 0) {
             updateLabels();
         }
 
@@ -176,6 +326,7 @@ public class Main {
 
         // Setze Register
         updateLabels();
+        updateButtons();
 
         // Setze JList
         view.getList().setModel(new OperationModel(states.get(current).getCounter()));
