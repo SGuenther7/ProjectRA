@@ -161,7 +161,6 @@ public class Primary {
         initializeSystemLabels();
         initializeStatusLabels();
         initializeOptionLabels();
-
     }
 
     private void initializeSystemLabels() {
@@ -371,9 +370,9 @@ public class Primary {
         buttons.setBounds(0, 0, 640, 40);
         operations.setBounds(0, 40, 320, 440);
         registers.setBounds(320, 40, 320, 440);
-        ports.setBounds(0, 120, 300, 40);
-        portA.setBounds(0, 0, 135, 40);
-        portB.setBounds(150, 0, 135, 40);
+        ports.setBounds(0, 120, 305, 40);
+        portA.setBounds(0, 0, 150, 40);
+        portB.setBounds(155, 0, 150, 40);
         systemPanel.setBounds(0, 0, 100, 100);
         statusPanel.setBounds(105, 0, 190, 35);
         optionPanel.setBounds(105, 40, 190, 35);
