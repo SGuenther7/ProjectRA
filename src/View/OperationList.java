@@ -13,16 +13,21 @@ public class OperationList extends JCheckBox implements ListCellRenderer {
         Command current = (Command) value;
         System.out.println();
 
-        if(current.isNext()) {
+        if (current.isNext()) {
             this.setBackground(Color.BLUE);
-        }
-        else {
+        } else {
             this.setBackground(Color.WHITE);
         }
         setSelected(current.isBreakpoint());
 
         setEnabled(list.isEnabled());
-        setText(current.getInstruction().toString());
+
+        String text = current.getInstruction().toString();
+        for (int parameter : current.getValue()) {
+            text += " 0x" + Integer.toHexString(parameter);
+        }
+
+        setText(text);
 
         return this;
     }
