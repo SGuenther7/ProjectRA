@@ -132,34 +132,34 @@ public class Memory {
     }
 
     public int getRP1() {
-        return memory[0][3] & 64;
+        return (memory[0][3] & 64) > 0 ? 1 : 0;
     }
     public int getRP0() {
-        return memory[0][3] & 32;
+        return (memory[0][3] & 32) > 0 ? 1: 0;
     }
     public int getZero() {
-        return memory[0][3] & 4;
+        return (memory[0][3] & 4) > 0 ? 1: 0;
     }
     public int getDitgitCarry() {
-        return memory[0][3] & 2;
+        return (memory[0][3] & 2) > 0 ? 1: 0;
     }
     public int getCarry() {
-        return memory[0][3] & 1;
+        return (memory[0][3] & 1) > 0 ? 1: 0;
     }
     public int getT0CS() {
-        return memory[1][3] & 64;
+        return (memory[1][3] & 64) > 0 ? 1: 0;
     }
     public int getPSA() {
-        return memory[1][1] & 8;
+        return (memory[1][1] & 8) > 0 ? 1: 0;
     }
     public int getPS0() {
-        return memory[1][1] & 1;
+        return (memory[1][1] & 1) > 0 ? 1: 0;
     }
     public int getPS1() {
-        return memory[1][1] & 2;
+        return (memory[1][1] & 2) > 0 ? 1: 0;
     }
     public int getPS2() {
-        return memory[1][1] & 4;
+        return (memory[1][1] & 4) > 0 ? 1: 0;
     }
 
     public void print() {
