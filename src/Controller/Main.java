@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Main {
-    private ArrayList<Worker> states; // TODO: Groesse einschraenken (performance).
+    private ArrayList<Worker> states;
     private Primary view;
     private int current = 0;
 
@@ -26,6 +26,9 @@ public class Main {
             peon.getMemory().content()[0][i] = 255;
             peon.getMemory().content()[1][i] = 255;
         }
+
+        peon.getMemory().content()[0][10] = 1;
+        peon.getMemory().content()[0][10] = 1;
         this.states.add(peon);
         this.current = 0;
         this.update();
@@ -229,11 +232,10 @@ public class Main {
     private void updateLabels() {
         JLabel[] labels = view.getLabels();
 
-        // TODO: PCL, PCLATH und PC zeigen alle gleichen weg an
         labels[0].setText("" + getCurrentState().getWorking());
         labels[2].setText("" + getCurrentState().getMemory().content()[0][2]);
         labels[4].setText("" + getCurrentState().getMemory().content()[0][10]);
-        labels[6].setText("" + getCurrentState().getMemory().content()[0][2]);
+        labels[6].setText("" + getCurrentState().getCurrent());
         labels[8].setText("" + getCurrentState().getMemory().content()[0][0]);
         labels[10].setText("" + getCurrentState().getMemory().getRP1());
         labels[12].setText("" + getCurrentState().getMemory().getRP0());

@@ -407,7 +407,7 @@ public class Primary {
         PCLATHLabel.setBounds(0, 40, 60, 15);
         PCLATHContent.setBounds(75, 40, 60, 15);
         PCLabel.setBounds(0, 60, 30, 15);
-        PCContent.setBounds(75, 60, 60, 15);
+        PCContent.setBounds(75, 60, 90, 15);
         INDFLabel.setBounds(0, 80, 60, 15);
         INDFContent.setBounds(75, 80, 60, 15);
     }

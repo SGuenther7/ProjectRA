@@ -16,6 +16,7 @@ public class Worker {
 
 	private Timer timer;
 
+	// TODO: Current setzt sich aus PCL und PCLATH zusammen
 	private int current;
 
 	public Worker() {
