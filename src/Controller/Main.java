@@ -16,7 +16,18 @@ public class Main {
     private int current = 0;
 
     private void debug() {
-        this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST");
+        //this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST");
+
+        Worker peon = new Worker();
+
+        for(int i = 0 ; i < peon.getMemory().content()[0].length ; i++){
+            //peon.getMemory().content()[0][i] = (int) ((Math.random() * 1000) + 1) & 0xFF;
+            //peon.getMemory().content()[1][i] = (int) ((Math.random() * 1000) + 1) & 0xFF;
+            peon.getMemory().content()[0][i] = 255;
+            peon.getMemory().content()[1][i] = 255;
+        }
+        this.states.add(peon);
+        this.current = 0;
         this.update();
     }
 
@@ -222,7 +233,7 @@ public class Main {
         labels[0].setText("" + getCurrentState().getWorking());
         labels[2].setText("" + getCurrentState().getMemory().content()[0][2]);
         labels[4].setText("" + getCurrentState().getMemory().content()[0][10]);
-        labels[6].setText("" + getCurrentState().getCurrent()); // TODO: prob. falsch
+        labels[6].setText("" + getCurrentState().getMemory().content()[0][2]);
         labels[8].setText("" + getCurrentState().getMemory().content()[0][0]);
         labels[10].setText("" + getCurrentState().getMemory().getRP1());
         labels[12].setText("" + getCurrentState().getMemory().getRP0());
