@@ -496,6 +496,7 @@ public class Primary {
             watchdog.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                    // TODO: WTD Button verhalten impl.
                     watchdog.setIcon(new ImageIcon(enabledWTD.getScaledInstance(24,24,Image.SCALE_SMOOTH)));
                     super.mouseClicked(e);
                 }

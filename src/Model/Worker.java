@@ -326,6 +326,9 @@ public class Worker {
 
 		// Timer updaten
 		timer.tick();
+
+		// Interner PC hochzaehlen
+        memory.content()[0][2] = (i + 1) & 0xFF;
 	}
 
 	public void next() {

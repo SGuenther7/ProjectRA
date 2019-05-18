@@ -218,6 +218,7 @@ public class Main {
     private void updateLabels() {
         JLabel[] labels = view.getLabels();
 
+        // TODO: PCL, PCLATH und PC zeigen alle gleichen weg an
         labels[0].setText("" + getCurrentState().getWorking());
         labels[2].setText("" + getCurrentState().getMemory().content()[0][2]);
         labels[4].setText("" + getCurrentState().getMemory().content()[0][10]);
