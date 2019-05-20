@@ -31,4 +31,8 @@ public class Stack extends java.util.Stack {
     public boolean isOverflow() {
         return this.overflow;
     }
+
+    public void setOverflow(boolean overflow) {
+        this.overflow = overflow;
+    }
 }

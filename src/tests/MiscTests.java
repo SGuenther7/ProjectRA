@@ -104,6 +104,17 @@ public class MiscTests {
     }
 
     @Test
+    void multipleCall() {
+
+    }
+
+    @Test
+    void stackOverflow() {
+
+    }
+
+
+    @Test
     void PCmanipulationVerhaltenTest() {
         Worker peon = new Worker(2);
 

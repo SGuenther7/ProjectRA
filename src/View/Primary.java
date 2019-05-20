@@ -565,6 +565,12 @@ public class Primary {
         };
     }
 
+    public void warnOverflow() {
+
+        JOptionPane.showMessageDialog(main,"A Stack overflow has taken place.");
+
+    }
+
     // Mache Buttons von aussen verfügbar um ActionListener hinzuzufuegen
     public JButton[] getButtons() {
         return new JButton[]{run, stop, forward, back, reset, load};

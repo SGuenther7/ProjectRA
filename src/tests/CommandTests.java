@@ -237,6 +237,28 @@ class CommandTests {
 
 	@Test
 	void CALLTest() {
+		Worker peon = new Worker(2);
+
+        Command call = new Command(Instruction.CALL, new int[]{2});
+		Command clr = new Command(Instruction.CLRW, new int[]{});
+		Command nop = new Command(Instruction.NOP, new int[]{});
+		Command ret = new Command(Instruction.RETURN, new int[]{});
+
+		peon.feed(call);
+		// Soll beim ersten Gang nicht ausgefuehrt werden
+		peon.feed(clr);
+		peon.feed(nop);
+		peon.feed(ret);
+
+		// Springe von 0 auf 2
+		peon.next();
+		// CLR wurde uebersprungen, lande auf NOP
+		peon.next();
+		assertEquals(2,peon.getWorking());
+
+		// RETURN zu 0+1 = CLRW
+		peon.next();
+		assertEquals(0,peon.getWorking());
 	}
 
 	@Test

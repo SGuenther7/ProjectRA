@@ -16,24 +16,7 @@ public class Main {
     private int current = 0;
 
     private void debug() {
-        this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST");
-        /*
-
-        Worker peon = new Worker();
-
-        for(int i = 0 ; i < peon.getMemory().content()[0].length ; i++){
-            //peon.getMemory().content()[0][i] = (int) ((Math.random() * 1000) + 1) & 0xFF;
-            //peon.getMemory().content()[1][i] = (int) ((Math.random() * 1000) + 1) & 0xFF;
-            peon.getMemory().content()[0][i] = 255;
-            peon.getMemory().content()[1][i] = 255;
-        }
-
-        peon.getMemory().content()[0][10] = 1;
-        peon.getMemory().content()[0][10] = 1;
-        this.states.add(peon);
-        this.current = 0;
-         */
-        this.update();
+        //this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST");
     }
 
     public void start() {
@@ -196,6 +179,7 @@ public class Main {
         // TODO: Execute bis Ende, dann update()
         // TODO: in Thread auslagern
         // TODO: Benoetigt Auto-Breakpoint bei GOTO/CALL!
+
     }
 
     private void stop() {
@@ -345,6 +329,12 @@ public class Main {
         // Setze JList
         view.getList().setModel(new OperationModel(states.get(current).getCounter()));
         view.getList().updateUI();
+
+        // Stack overflow ?
+        if(getCurrentState().getStack().isOverflow()) {
+            view.warnOverflow();
+            getCurrentState().getStack().setOverflow(false);
+        }
     }
 
     /**
