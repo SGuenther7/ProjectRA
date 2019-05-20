@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.Instruction;
 import Model.Parser;
 import Model.Worker;
 import View.Primary;
@@ -14,12 +15,20 @@ public class Main {
     private ArrayList<Worker> states;
     private Primary view;
     private int current = 0;
+    private Thread runner;
 
     private void debug() {
-        //this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST");
+        this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST");
+        this.update();
     }
 
     public void start() {
+        runner = new Thread() {
+            public void run() {
+                Main.this.run();
+            }
+        };
+
         view = new Primary();
         view.initialize();
         this.initialiseActionListeners(view);
@@ -32,7 +41,8 @@ public class Main {
     private void initialiseActionListeners(Primary view) {
         JButton buttons[] = view.getButtons();
         buttons[0].addActionListener(e -> {
-            this.run();
+            //this.run();
+            this.runner.start();
             this.update();
         });
         buttons[1].addActionListener(e -> {
@@ -177,13 +187,41 @@ public class Main {
 
     private void run() {
         // TODO: Execute bis Ende, dann update()
-        // TODO: in Thread auslagern
         // TODO: Benoetigt Auto-Breakpoint bei GOTO/CALL!
 
+        // Ist eine .LST Datei geladen ?
+        if (states.size() == 0) {
+            return;
+        }
+
+        // Waerend nicht am Ende
+        while (getCurrentState().getCurrent() < getCurrentState().getCounter().size()) {
+
+            // Ist breakpoint oder GOTO ?
+            if (getCurrentState().getCounter().get(getCurrentState().getCurrent()).isBreakpoint() ||
+                    getCurrentState().getCounter().get(getCurrentState().getCurrent()).getInstruction() == Instruction.GOTO) {
+                break;
+            }
+
+            // Naechsten Befehl ausfuehren
+            states.add(new Worker(states.get(current)));
+            current++;
+            states.get(current).next();
+
+            // DEBUG
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+
+            }
+        }
+
+        update();
     }
 
     private void stop() {
         // TODO: Thread mit run() stoppen
+        runner.interrupt();
     }
 
     private void forward() {
@@ -313,7 +351,7 @@ public class Main {
             view.getButtons()[3].setEnabled(false);
         }
 
-        if (!states.get(current).hasNext()) {
+        if (!states.get(current).hasNext() && !isJump(getCurrentState().getCounter().get(getCurrentState().getCurrent()).getInstruction())) {
             view.getButtons()[2].setEnabled(false);
         }
 
@@ -331,10 +369,17 @@ public class Main {
         view.getList().updateUI();
 
         // Stack overflow ?
-        if(getCurrentState().getStack().isOverflow()) {
+        if (getCurrentState().getStack().isOverflow()) {
             view.warnOverflow();
             getCurrentState().getStack().setOverflow(false);
         }
+    }
+
+    private boolean isJump(Instruction inst) {
+        if(inst == Instruction.GOTO || inst == Instruction.CALL || inst == Instruction.RETURN || inst == Instruction.RETFIE || inst == Instruction.RETLW) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -366,7 +411,7 @@ public class Main {
     public static void main(String args[]) {
         Main manager = new Main();
         manager.start();
-        //manager.debug();
+        manager.debug();
     }
 }
 
