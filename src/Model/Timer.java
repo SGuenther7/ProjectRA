@@ -74,13 +74,13 @@ public class Timer {
             // Dec. TMR0 Register
             if (tmrCounter == 0) {
 
-                peon.getMemory().content()[0][10]++;
+                peon.getMemory().content()[0][1]++;
 
                 // T0IF setzen
-                if (peon.getMemory().content()[0][10] == 256) {
+                if (peon.getMemory().content()[0][1] == 256) {
                     // TODO: Interrupt enable bin in INTCON abfragen
                     peon.getMemory().content()[0][12] = peon.getMemory().content()[0][12] | 4;
-                    peon.getMemory().content()[0][10] = 0;
+                    peon.getMemory().content()[0][1] = 0;
                 }
             }
         } else {

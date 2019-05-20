@@ -186,8 +186,8 @@ public class Worker {
 			// Flag : C, CD, Z
 			result = memory.get(getBank(), command.getValue()[0]) - working;
 
-			handleCarryFlagOnSub(working, memory.get(getBank(), command.getValue()[0]));
-			handleDigitCarryOnSub(working, memory.get(getBank(), command.getValue()[0]));
+			handleCarryFlagOnSub(working, command.getValue()[0]);
+			handleDigitCarryOnSub(working, command.getValue()[0]);
 			handleZeroFlag(working);
 
 			// Destination Bit gesetzt ?
@@ -228,9 +228,8 @@ public class Worker {
 			break;
 		case CLRW:
 			// Flag : Z
-			handleZeroFlag(working);
+			handleZeroFlag(working); // TODO: korrekt behav. ?
 			working = 0;
-			
 			break;
 		case NOP:
 			break;
@@ -303,8 +302,8 @@ public class Worker {
 			// Flag : C, CD, Z
 			result = command.getValue()[0] - working;
 			
-			handleCarryFlagOnSub(working, memory.get(getBank(), command.getValue()[0]));
-			handleDigitCarryOnSub(working, memory.get(getBank(), command.getValue()[0]));
+			handleCarryFlagOnSub(working, command.getValue()[0]);
+			handleDigitCarryOnSub(working, command.getValue()[0]);
 			handleZeroFlag(working);
 
 			working = result;
@@ -327,22 +326,12 @@ public class Worker {
 
 		// Timer updaten
 		timer.tick();
-
-		// Interner PC hochzaehlen
-        memory.content()[0][2] = (i + 1) & 0xFF;
+		updateCurrent();
 	}
 
 	public void next() {
-		execute(getCurrent());
 		counter.get(getCurrent()).setNext(false);
-
-		// Wird ein zaehler ueberlauf stattfinden ?
-		if (getCurrent() >= (PC_MAX_VALUE - 1)) {
-			current = 0;
-			// TODO: Fehlermeldung : PC ueberflauf
-		} else {
-			current++;
-		}
+		execute(getCurrent());
 		counter.get(getCurrent()).setNext(true);
 	}
 
@@ -367,7 +356,7 @@ public class Worker {
 	}
 
 	private boolean handleCarryFlagOnAdd(int base, int add) {
-		if (base + add > 25) {
+		if (base + add > 25) { // TODO handleCarryFlag testen
 			memory.set(getBank(), 3, memory.get(getBank(), 3) | 1);
 			return true;
 		}
@@ -386,7 +375,7 @@ public class Worker {
 		base = base & 15;
 		add = add & 15;
 
-		if (base + add > 15) {
+		if (base + add > 15) { // TODO handleDitiCarryFlag testen
 			memory.set(getBank(), 3, memory.get(getBank(), 3) | 2);
 			return true;
 		}
@@ -427,6 +416,16 @@ public class Worker {
 	}
 
 	public void updateCurrent() {
+	    memory.content()[0][2]++;
+
+	    if(memory.content()[0][2] >= PC_MAX_VALUE) {
+			memory.set(getBank(), 2, memory.get(getBank(), 3) | 1);
+			memory.content()[0][2] = 0;
+		}
+	    applyPCL();
+	}
+
+	private void applyPCL() {
 		int temp = memory.content()[0][10];
 		temp = temp << 8;
 		temp += memory.content()[0][2];

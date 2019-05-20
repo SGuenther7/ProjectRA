@@ -16,7 +16,8 @@ public class Main {
     private int current = 0;
 
     private void debug() {
-        //this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST");
+        this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST");
+        /*
 
         Worker peon = new Worker();
 
@@ -31,16 +32,15 @@ public class Main {
         peon.getMemory().content()[0][10] = 1;
         this.states.add(peon);
         this.current = 0;
+         */
         this.update();
     }
 
     public void start() {
-        reset();
-
         view = new Primary();
         view.initialize();
         this.initialiseActionListeners(view);
-        update();
+        reset();
 
         // Mache GUI sichtbar
         view.start();
@@ -352,7 +352,7 @@ public class Main {
      */
     private void reset() {
         states = new ArrayList<Worker>();
-        current = 0;
+        update();
     }
 
     private Worker getCurrentState() {

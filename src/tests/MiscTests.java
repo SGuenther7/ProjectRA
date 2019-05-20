@@ -19,8 +19,8 @@ public class MiscTests {
     @Test
     void memoryEqualsFalseTest() {
         Memory wild = new Memory(new Worker());
-        wild.set(0,5,3);
-        wild.set(1,7,9);
+        wild.set(0, 5, 3);
+        wild.set(1, 7, 9);
         Memory base = new Memory(new Worker());
 
         assertFalse(wild.equals(base));
@@ -29,8 +29,8 @@ public class MiscTests {
     @Test
     void memoryEqualsCloneTrueTest() {
         Memory base = new Memory(new Worker());
-        base.set(0,5,3);
-        base.set(1,7,9);
+        base.set(0, 5, 3);
+        base.set(1, 7, 9);
 
         assertTrue(base.equals(new Memory(base)));
     }
@@ -39,12 +39,12 @@ public class MiscTests {
     void memoryEqualsTrueTest() {
 
         Memory base = new Memory(new Worker());
-        base.set(0,15,3);
-        base.set(1,17,9);
+        base.set(0, 15, 3);
+        base.set(1, 17, 9);
 
         Memory other = new Memory(new Worker());
-        other.set(0,15,3);
-        other.set(1,17,9);
+        other.set(0, 15, 3);
+        other.set(1, 17, 9);
 
         assertTrue(base.equals(other));
     }
@@ -54,7 +54,7 @@ public class MiscTests {
         Memory wild = new Memory(new Worker());
         Memory clone = new Memory(wild);
 
-        assertEquals(wild,clone);
+        assertEquals(wild, clone);
     }
 
     @Test
@@ -104,6 +104,28 @@ public class MiscTests {
     }
 
     @Test
+    void PCmanipulationVerhaltenTest() {
+        Worker peon = new Worker(2);
+
+        Command prepare = new Command(Instruction.ADDWF, new int[]{2, 1});
+        Command clear = new Command(Instruction.CLRW, new int[]{});
+        Command nop = new Command(Instruction.NOP, new int[]{});
+
+        // Lade working (2) in PCL (0x2h)
+        peon.feed(prepare);
+        // Ueberspringe clearw
+        peon.feed(clear);
+        // Anstatt ausgefuehrt
+        peon.feed(nop);
+        peon.feed(nop);
+
+        peon.execute(0);
+        peon.execute(peon.getCurrent());
+
+        assertEquals(2, peon.getWorking());
+    }
+
+    @Test
     void indirekteAdressierungTest() {
 
         Worker peon = new Worker();
@@ -128,7 +150,7 @@ public class MiscTests {
         peon.execute(2);
         peon.execute(3);
 
-        assertEquals(0x8, peon.getMemory().get(peon.getBank(),13));
+        assertEquals(0x8, peon.getMemory().get(peon.getBank(), 13));
     }
 }
 
