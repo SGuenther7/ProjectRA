@@ -105,12 +105,62 @@ public class MiscTests {
 
     @Test
     void multipleCall() {
+        Worker peon = new Worker(2);
 
+        Command initial= new Command(Instruction.CALL, new int[]{1});
+		Command nested = new Command(Instruction.CALL, new int[]{4});
+		Command nop = new Command(Instruction.NOP, new int[]{});
+		Command ret = new Command(Instruction.RETURN, new int[]{});
+        Command clr = new Command(Instruction.CLRW, new int[]{});
+        Command mov = new Command(Instruction.MOVLW, new int[]{3});
+
+		peon.feed(initial);
+        peon.feed(clr);
+		peon.feed(nested);
+        peon.feed(ret);
+        peon.feed(nop);
+        peon.feed(mov);
+        peon.feed(ret);
+        peon.feed(nop);
+
+        // Spring zu nested : 2
+        peon.next();
+        // Spring zu mov : 5
+        peon.next();
+        assertEquals(2,peon.getWorking());
+        // Setze W zu 3 : 6
+        peon.next();
+        assertEquals(3,peon.getWorking());
+        // Return zu nested+1 : 3
+        peon.next();
+        // Return zu initial+1 : 1
+        peon.next();
+        // Clear W : 2
+        peon.next();
+        assertEquals(0,peon.getWorking());
     }
 
     @Test
     void stackOverflow() {
+        Worker peon = new Worker(2);
 
+        Command nop = new Command(Instruction.NOP, new int[]{});
+        Command call = new Command(Instruction.CALL, new int[]{0});
+
+        peon.feed(nop);
+        peon.feed(call);
+
+        peon.next();
+        peon.next();
+        peon.next();
+        peon.next();
+        peon.next();
+        peon.next();
+        peon.next();
+        peon.next();
+        peon.next();
+
+        assertEquals(true,peon.getStack().isOverflow());
     }
 
 

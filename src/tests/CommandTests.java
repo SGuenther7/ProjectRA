@@ -239,18 +239,18 @@ class CommandTests {
 	void CALLTest() {
 		Worker peon = new Worker(2);
 
-        Command call = new Command(Instruction.CALL, new int[]{2});
+        Command call = new Command(Instruction.CALL, new int[]{1});
 		Command clr = new Command(Instruction.CLRW, new int[]{});
 		Command nop = new Command(Instruction.NOP, new int[]{});
 		Command ret = new Command(Instruction.RETURN, new int[]{});
 
 		peon.feed(call);
-		// Soll beim ersten Gang nicht ausgefuehrt werden
 		peon.feed(clr);
 		peon.feed(nop);
 		peon.feed(ret);
+		peon.feed(nop);	// Das setNext() in next() kein OOB wirft
 
-		// Springe von 0 auf 2
+		// Springe von 0 auf 2 (starte bei 1 + PC inc.)
 		peon.next();
 		// CLR wurde uebersprungen, lande auf NOP
 		peon.next();
@@ -258,8 +258,23 @@ class CommandTests {
 
 		// RETURN zu 0+1 = CLRW
 		peon.next();
+		// Setze W zurueck
+		peon.next();
 		assertEquals(0,peon.getWorking());
 	}
+
+	@Test
+	void RETURNTest() {
+		Worker peon = new Worker();
+		peon.getStack().push(4);
+
+		Command ret = new Command(Instruction.RETURN, new int[]{});
+		peon.feed(ret);
+		peon.next();
+
+		assertEquals(5,peon.getCurrent());
+	}
+
 
 	@Test
 	void CRLWDTTest() {
@@ -302,10 +317,6 @@ class CommandTests {
 
 	@Test
 	void RETLWTest() {
-	}
-
-	@Test
-	void RETURNTest() {
 	}
 
 	@Test
