@@ -242,8 +242,8 @@ public class Worker {
                 break;
             case RETURN:
                 // TODO: imp. + test
-                if (stack.size() != 0) {
-                    working = (int) stack.pop();
+                if (stack.size() > 0) {
+                    memory.content()[0][2] = (int) stack.pop();
                 }
                 break;
             case SLEEP:
@@ -334,7 +334,9 @@ public class Worker {
     public void next() {
         counter.get(getCurrent()).setNext(false);
         execute(getCurrent());
-        counter.get(getCurrent()).setNext(true);
+        if (counter.size() > getCurrent()) {
+            counter.get(getCurrent()).setNext(true);
+        }
     }
 
     public void run() {
