@@ -52,7 +52,7 @@ public class Command {
     public void print() {
         System.out.print(instruction + " ");
 
-        if(value == null) {
+        if (value == null) {
             return;
         }
 
@@ -72,11 +72,13 @@ public class Command {
             return false;
         }
 
+        if (((Command) obj).value == null && this.value == null) {
+            return true;
+        }
 
         if (((Command) obj).value.length != this.value.length) {
             return false;
         }
-
 
         for (int i = 0; i < this.value.length; i++) {
 

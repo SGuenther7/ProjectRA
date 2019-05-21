@@ -26,6 +26,9 @@ public class Worker {
         this.stack = new Stack();
         this.timer = new Timer(this);
 
+        portA = new Port();
+        portB = new Port();
+
         this.current = 0;
     }
 
@@ -69,7 +72,6 @@ public class Worker {
         }
 
         counter.get(getCurrent()).setNext(true);
-
         return true;
     }
 
