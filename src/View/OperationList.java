@@ -21,7 +21,7 @@ public class OperationList extends JCheckBox implements ListCellRenderer {
 
         setEnabled(list.isEnabled());
 
-        String text = current.getInstruction().toString();
+        String text = index + " : " + current.getInstruction().toString();
 
         if (current.getValue() != null) {
             for (int parameter : current.getValue()) {
