@@ -49,6 +49,22 @@ public class Command {
         return breakpoint;
     }
 
+    public void print() {
+        System.out.print(instruction + " ");
+
+        if(value == null) {
+            return;
+        }
+
+        System.out.print(": ");
+
+        for (int i = 0; i < value.length; i++) {
+            System.out.print(getValue()[i] + " ");
+        }
+
+        System.out.println();
+    }
+
     @Override
     public boolean equals(Object obj) {
 
