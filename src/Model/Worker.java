@@ -351,7 +351,7 @@ public class Worker {
         return (getCurrent() < counter.size() - 1);
     }
 
-    private boolean handleZeroFlag(int value) {
+    public boolean handleZeroFlag(int value) {
         if (value == 0) {
             memory.set(getBank(), 3, memory.get(getBank(), 3) | 3);
             return true;
@@ -359,27 +359,27 @@ public class Worker {
         return false;
     }
 
-    private boolean handleCarryFlagOnAdd(int base, int add) {
-        if (base + add > 25) { // TODO handleCarryFlag testen
+    public boolean handleCarryFlagOnAdd(int base, int add) {
+        if (base + add > 255) {
             memory.set(getBank(), 3, memory.get(getBank(), 3) | 1);
             return true;
         }
         return false;
     }
 
-    private boolean handleCarryFlagOnSub(int base, int sub) {
-        if (base - sub < 0) {
+    public boolean handleCarryFlagOnSub(int base, int sub) {
+        if (base - sub >= 0) { // TODO: Nachfragen
             memory.set(getBank(), 3, memory.get(getBank(), 3) | 1);
             return true;
         }
         return false;
     }
 
-    private boolean handleDigitCarryOnAdd(int base, int add) {
+    public boolean handleDigitCarryOnAdd(int base, int add) {
         base = base & 15;
         add = add & 15;
 
-        if (base + add > 15) { // TODO handleDitiCarryFlag testen
+        if (base + add > 15) {
             memory.set(getBank(), 3, memory.get(getBank(), 3) | 2);
             return true;
         }
@@ -387,7 +387,7 @@ public class Worker {
         return false;
     }
 
-    private boolean handleDigitCarryOnSub(int base, int sub) {
+    public boolean handleDigitCarryOnSub(int base, int sub) {
         base = base & 15;
         sub = sub & 15;
 

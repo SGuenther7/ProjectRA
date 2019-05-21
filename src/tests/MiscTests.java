@@ -213,6 +213,42 @@ public class MiscTests {
 
         assertEquals(0x8, peon.getMemory().get(peon.getBank(), 13));
     }
+
+    @Test
+    void carryFlagSubTest() {
+        Worker peon = new Worker();
+        assertEquals(true, peon.handleCarryFlagOnSub(15,15));
+        assertEquals(false, peon.handleCarryFlagOnSub(1,2));
+    }
+
+    @Test
+    void carryFlagAddTest() {
+        Worker peon = new Worker();
+        assertEquals(true, peon.handleCarryFlagOnAdd(255,1));
+        assertEquals(false, peon.handleCarryFlagOnAdd(254,1));
+    }
+
+
+    @Test
+    void digitCarryFlagAddTest() {
+        Worker peon = new Worker();
+        assertEquals(true, peon.handleDigitCarryOnAdd(127,1));
+        assertEquals(false, peon.handleDigitCarryOnAdd(126,1));
+    }
+
+    @Test
+    void digitCarryFlagSubTest() {
+        Worker peon = new Worker();
+        assertEquals(true, peon.handleDigitCarryOnSub(16,1));
+        assertEquals(false, peon.handleDigitCarryOnSub(32,16));
+    }
+
+    @Test
+    void zeroFlagTest() {
+        Worker peon = new Worker();
+        assertEquals(true, peon.handleZeroFlag(0));
+        assertEquals(false, peon.handleZeroFlag(254));
+    }
 }
 
 
