@@ -26,4 +26,9 @@ public class Port {
     public int get() {
         return internalRegister;
     }
+
+    public int and(int value) {
+        internalRegister = internalRegister | value;
+        return internalRegister;
+    }
 }
