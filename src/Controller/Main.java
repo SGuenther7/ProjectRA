@@ -101,7 +101,10 @@ public class Main {
                 invertPortBit(0, true, bit);
 
                 // Update Port Bit
-                if (checkBit(getCurrentState().getPortA().get(), bit) != checkPortBit(0, false, bit)) {
+                boolean internal = checkBit(getCurrentState().getPortB().get(), bit);
+                boolean port = checkPortBit(0, false, bit);
+
+                if (port != internal) {
                     invertPortBit(0, false, bit);
                 }
 
@@ -125,16 +128,10 @@ public class Main {
                 invertPortBit(1, true, bit);
 
                 // Update Port Bit
-                // Nehme Bit von internal Register und schiebe in Port
                 boolean internal = checkBit(getCurrentState().getPortB().get(), bit);
                 boolean port = checkPortBit(1, false, bit);
 
-                System.out.println("PORT : " + port);
-                System.out.println("INTE : " + internal);
-
                 if (port != internal) {
-                    System.out.println("Ausgefuehrt!");
-                    System.out.println();
                     invertPortBit(1, false, bit);
                 }
 
@@ -230,7 +227,6 @@ public class Main {
 
     private void run() {
         // TODO: Execute bis Ende, dann update()
-        // TODO: Benoetigt Auto-Breakpoint bei GOTO/CALL!
 
         // Ist eine .LST Datei geladen ?
         if (states.size() == 0) {
