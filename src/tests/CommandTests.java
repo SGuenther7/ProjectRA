@@ -69,24 +69,45 @@ class CommandTests {
 
 	@Test
 	void COMFTest() {
-	}
+		Worker expected = new Worker(114);
+		expected.getMemory().set(expected.getBank(), 13, 5);
 
-	@Test
-	void DECFTest() {
-		Worker expected = new Worker();
-		expected.getMemory().set(expected.getBank(), 13, 4);
-
-		Worker peon = new Worker();
+		Worker peon = new Worker(13);
 		peon.getMemory().set(peon.getBank(), 13, 5);
 
-		peon.feed(new Command(Instruction.DECF, new int[] { 5, 1 }));
+		peon.feed(new Command(Instruction.COMF, new int[] { 13,0 }));
 		peon.execute(0);
 
 		assertEquals(expected.getWorking(), peon.getWorking());
 	}
 
 	@Test
+	void DECFTest() {
+		Worker expected = new Worker();
+		expected.getMemory().set(expected.getBank(), 5, 4);
+
+		Worker peon = new Worker();
+		peon.getMemory().set(peon.getBank(), 5, 5);
+
+		peon.feed(new Command(Instruction.DECF, new int[] { 5, 1 }));
+		peon.execute(0);
+
+		assertEquals(expected.getMemory().content()[0][5], peon.getMemory().content()[0][5]);
+	}
+
+	@Test
 	void DECFSZTest() {
+		Worker expected = new Worker();
+		expected.getMemory().content()[0][12] = 11;
+
+		Worker peon = new Worker();
+		peon.getMemory().content()[0][12] = 12;
+
+		peon.feed(new Command(Instruction.DECFSZ, new int[] { 12,1 }));
+//		peon.feed(new Command(Instruction.DECF, new int[] { 12,1 }));
+		peon.execute(0);
+
+		assertEquals(expected.getMemory().content()[0][1], peon.getMemory().content()[0][1]);
 	}
 
 	@Test
@@ -105,6 +126,17 @@ class CommandTests {
 
 	@Test
 	void INCFSZTest() {
+		Worker expected = new Worker(14);
+		expected.getMemory().content()[0][13] = 13;
+
+		Worker peon = new Worker(13);
+		peon.getMemory().content()[0][13] = 13;
+
+		peon.feed(new Command(Instruction.INCFSZ, new int[] { 13, 0 }));
+//		peon.feed(new Command(Instruction.INCF, new int[] { 12, 0 }));
+		peon.execute(0);
+
+		assertEquals(expected.getWorking(), peon.getWorking());
 	}
 
 	@Test
@@ -167,10 +199,32 @@ class CommandTests {
 
 	@Test
 	void RLFTest() {
+		Worker expected = new Worker();
+		expected.getMemory().set(expected.getBank(), 13, 26);
+
+		Worker peon = new Worker();
+		peon.getMemory().set(peon.getBank(), 13, 13);
+
+		peon.feed(new Command(Instruction.RLF, new int[] {13, 1}));
+		peon.execute(0);
+
+		assertEquals(expected.getMemory().content()[0][13], peon.getMemory().content()[0][13]);
+		assertEquals(0, peon.getMemory().content()[0][3]);
 	}
 
 	@Test
 	void RRFTest() {
+		Worker expected = new Worker();
+		expected.getMemory().set(expected.getBank(), 13, 6);
+
+		Worker peon = new Worker();
+		peon.getMemory().set(peon.getBank(), 13, 13);
+
+		peon.feed(new Command(Instruction.RRF, new int[] {13, 1}));
+		peon.execute(0);
+
+		assertEquals(expected.getMemory().content()[0][13], peon.getMemory().content()[0][13]);
+		assertEquals(1, peon.getMemory().content()[0][3]);
 	}
 
 	@Test
@@ -189,6 +243,16 @@ class CommandTests {
 
 	@Test
 	void SWAPFTest() {
+		Worker expected = new Worker(10);
+		expected.getMemory().set(expected.getBank(), 0x25, 0x52);
+
+		Worker peon = new Worker(10);
+		peon.getMemory().set(peon.getBank(), 0x25, 0);
+
+		peon.feed(new Command(Instruction.SWAPF, new int[] {0x25, 1}));
+		peon.execute(0);
+
+		assertEquals(expected.getMemory().content()[0][0x25], peon.getMemory().content()[0][0x25]);
 	}
 
 	@Test
@@ -207,10 +271,30 @@ class CommandTests {
 
 	@Test
 	void BCFTest() {
+		Worker expected = new Worker(5);
+		expected.getMemory().set(expected.getBank(), 3, 0);
+
+		Worker peon = new Worker(5);
+		peon.getMemory().set(peon.getBank(), 3, 5);
+
+		peon.feed(new Command(Instruction.BCF, new int[] { 3,5 }));
+		peon.execute(0);
+
+		assertEquals(expected.getMemory().content()[0][3], peon.getMemory().content()[0][3]);
 	}
 
 	@Test
 	void BSFTest() {
+		Worker expected = new Worker(5);
+		expected.getMemory().set(expected.getBank(), 3, 1);
+
+		Worker peon = new Worker(5);
+		peon.getMemory().set(peon.getBank(), 3, 5);
+
+		peon.feed(new Command(Instruction.BSF, new int[] { 3, 5}));
+		peon.execute(0);
+
+		assertEquals(expected.getMemory().content()[0][3], peon.getMemory().content()[0][3]);
 	}
 
 	@Test
@@ -300,15 +384,14 @@ class CommandTests {
 
     @Test
     void MOVLWTest() {
-//        // W = 10h, C=x, DC=x, Z=0
-//        Worker expected = new Worker(17);
-//        Worker peon = new Worker();
-//        Command target = new Command(Instruction.MOVLW, new int[]{0x11});
-//
-//        peon.feed(target);
-//        peon.execute(0);
-//
-//        assertEquals(expected, peon);
+        // W = 10h, C=x, DC=x, Z=0
+        Worker expected = new Worker(17);
+        Worker peon = new Worker(0);
+
+        peon.feed(new Command(Instruction.MOVLW, new int[]{0x11}));
+        peon.execute(0);
+
+        assertEquals(expected.getWorking(), peon.getWorking());
     }
 
 	@Test

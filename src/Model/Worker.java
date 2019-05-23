@@ -120,10 +120,19 @@ public class Worker {
                     working = result;
                 }
                 break;
+            case COMF:
+            	// Var : f, d
+            	result = ~command.getValue()[0] & 0b1111111;
+	
+            	 if (command.getValue()[1] == 1) {
+                     memory.set(getBank(), command.getValue()[0], result);
+                 } else {
+                     working = result;
+                 }
+                break;
             case DECF:
                 // Var : f, d
                 // Flag : Z
-
                 result = memory.get(getBank(), command.getValue()[0]) - 1;
                 handleZeroFlag(working);
 
@@ -136,6 +145,18 @@ public class Worker {
             case DECFSZ:
                 // Var : f, d
                 // TODO: imp. + test
+            	 result = memory.get(getBank(), command.getValue()[0]) - 1;
+                 handleZeroFlag(working);
+
+                 if (command.getValue()[1] == 1) {
+                     memory.set(getBank(), command.getValue()[0], result);
+                 } else {
+                     working = result;
+                 }
+                 if(result == 0) {
+                	 //TODO
+                	 memory.content()[0][2]--;
+                 }
                 break;
             case INCF:
                 // Var : f, d
@@ -143,7 +164,8 @@ public class Worker {
 
                 result = memory.get(getBank(), command.getValue()[0]) + 1;
                 handleZeroFlag(working);
-
+                result = (result & 0b1111111);
+                
                 if (command.getValue()[1] == 1) {
                     memory.set(getBank(), command.getValue()[0], result);
                 } else {
@@ -153,6 +175,20 @@ public class Worker {
             case INCFSZ:
                 // Var : f, d
                 // TODO: imp. + test
+            	 result = memory.get(getBank(), command.getValue()[0]) + 1;
+            	 System.out.println(result);
+            	 handleZeroFlag(working);
+            	 result = (result & 0b1111111);
+            	 System.out.println(result);
+                 if (command.getValue()[1] == 1) {
+                     memory.set(getBank(), command.getValue()[0], result);
+                 } else {
+                     working = result;
+                 }
+                 if (result == 0) {
+                	 //TODO
+                	 memory.content()[0][2]++;
+                 }
                 break;
             case IORWF:
                 // Var : f, d
@@ -178,11 +214,29 @@ public class Worker {
             case RLF:
                 // Var : f, d
                 // TODO: imp. + test
+            	int temp = (memory.content()[getBank()][3] & 0b1);
+            	memory.set(getBank(), 3, (command.getValue()[0] & 0b1000000) >>> 6);
+            	result = ((0b111111 & command.getValue()[0]) << 1) + temp;
+            	
+            	if (command.getValue()[1] == 1) {
+                    memory.set(getBank(), command.getValue()[0], result);
+                } else {
+                    working = result;
+                }
                 break;
             case RRF:
                 // Var : f, d
                 // TODO: imp. + test
-                break;
+            	int temp2 = memory.content()[getBank()][3];
+            	memory.set(getBank(), 3, (command.getValue()[0] & 0b1));
+            	result = (command.getValue()[0] >>> 1) + (temp2 << 6);
+            	
+            	if (command.getValue()[1] == 1) {
+                    memory.set(getBank(), command.getValue()[0], result);
+                } else {
+                    working = result;
+                }
+            	break;
             case SUBWF:
                 // Var : f, d
                 // Flag : C, CD, Z
@@ -202,6 +256,16 @@ public class Worker {
             case SWAPF:
                 // Var : f, d
                 // TODO: imp. + test
+            	result = command.getValue()[0];
+            	int resultFirst = (0b11110000 & result) >>> 4;
+            	int resultSecond = (0b1111 & result) << 4;
+            	result = resultFirst + resultSecond;
+            	
+            	 if (command.getValue()[1] == 1) {
+                     memory.set(getBank(), command.getValue()[0], result);
+                 } else {
+                     working = result;
+                 }
                 break;
             case XORWF:
                 // Var : f, d
@@ -255,19 +319,26 @@ public class Worker {
             case BCF:
                 // Var : f, b
                 // TODO: imp. + test
+            	 memory.set(getBank(), command.getValue()[0], 0);
                 break;
             case BSF:
                 // Var : f, b
                 // TODO: imp. + test
-                break;
+            	memory.set(getBank(), command.getValue()[0], 1);
+            	break;
             case BTFSS:
                 // Var : f, b
                 // TODO: imp. + test
+            	if(memory.get(getBank(), command.getValue()[0]) == 1) {
+            		//TODO
+            	}
                 break;
             case BTFSC:
                 // Var : f, b
                 // TODO: imp. + test
-
+            	if(memory.get(getBank(), command.getValue()[0]) == 0) {
+            		//TODO 
+            	}
                 break;
             case ADDLW:
                 // Var : k
