@@ -154,7 +154,7 @@ public class Main {
                     invertPortBit(0, false, calculateBit(temp));
                 } else {
                     // Speicher in Zwischenregister
-                    getCurrentState().getPortA().and(calculateBit(temp));
+                    getCurrentState().getPortA().add(calculateBit(temp));
                 }
 
                 updateButtons();
@@ -176,7 +176,7 @@ public class Main {
                     invertPortBit(1, false, calculateBit(temp));
                 } else {
                     // Speicher in Zwischenregister
-                    getCurrentState().getPortB().and(calculateBit(temp));
+                    getCurrentState().getPortB().add(calculateBit(temp));
                 }
             });
         }
