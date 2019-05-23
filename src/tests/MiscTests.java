@@ -4,6 +4,7 @@ import Model.Command;
 import Model.Instruction;
 import Model.Memory;
 import Model.Worker;
+import com.sun.org.apache.bcel.internal.generic.NOP;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,9 +13,22 @@ public class MiscTests {
 
     @Test
     void bankZugriffTest() {
-        // TODO memory testen
-    }
+        Worker peon = new Worker(32);
 
+        Command switchBank = new Command(Instruction.MOVWF, new int[]{3});
+        Command loadW = new Command(Instruction.MOVLW, new int[]{1});
+        Command movTRIS = new Command(Instruction.MOVWF, new int[]{5});
+
+        peon.feed(switchBank);
+        peon.feed(loadW);
+        peon.feed(movTRIS);
+
+        peon.execute(0);
+        peon.execute(1);
+        peon.execute(2);
+
+        assertEquals(1,peon.getMemory().content()[1][5]);
+    }
 
     @Test
     void memoryEqualsFalseTest() {
@@ -107,16 +121,16 @@ public class MiscTests {
     void multipleCall() {
         Worker peon = new Worker(2);
 
-        Command initial= new Command(Instruction.CALL, new int[]{1});
-		Command nested = new Command(Instruction.CALL, new int[]{4});
-		Command nop = new Command(Instruction.NOP, new int[]{});
-		Command ret = new Command(Instruction.RETURN, new int[]{});
+        Command initial = new Command(Instruction.CALL, new int[]{1});
+        Command nested = new Command(Instruction.CALL, new int[]{4});
+        Command nop = new Command(Instruction.NOP, new int[]{});
+        Command ret = new Command(Instruction.RETURN, new int[]{});
         Command clr = new Command(Instruction.CLRW, new int[]{});
         Command mov = new Command(Instruction.MOVLW, new int[]{3});
 
-		peon.feed(initial);
+        peon.feed(initial);
         peon.feed(clr);
-		peon.feed(nested);
+        peon.feed(nested);
         peon.feed(ret);
         peon.feed(nop);
         peon.feed(mov);
@@ -127,17 +141,17 @@ public class MiscTests {
         peon.next();
         // Spring zu mov : 5
         peon.next();
-        assertEquals(2,peon.getWorking());
+        assertEquals(2, peon.getWorking());
         // Setze W zu 3 : 6
         peon.next();
-        assertEquals(3,peon.getWorking());
+        assertEquals(3, peon.getWorking());
         // Return zu nested+1 : 3
         peon.next();
         // Return zu initial+1 : 1
         peon.next();
         // Clear W : 2
         peon.next();
-        assertEquals(0,peon.getWorking());
+        assertEquals(0, peon.getWorking());
     }
 
     @Test
@@ -160,7 +174,7 @@ public class MiscTests {
         peon.next();
         peon.next();
 
-        assertEquals(true,peon.getStack().isOverflow());
+        assertEquals(true, peon.getStack().isOverflow());
     }
 
 
@@ -217,30 +231,30 @@ public class MiscTests {
     @Test
     void carryFlagSubTest() {
         Worker peon = new Worker();
-        assertEquals(true, peon.handleCarryFlagOnSub(15,15));
-        assertEquals(false, peon.handleCarryFlagOnSub(1,2));
+        assertEquals(true, peon.handleCarryFlagOnSub(15, 15));
+        assertEquals(false, peon.handleCarryFlagOnSub(1, 2));
     }
 
     @Test
     void carryFlagAddTest() {
         Worker peon = new Worker();
-        assertEquals(true, peon.handleCarryFlagOnAdd(255,1));
-        assertEquals(false, peon.handleCarryFlagOnAdd(254,1));
+        assertEquals(true, peon.handleCarryFlagOnAdd(255, 1));
+        assertEquals(false, peon.handleCarryFlagOnAdd(254, 1));
     }
 
 
     @Test
     void digitCarryFlagAddTest() {
         Worker peon = new Worker();
-        assertEquals(true, peon.handleDigitCarryOnAdd(127,1));
-        assertEquals(false, peon.handleDigitCarryOnAdd(126,1));
+        assertEquals(true, peon.handleDigitCarryOnAdd(127, 1));
+        assertEquals(false, peon.handleDigitCarryOnAdd(126, 1));
     }
 
     @Test
     void digitCarryFlagSubTest() {
         Worker peon = new Worker();
-        assertEquals(true, peon.handleDigitCarryOnSub(16,1));
-        assertEquals(false, peon.handleDigitCarryOnSub(32,16));
+        assertEquals(true, peon.handleDigitCarryOnSub(16, 1));
+        assertEquals(false, peon.handleDigitCarryOnSub(32, 16));
     }
 
     @Test
@@ -248,6 +262,100 @@ public class MiscTests {
         Worker peon = new Worker();
         assertEquals(true, peon.handleZeroFlag(0));
         assertEquals(false, peon.handleZeroFlag(254));
+    }
+
+    @Test
+    void destinationBitTest() {
+        Worker peon = new Worker(2);
+        peon.getMemory().content()[0][13] = 3;
+        Command add = new Command(Instruction.ADDWF, new int[]{13, 1});
+
+        peon.feed(add);
+        peon.execute(0);
+
+        assertEquals(5, peon.getMemory().content()[0][13]);
+    }
+
+    @Test
+    void destinationBitIndAdressTest() {
+        Worker peon = new Worker(13);
+        peon.getMemory().content()[0][13] = 3;
+
+        Command mov = new Command(Instruction.MOVWF, new int[]{0});
+
+        Command setw = new Command(Instruction.MOVLW, new int[]{2});
+        Command add = new Command(Instruction.ADDWF, new int[]{0, 1});
+
+        peon.feed(mov);
+        peon.feed(setw);
+        peon.feed(add);
+
+        peon.execute(0);
+        assertEquals(13, peon.getMemory().content()[0][0]);
+        peon.execute(1);
+        peon.execute(2);
+        assertEquals(5, peon.getMemory().content()[0][13]);
+    }
+
+    @Test
+    void portCachingIn() {
+        // Schreibe an PIN von PortA
+        // Check ob PortA Register geaendert wurde (false)
+        // Schreibe in TrisA
+        // Check Register nochmal (true)
+        Worker peon = new Worker(1);
+
+        Command movPIN = new Command(Instruction.MOVWF, new int[]{5});
+        Command loadSwitch = new Command(Instruction.MOVLW, new int[]{32});
+        Command switchBank = new Command(Instruction.MOVWF, new int[]{3});
+        Command loadW = new Command(Instruction.MOVLW, new int[]{1});
+        Command movTRIS = new Command(Instruction.MOVWF, new int[]{5});
+
+        peon.feed(movPIN);
+        peon.feed(loadSwitch);
+        peon.feed(switchBank);
+        peon.feed(loadW);
+        peon.feed(movTRIS);
+
+        peon.execute(0);
+
+        // Nicht auf Port geschrieben
+        assertEquals(peon.getMemory().content()[0][5], 0);
+        // In zwischen Register geladen
+        assertEquals(1, peon.getPortA().get());
+
+        // Switche Bank
+        peon.execute(1);
+        peon.execute(2);
+        peon.execute(3);
+
+        // Setze TRIS bit
+        peon.execute(4);
+
+        // Jetzt von Zwischenspei. in Port geladen
+        assertEquals(1,peon.getMemory().content()[0][5]);
+    }
+
+    @Test
+    void tmrTest() {
+        // Setze 4 bit in INTCON (enable interrupt)
+        //nop
+        // goto
+        // while n < 256
+        // bit 2 in INTCON gesetzt ?
+        Worker peon = new Worker();
+
+        Command nop = new Command(Instruction.NOP, new int[]{});
+        Command jump = new Command(Instruction.GOTO, new int[]{0});
+
+        peon.feed(nop);
+        peon.feed(jump);
+
+        for (int i = 0; i < 257; i++) {
+            peon.next();
+        }
+
+        assertEquals(4, peon.getMemory().content()[0][12]);
     }
 }
 
