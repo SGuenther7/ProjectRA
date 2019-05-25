@@ -275,8 +275,7 @@ public class MiscTests {
         Worker peon = new Worker(13);
         peon.getMemory().content()[0][13] = 3;
 
-        Command mov = new Command(Instruction.MOVWF, new int[]{0});
-
+        Command mov = new Command(Instruction.MOVWF, new int[]{4});
         Command setw = new Command(Instruction.MOVLW, new int[]{2});
         Command add = new Command(Instruction.ADDWF, new int[]{0, 1});
 
@@ -285,7 +284,7 @@ public class MiscTests {
         peon.feed(add);
 
         peon.execute(0);
-        assertEquals(13, peon.getMemory().content()[0][0]);
+        assertEquals(13, peon.getMemory().content()[0][4]);
         peon.execute(1);
         peon.execute(2);
         assertEquals(5, peon.getMemory().content()[0][13]);
