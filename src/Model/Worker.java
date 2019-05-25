@@ -395,7 +395,8 @@ public class Worker {
                 stack.push(getCurrent());
             case GOTO:
                 // Var : k
-                memory.content()[0][2] = counter.get(i).getValue()[0];
+                //memory.content()[0][2] = counter.get(i).getValue()[0];
+                memory.set(0,2, counter.get(i).getValue()[0]);
                 break;
         }
 
@@ -441,7 +442,7 @@ public class Worker {
     }
 
     public boolean handleCarryFlagOnSub(int base, int sub) {
-        if (base - sub >= 0) { // TODO: Nachfragen
+        if (base - sub >= 0) {
             memory.set(getBank(), 3, memory.get(getBank(), 3) | 1);
             return true;
         }
@@ -499,10 +500,11 @@ public class Worker {
             memory.set(getBank(), 2, memory.get(getBank(), 3) | 1);
             memory.content()[0][2] = 0;
         }
-        applyPCL();
+        current = memory.content()[0][2];
+        //applyPCL();
     }
 
-    private void applyPCL() {
+    public void applyPCL() {
         int temp = memory.content()[0][10];
         temp = temp << 8;
         temp += memory.content()[0][2];

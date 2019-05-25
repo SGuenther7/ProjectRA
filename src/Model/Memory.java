@@ -86,10 +86,11 @@ public class Memory {
                 //       TMR0 ihn hat.
                 break;
             case 2:
-            case 10:
                 // PCL oder PCLATH wurde beschrieben
-                peon.updateCurrent();
-                break;
+                // Aenderung von Wert
+                memory[0][2] = value;
+                peon.applyPCL();
+                return;
             case 5:
             case 6:
                 // TRIS Zugriff
