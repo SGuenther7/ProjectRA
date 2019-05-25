@@ -482,7 +482,12 @@ public class Worker {
     }
 
     public int getBank() {
-        return 0;
+        int bank = memory.getRP0();
+
+        if(memory.getRP1() == 1) {
+            bank += 2;
+        }
+        return bank;
     }
 
     public ArrayList<Command> getCounter() {
