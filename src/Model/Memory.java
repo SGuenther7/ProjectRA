@@ -96,7 +96,9 @@ public class Memory {
                 // TRIS Zugriff
                 if(bank == 1) {
                     // Update Port Register mit Port Zwischenspeicher (an TRIS bits)
-                    memory[0][index] = memory[0][index] & (memory[1][index] & resolvePort(index).get());
+                    memory[1][index] = value;
+                    memory[0][index] = memory[0][index] | (memory[1][index] & resolvePort(index).get());
+                    return;
                 }
 
                 // Port Register Zugriff
@@ -104,14 +106,18 @@ public class Memory {
                     // Speichere Bits die auch in TRIS gesetzt sind zu Port Register
                     // Speicher Rest in Zwischenspeicher
                     memory[0][index] = memory[1][index] & value;
-                    resolvePort(index).set((258 - memory[1][index]) & value);
+                    resolvePort(index).set(memory[1][index] ^ value);
+
+                    //1010 tris
+                    //1111 value
+                    //0101 cache
                     return;
                 }
                 break;
         }
 
         // Aenderung von Wert
-        memory[resolveBank(bank, index)][resolveAddressing(index)] = value;
+       memory[resolveBank(bank, index)][resolveAddressing(index)] = value;
     }
 
     private Port resolvePort(int index) {
