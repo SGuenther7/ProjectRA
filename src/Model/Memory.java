@@ -79,6 +79,11 @@ public class Memory {
     public void set(int bank, int index, int value) {
         // Extra Funktionen bei Speicherzugriff
         switch (index) {
+            case 0:
+                if(memory[0][4] != 0) {
+                    memory[0][memory[0][4]] = value;
+                }
+                return;
             case 1:
                 // Zugriff auf TMR0
                 // TODO: Benoetigt zwei extra Zyklen
