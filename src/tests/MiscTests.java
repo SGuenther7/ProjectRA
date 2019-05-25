@@ -164,15 +164,9 @@ public class MiscTests {
         peon.feed(nop);
         peon.feed(call);
 
-        peon.next();
-        peon.next();
-        peon.next();
-        peon.next();
-        peon.next();
-        peon.next();
-        peon.next();
-        peon.next();
-        peon.next();
+        for (int i = 0; i < 17; i++) {
+            peon.next();
+        }
 
         assertEquals(true, peon.getStack().isOverflow());
     }
