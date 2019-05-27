@@ -308,6 +308,8 @@ public class Main {
         labels[24].setText("" + getCurrentState().getMemory().getPS0());
         labels[26].setText("" + getCurrentState().getMemory().getPS1());
         labels[28].setText("" + getCurrentState().getMemory().getPS2());
+
+        view.getStatus().setText("Cycles : " + getCurrentState().getCycles());
     }
 
     private void updateButtons() {
@@ -331,6 +333,7 @@ public class Main {
      * Aktualisiert Befehls Liste, Highlighting der Liste, Button Verfuegbarkeit und Register Inhalte.
      */
     public void update() {
+
 
         if (states.size() > 0) {
             updateLabels();
@@ -418,7 +421,7 @@ public class Main {
     public static void main(String args[]) {
         Main manager = new Main();
         manager.start();
-        manager.debug();
+        //manager.debug();
     }
 }
 
