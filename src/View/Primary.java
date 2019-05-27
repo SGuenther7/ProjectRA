@@ -3,6 +3,8 @@ package View;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -24,6 +26,8 @@ public class Primary {
     private JPanel systemPanel;
     private JPanel statusPanel;
     private JPanel optionPanel;
+
+    private JTable mem;
 
     private JScrollPane instructionView;
 
@@ -110,8 +114,6 @@ public class Primary {
     private JButton portBPinBit6;
     private JButton portBPinBit7;
 
-    // TODO: TRIS und PORT (A und B) in externen Feld (mit Klickbarkeit)
-
     private JLabel status;
     private JList instructions;
 
@@ -174,6 +176,34 @@ public class Primary {
         initializeSystemLabels();
         initializeStatusLabels();
         initializeOptionLabels();
+    }
+
+    private void jtableEXP() {
+        // Java == good :)))
+        String[] names = {"0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"};
+        Object[][] values = new Object[24][8];
+
+        for (int i = 0; i < values.length; i++) {
+            for (int o = 0; o < values[0].length; o++) {
+                values[i][o] = 0;
+            }
+        }
+
+        mem = new JTable(values, names);
+        mem.setTableHeader(null);
+        mem.setFillsViewportHeight(true);
+
+        registers.add(mem);
+        mem.setBounds(0,180,1500,1500);
+        mem.setRowHeight(8);
+        mem.setRowMargin(0);
+        mem.setShowGrid(false);
+        //mem.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        mem.setBackground(new Color(200, 200, 200));
+
+        for (int i = 0; i < 24 ; i++) {
+            mem.getColumnModel().getColumn(i).setMaxWidth(35);
+        }
     }
 
     private void initializeSystemLabels() {

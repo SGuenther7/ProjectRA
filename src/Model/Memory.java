@@ -174,6 +174,18 @@ public class Memory {
         return (memory[1][1] & 4) > 0 ? 1: 0;
     }
 
+    public int getGIE() {
+        return (memory[0][12] & 128) > 0 ? 1: 0;
+    }
+
+    public int getT0IE() {
+        return (memory[0][12] & 32) > 0 ? 1: 0;
+    }
+
+    public int getT0IF() {
+        return (memory[0][12] & 32) > 0 ? 1: 0;
+    }
+
     public void print() {
         for (int y = 0; y < memory.length; y++) {
             for (int x = 0; x < memory[0].length; x++) {

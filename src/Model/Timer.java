@@ -63,7 +63,7 @@ public class Timer {
 
     private void tickTMR() {
         // Wird von Befehlstakt beeinflusst ?
-        if (getSource() == 0) {
+        if (getSource() == 0 && peon.getMemory().getGIE() == 1 && peon.getMemory().getT0IE() == 1) {
             // Wurde tmrCounter nie gestetzt oder hatte reset ?
             if (tmrCounter == TIMER_COUNTER_DEFAULT || tmrCounter == 0) {
                 resetTMR0();
@@ -78,14 +78,23 @@ public class Timer {
 
                 // T0IF setzen
                 if (peon.getMemory().content()[0][1] == 256) {
-                    // TODO: Interrupt enable bin in INTCON abfragen
-                    peon.getMemory().content()[0][12] = peon.getMemory().content()[0][12] | 4;
                     peon.getMemory().content()[0][1] = 0;
+                    triggerTMRInterrupt();
                 }
             }
         } else {
             // TODO: Port abfragen
         }
+    }
+
+    private void triggerTMRInterrupt() {
+        // Setze T0IF
+        System.out.println(peon.getMemory().content()[0][12]);
+        peon.getMemory().content()[0][12] = peon.getMemory().content()[0][12] | 4;
+        System.out.println(peon.getMemory().content()[0][12]);
+        // Springe zu Interrupt Adresse
+        peon.setCurrent(4);
+        peon.getMemory().content()[0][2] = 4;
     }
 
     private void resetTMR0() {

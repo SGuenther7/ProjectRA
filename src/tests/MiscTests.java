@@ -338,17 +338,48 @@ public class MiscTests {
         // bit 2 in INTCON gesetzt ?
         Worker peon = new Worker();
 
+        // Setze Interrupt Bits
+        peon.getMemory().content()[0][12] = 160;
+
         Command nop = new Command(Instruction.NOP, new int[]{});
         Command jump = new Command(Instruction.GOTO, new int[]{0});
 
         peon.feed(nop);
         peon.feed(jump);
+        peon.feed(nop);
+        peon.feed(nop);
+        peon.feed(nop);
+        peon.feed(nop);
 
-        for (int i = 0; i < 257; i++) {
+        for (int i = 0; i < 256; i++) {
             peon.next();
         }
 
-        assertEquals(4, peon.getMemory().content()[0][12]);
+        assertEquals(164, peon.getMemory().content()[0][12]);
+    }
+
+    @Test
+    void interruptJump() {
+        Worker peon = new Worker();
+
+        // Setze Interrupt Bits
+        peon.getMemory().content()[0][12] = 160;
+
+        Command nop = new Command(Instruction.NOP, new int[]{});
+        Command jump = new Command(Instruction.GOTO, new int[]{0});
+
+        peon.feed(nop);
+        peon.feed(jump);
+        peon.feed(nop);
+        peon.feed(nop);
+        peon.feed(nop);
+        peon.feed(nop);
+
+        for (int i = 0; i < 256; i++) {
+            peon.next();
+        }
+
+        assertEquals(5, peon.getCurrent());
     }
 }
 

@@ -403,6 +403,7 @@ public class Worker {
         // Timer updaten
         timer.tick();
         updateCurrent();
+        //handleInterrupt();
     }
 
     public void next() {
@@ -557,5 +558,9 @@ public class Worker {
             System.out.print(element.getInstruction() + " ");
         }
         System.out.println();
+    }
+
+    public void setCurrent(int current) {
+        this.current = current;
     }
 }
