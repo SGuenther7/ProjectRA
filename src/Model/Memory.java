@@ -86,9 +86,9 @@ public class Memory {
                 return;
             case 1:
                 // Zugriff auf TMR0
-                // TODO: Benoetigt zwei extra Zyklen
                 // TODO: Setzt Vorteiler zurueck falls
                 //       TMR0 ihn hat.
+                peon.setCycles(peon.getCycles() + 1);
                 break;
             case 2:
                 // PCL oder PCLATH wurde beschrieben

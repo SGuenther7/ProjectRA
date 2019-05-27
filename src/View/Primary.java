@@ -143,8 +143,8 @@ public class Primary {
 
         status = new JLabel();
         status.setBounds(14, 392, 300, 16);
+        status.setText("hello, I'm underwater.");
 
-        status.setBackground(Color.BLUE);
         status.setForeground(Color.GRAY);
         operations.add(status);
 

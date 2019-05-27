@@ -14,6 +14,8 @@ public class Worker {
     private Port portA;
     private Port portB;
 
+    private int cycles;
+
     private Timer timer;
 
     // TODO: Current setzt sich aus PCL und PCLATH zusammen
@@ -29,7 +31,8 @@ public class Worker {
         portA = new Port();
         portB = new Port();
 
-        this.current = 0;
+        current = 0;
+        cycles = 0;
     }
 
     public Worker(int working) {
@@ -43,11 +46,15 @@ public class Worker {
     }
 
     public Worker(int working, Memory memory, ArrayList<Command> counter, Stack stack, int current) {
-        this.working = working;
-        this.memory = memory;
+        this(working,memory);
         this.counter = counter;
         this.stack = stack;
         this.current = current;
+    }
+
+    public Worker(int working, Memory memory, ArrayList<Command> counter, Stack stack, int current, int cycles) {
+        this(working,memory,counter,stack,current);
+        this.cycles = cycles;
     }
 
     public Worker(Worker clone) {
@@ -62,6 +69,7 @@ public class Worker {
 
         this.stack = new Stack(clone.stack);
         this.current = clone.getCurrent();
+        this.cycles = clone.getCycles();
     }
 
     public boolean feed(ArrayList<Command> container) {
@@ -400,10 +408,9 @@ public class Worker {
                 break;
         }
 
-        // Timer updaten
+        this.cycles += counter.get(i).getCycles();
         timer.tick();
         updateCurrent();
-        //handleInterrupt();
     }
 
     public void next() {
@@ -562,5 +569,13 @@ public class Worker {
 
     public void setCurrent(int current) {
         this.current = current;
+    }
+
+    public int getCycles() {
+        return cycles;
+    }
+
+    public void setCycles(int cycles) {
+        this.cycles = cycles;
     }
 }

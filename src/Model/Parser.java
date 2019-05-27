@@ -71,6 +71,19 @@ public class Parser {
 		return result;
 	}
 
+	public static int getCycles(Instruction inst) {
+		switch (inst) {
+			case CALL:
+			case GOTO:
+			case RETFIE:
+			case RETLW:
+			case RETURN:
+				return 2;
+		}
+
+	    return 1;
+	}
+
 	public static Command parse(String line) throws NullPointerException {
 
 		Instruction instruction = null;
@@ -223,8 +236,6 @@ public class Parser {
 			break;
 		}
 
-		Command c = new Command(instruction, value);
-
-		return c;
+		return new Command(instruction, value,getCycles(instruction));
 	}
 }

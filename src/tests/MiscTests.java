@@ -381,6 +381,28 @@ public class MiscTests {
 
         assertEquals(5, peon.getCurrent());
     }
+
+    @Test
+    void checkCycles() {
+        Worker peon = new Worker();
+        Command nop = new Command(Instruction.NOP, new int[]{});
+        peon.feed(nop);
+        peon.feed(nop);
+        peon.next();
+        peon.next();
+        assertEquals(2, peon.getCycles());
+    }
+
+    @Test
+    void checkTMRAccessCycles() {
+        Worker peon = new Worker(1);
+        Command set = new Command(Instruction.MOVWF, new int[]{1});
+
+        peon.feed(set);
+        assertEquals(0,peon.getCycles());
+        peon.next();
+        assertEquals(2,peon.getCycles());
+    }
 }
 
 

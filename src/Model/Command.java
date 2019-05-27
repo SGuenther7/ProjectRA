@@ -3,6 +3,7 @@ package Model;
 public class Command {
     private Instruction instruction;
     private int value[];
+    private int cycles = 1;
 
     private boolean next;
     private boolean selected;
@@ -11,6 +12,11 @@ public class Command {
     public Command(Instruction instruction, int value[]) {
         this.instruction = instruction;
         this.value = value;
+    }
+
+    public Command(Instruction instruction, int value[], int cycles) {
+        this(instruction,value);
+        this.cycles = cycles;
     }
 
     public Instruction getInstruction() {
@@ -88,5 +94,13 @@ public class Command {
         }
 
         return true;
+    }
+
+    public int getCycles() {
+        return cycles;
+    }
+
+    public void setCycles(int cycles) {
+        this.cycles = cycles;
     }
 }
