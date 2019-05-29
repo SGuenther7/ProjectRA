@@ -7,9 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Parser {
-
 	public static ArrayList<String> load(String path) {
-
 		BufferedReader re;
 		ArrayList<String> sentences = new ArrayList<String>();
 
@@ -32,7 +30,6 @@ public class Parser {
 	}
 
 	public static ArrayList<String> cut(ArrayList<String> lines) throws NullPointerException {
-
 		ArrayList<String> temp = new ArrayList<String>();
 		for (int i = 0; i < lines.size(); i++) {
 			if (Character.isDigit(lines.get(i).charAt(0))) {
@@ -44,7 +41,6 @@ public class Parser {
 	}
 
 	public static String cut(String line) throws NullPointerException {
-
 		ArrayList<String> wrapper = new ArrayList<>();
 		wrapper.add(line);
 
@@ -59,7 +55,6 @@ public class Parser {
 	}
 
 	public static ArrayList<Command> parseMultible(ArrayList<String> lines) throws NullPointerException {
-
 	    ArrayList<Command> result = new ArrayList<>();
 
 		for (String line : lines) {
@@ -236,6 +231,6 @@ public class Parser {
 			break;
 		}
 
-		return new Command(instruction, value,getCycles(instruction));
+		return new Command(instruction, value, getCycles(instruction));
 	}
 }

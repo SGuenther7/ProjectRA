@@ -598,6 +598,10 @@ public class Worker {
         return true;
     }
 
+    public Timer getTimer() {
+        return timer;
+    }
+
     public Port getPortA() {
         return portA;
     }

@@ -327,58 +327,6 @@ assertEquals(2, peon.getWorking());
         assertEquals(1,peon.getMemory().content()[0][5]);
     }
 
-    @Test
-    void tmrTest() {
-        // Setze 4 bit in INTCON (enable interrupt)
-        //nop
-        // goto
-        // while n < 256
-        // bit 2 in INTCON gesetzt ?
-        Worker peon = new Worker();
-
-        // Setze Interrupt Bits
-        peon.getMemory().content()[0][12] = 160;
-
-        Command nop = new Command(Instruction.NOP, new int[]{});
-        Command jump = new Command(Instruction.GOTO, new int[]{0});
-
-        peon.feed(nop);
-        peon.feed(jump);
-        peon.feed(nop);
-        peon.feed(nop);
-        peon.feed(nop);
-        peon.feed(nop);
-
-        for (int i = 0; i < 256; i++) {
-            peon.next();
-        }
-
-        assertEquals(164, peon.getMemory().content()[0][12]);
-    }
-
-    @Test
-    void interruptJump() {
-        Worker peon = new Worker();
-
-        // Setze Interrupt Bits
-        peon.getMemory().content()[0][12] = 160;
-
-        Command nop = new Command(Instruction.NOP, new int[]{});
-        Command jump = new Command(Instruction.GOTO, new int[]{0});
-
-        peon.feed(nop);
-        peon.feed(jump);
-        peon.feed(nop);
-        peon.feed(nop);
-        peon.feed(nop);
-        peon.feed(nop);
-
-        for (int i = 0; i < 256; i++) {
-            peon.next();
-        }
-
-        assertEquals(5, peon.getCurrent());
-    }
 
     @Test
     void checkCycles() {
@@ -400,6 +348,259 @@ assertEquals(2, peon.getWorking());
         assertEquals(0,peon.getCycles());
         peon.next();
         assertEquals(2,peon.getCycles());
+    }
+
+    @Test
+    void watchdogReset() {
+        Worker peon = new Worker();
+
+        Command nop = new Command(Instruction.NOP, new int[]{});
+        Command jump = new Command(Instruction.GOTO, new int[]{0});
+
+        peon.feed(nop);
+        peon.feed(jump);
+
+        // Starte WDT
+        peon.getTimer().wdtEnabled = true;
+
+        for (int i = 0; i < 18001; i++) {
+            peon.next();
+        }
+
+        assertEquals(true, peon.getTimer().reset);
+    }
+
+    @Test
+    void watchdogScalerAllReset() {
+        Worker peon = new Worker();
+
+        Command nop = new Command(Instruction.NOP, new int[]{});
+        Command jump = new Command(Instruction.GOTO, new int[]{0},2);
+
+        peon.feed(nop);
+        peon.feed(jump);
+
+        // Starte WDT
+        peon.getTimer().wdtEnabled = true;
+
+        // TMR auf Port, Prescaler auf 128 und WDT
+        peon.getMemory().content()[1][2] = 0b0101111;
+
+        for (int i = 1; i < 2304000; i++) {
+            peon.next();
+        }
+        assertEquals(false, peon.getTimer().reset);
+
+        peon.next();
+        assertEquals(true, peon.getTimer().reset);
+    }
+
+    @Test
+    void watchdogScalerHalfReset() {
+        Worker peon = new Worker();
+
+        Command nop = new Command(Instruction.NOP, new int[]{});
+        Command jump = new Command(Instruction.GOTO, new int[]{0});
+
+        peon.feed(nop);
+        peon.feed(jump);
+
+        // Starte WDT
+        peon.getTimer().wdtEnabled = true;
+
+        // TMR auf Port, Prescaler auf 8 und WDT
+        peon.getMemory().content()[1][2] = 0b101011;
+
+        for (int i = 1; i < 144000; i++) {
+            peon.next();
+        }
+        assertEquals(false, peon.getTimer().reset);
+
+        peon.next();
+        assertEquals(true, peon.getTimer().reset);
+    }
+
+
+    @Test
+    void timerScalerFullTest() {
+        Worker peon = new Worker();
+
+        // GOTO hier als 1-Zyclus befehl
+        Command jump = new Command(Instruction.GOTO, new int[]{0});
+        Command nop = new Command(Instruction.NOP, new int[]{});
+
+        peon.feed(nop);
+        peon.feed(jump);
+
+        // Prescaler auf 128 und TMR
+        peon.getMemory().content()[1][2] = 0b00111;
+
+        for (int i = 1; i < 65536; i++) {
+            peon.next();
+        }
+        assertEquals(0,peon.getMemory().content()[0][12] & 4);
+        peon.next();
+        assertEquals(4,peon.getMemory().content()[0][12] & 4);
+    }
+
+
+    @Test
+    void timerScalerHalfTest() {
+        Worker peon = new Worker();
+
+        // GOTO hier als 1-Zyclus befehl
+        Command jump = new Command(Instruction.GOTO, new int[]{0});
+        Command nop = new Command(Instruction.NOP, new int[]{});
+
+        peon.feed(nop);
+        peon.feed(jump);
+
+        // Prescaler auf 8 und TMR
+        peon.getMemory().content()[1][2] = 0b00011;
+
+        // 256 * 16
+        for (int i = 1; i < 4096; i++) {
+            peon.next();
+        }
+        assertEquals(0,peon.getMemory().content()[0][12] & 4);
+        peon.next();
+        assertEquals(4,peon.getMemory().content()[0][12] & 4);
+    }
+
+    @Test
+    void timerJustScalerTest() {
+        Worker peon = new Worker();
+
+        // GOTO hier als 1-Zyclus befehl
+        Command jump = new Command(Instruction.GOTO, new int[]{0});
+        Command nop = new Command(Instruction.NOP, new int[]{});
+
+        peon.feed(nop);
+        peon.feed(jump);
+
+        // Prescaler auf 0 und TMR
+        peon.getMemory().content()[1][2] = 0;
+
+        // 256 *  1
+        for (int i = 1; i < 256; i++) {
+            peon.next();
+        }
+        assertEquals(0,peon.getMemory().content()[0][12] & 4);
+        peon.next();
+        assertEquals(4,peon.getMemory().content()[0][12] & 4);
+    }
+
+    @Test
+    void timerPresetTest() {
+        Worker peon = new Worker();
+
+        // GOTO hier als 1-Zyclus befehl
+        Command jump = new Command(Instruction.GOTO, new int[]{0});
+        Command nop = new Command(Instruction.NOP, new int[]{});
+
+        peon.feed(nop);
+        peon.feed(jump);
+
+        // Prescaler auf 0 und WDT
+        peon.getMemory().content()[1][2] = 0b1000;
+
+        // Timer Register vor setzten
+        peon.getMemory().content()[0][1] = 128;
+
+        // (256 - 128)  *  1
+        for (int i = 1; i < 128; i++) {
+            peon.next();
+        }
+        assertEquals(0,peon.getMemory().content()[0][12] & 4);
+        peon.next();
+        assertEquals(4,peon.getMemory().content()[0][12] & 4);
+    }
+
+    @Test
+    void timerPresetWithScalerTest() {
+        Worker peon = new Worker();
+
+        // GOTO hier als 1-Zyclus befehl
+        Command jump = new Command(Instruction.GOTO, new int[]{0});
+        Command nop = new Command(Instruction.NOP, new int[]{});
+
+        peon.feed(nop);
+        peon.feed(jump);
+
+        // Prescaler auf 256 und TMR
+        peon.getMemory().content()[1][2] = 0b0111;
+
+        // Timer Register vor setzten
+        peon.getMemory().content()[0][1] = 128;
+
+        // (256 - 128)  *  256
+        for (int i = 1; i < 32768; i++) {
+            peon.next();
+        }
+        assertEquals(0,peon.getMemory().content()[0][12] & 4);
+        peon.next();
+        assertEquals(4,peon.getMemory().content()[0][12] & 4);
+    }
+
+    @Test
+    void timerTest() {
+        Worker peon = new Worker();
+
+        // TMR auf Clock, Prescaler auf WDT
+        peon.getMemory().content()[1][2] = 0b1000;
+
+        Command nop = new Command(Instruction.NOP, new int[]{});
+        Command jump = new Command(Instruction.GOTO, new int[]{0});
+
+        peon.feed(nop);
+        peon.feed(jump);
+
+        // Kein Vorteiler, also 255 + 1 fuer Ueberfluss
+        for (int i = 1; i < 256; i++) {
+            peon.next();
+        }
+        assertEquals(0, peon.getMemory().content()[0][12] & 4);
+        peon.next();
+        assertEquals(4,peon.getMemory().content()[0][12] & 4);
+    }
+
+    @Test
+    void timerCloseToOverflowTest() {
+        // Scaler gesetzt, kurz vor ueberfluss
+        // aber ueber standard wert
+    }
+
+    @Test
+    void timerScalerResetTest(){
+        // Scaler gesetzt, kurz vor ueberfluss
+        // aber ueber standard wert
+    }
+
+    @Test
+    void interruptJumpTest() {
+        Worker peon = new Worker();
+
+        // Setze Interrupt Bits
+        peon.getMemory().content()[0][12] = 160;
+
+        // Setze Vorteiler
+        peon.getMemory().content()[1][2] = 0b0;
+
+        Command nop = new Command(Instruction.NOP, new int[]{});
+        Command jump = new Command(Instruction.GOTO, new int[]{0});
+
+        peon.feed(nop);
+        peon.feed(jump);
+        peon.feed(nop);
+        peon.feed(nop);
+        peon.feed(nop);
+        peon.feed(nop);
+
+        for (int i = 0; i < 256; i++) {
+            peon.next();
+        }
+
+        assertEquals(4, peon.getCurrent());
     }
 }
 
