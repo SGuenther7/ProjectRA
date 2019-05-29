@@ -62,11 +62,10 @@ public class Main {
             public void mouseReleased(MouseEvent e) {
                 JList list = (JList) e.getSource();
                 int index = list.locationToIndex(e.getPoint());
-
                 try {
                     states.get(current).getCounter().get(index).toggleBreakpoint();
+                    view.getList().repaint();
                 } catch (IndexOutOfBoundsException b) {
-                    System.out.println("lol");
                 }
 
                 super.mouseReleased(e);
@@ -423,7 +422,7 @@ public class Main {
     public static void main(String args[]) {
         Main manager = new Main();
         manager.start();
-        manager.debug();
+        //manager.debug();
     }
 }
 
