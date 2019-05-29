@@ -14,7 +14,7 @@ public class Main {
     private ArrayList<Worker> states;
     private Primary view;
     private int current = 0;
-    private Thread runner;
+    private Thread runner = null;
 
     private void debug() {
         this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST");
@@ -22,11 +22,6 @@ public class Main {
     }
 
     public void start() {
-        runner = new Thread() {
-            public void run() {
-                Main.this.run();
-            }
-        };
 
         view = new Primary();
         view.initialize();
@@ -40,13 +35,16 @@ public class Main {
     private void initialiseActionListeners(Primary view) {
         JButton buttons[] = view.getButtons();
         buttons[0].addActionListener(e -> {
-            //this.run();
-            this.runner.start();
-            this.update();
+            runner = new Thread() {
+                public void run() {
+                    Main.this.run();
+                }
+            };
+            runner.start();
+            //this.update();
         });
         buttons[1].addActionListener(e -> {
-            this.stop();
-            this.update();
+            this.interrupt();
         });
         buttons[2].addActionListener(e -> {
             this.forward();
@@ -234,33 +232,33 @@ public class Main {
         }
 
         // Waerend nicht am Ende
-        while (getCurrentState().getCurrent() < getCurrentState().getCounter().size()) {
-
-            // Ist breakpoint oder GOTO ?
-            if (getCurrentState().getCounter().get(getCurrentState().getCurrent()).isBreakpoint() ||
-                    getCurrentState().getCounter().get(getCurrentState().getCurrent()).getInstruction() == Instruction.GOTO) {
-                break;
+        while (!runner.interrupted() && getCurrentState().hasNext()) {
+            if (getCurrentState().isBreakpoint()) {
+                resetThread();
+                return;
             }
 
-            // Naechsten Befehl ausfuehren
-            states.add(new Worker(states.get(current)));
-            current++;
-            states.get(current).next();
+            forward();
+            update();
 
-            // DEBUG
             try {
-                Thread.sleep(1000);
+                runner.sleep(1000);
             } catch (InterruptedException e) {
-
+                Thread.currentThread().interrupt();
+                runner = null;
             }
         }
-
-        update();
     }
 
-    private void stop() {
-        // TODO: Thread mit run() stoppen
+    private void interrupt() {
+        if(runner != null) {
+            runner.interrupt();
+        }
+    }
+
+    private void resetThread() {
         runner.interrupt();
+        runner = null;
     }
 
     private void forward() {

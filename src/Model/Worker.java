@@ -458,6 +458,20 @@ public class Worker {
         return (getCurrent() < counter.size() - 1 || isJump(getCounter().get(getCurrent()).getInstruction()));
     }
 
+    public boolean isJump() {
+        return isJump(getCounter().get(getCurrent()).getInstruction());
+    }
+
+    public boolean isBreakpoint(Command command) {
+        return command.isBreakpoint();
+    }
+
+    public boolean isBreakpoint() {
+        return isBreakpoint(getCounter().get(getCurrent()));
+    }
+
+
+
     public boolean isJump(Instruction instruction) {
 
         switch (instruction) {
