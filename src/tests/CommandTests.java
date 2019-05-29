@@ -323,7 +323,7 @@ class CommandTests {
 	void CALLTest() {
 		Worker peon = new Worker(2);
 
-        Command call = new Command(Instruction.CALL, new int[]{1});
+        Command call = new Command(Instruction.CALL, new int[]{2});
 		Command clr = new Command(Instruction.CLRW, new int[]{});
 		Command nop = new Command(Instruction.NOP, new int[]{});
 		Command ret = new Command(Instruction.RETURN, new int[]{});
@@ -334,7 +334,7 @@ class CommandTests {
 		peon.feed(ret);
 		peon.feed(nop);	// Das setNext() in next() kein OOB wirft
 
-		// Springe von 0 auf 2 (starte bei 1 + PC inc.)
+		// Springe von 0 auf 2
 		peon.next();
 		// CLR wurde uebersprungen, lande auf NOP
 		peon.next();
@@ -356,7 +356,7 @@ class CommandTests {
 		peon.feed(ret);
 		peon.next();
 
-		assertEquals(5,peon.getCurrent());
+		assertEquals(4,peon.getCurrent());
 	}
 
 

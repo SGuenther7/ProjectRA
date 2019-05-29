@@ -93,7 +93,6 @@ public class Worker {
     }
 
     public void execute(int i) {
-
         Command command = counter.get(i);
         int result;
 
@@ -324,6 +323,7 @@ public class Worker {
                 // TODO: imp. + test
                 if (stack.size() > 0) {
                     memory.content()[0][2] = (int) stack.pop();
+                    current = memory.content()[0][2];
                 }
 
                 // Timer und cycles laufen weiter,
@@ -418,7 +418,7 @@ public class Worker {
                 break;
             case CALL:
                 // Var : k
-                stack.push(getCurrent());
+                stack.push(getCurrent()+1);
             case GOTO:
                 // Var : k
                 //memory.content()[0][2] = counter.get(i).getValue()[0];
