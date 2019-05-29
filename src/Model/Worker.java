@@ -313,13 +313,25 @@ public class Worker {
                 break;
             case RETFIE:
                 // TODO: imp. + test
-                break;
+
+                // Timer und cycles laufen weiter,
+                // PC wird nicht inkrementiert.
+                this.cycles += counter.get(i).getCycles();
+                timer.tick();
+
+                return;
             case RETURN:
                 // TODO: imp. + test
                 if (stack.size() > 0) {
                     memory.content()[0][2] = (int) stack.pop();
                 }
-                break;
+
+                // Timer und cycles laufen weiter,
+                // PC wird nicht inkrementiert.
+                this.cycles += counter.get(i).getCycles();
+                timer.tick();
+
+                return;
             case SLEEP:
                 // Flag : TO, TP
                 // TODO: imp. + test
@@ -380,7 +392,13 @@ public class Worker {
             case RETLW:
                 // Var : k
                 // TODO: imp. + test
-                break;
+
+                // Timer und cycles laufen weiter,
+                // PC wird nicht inkrementiert.
+                this.cycles += counter.get(i).getCycles();
+                timer.tick();
+
+                return;
             case SUBLW:
                 // Var : k
                 // Flag : C, CD, Z
@@ -405,7 +423,13 @@ public class Worker {
                 // Var : k
                 //memory.content()[0][2] = counter.get(i).getValue()[0];
                 memory.set(0,2, counter.get(i).getValue()[0]);
-                break;
+
+                // Timer und cycles laufen weiter,
+                // PC wird nicht inkrementiert.
+                this.cycles += counter.get(i).getCycles();
+                timer.tick();
+
+                return;
         }
 
         this.cycles += counter.get(i).getCycles();
@@ -430,7 +454,21 @@ public class Worker {
     }
 
     public boolean hasNext() {
-        return (getCurrent() < counter.size() - 1);
+
+        return (getCurrent() < counter.size() - 1 || isJump(getCounter().get(getCurrent()).getInstruction()));
+    }
+
+    public boolean isJump(Instruction instruction) {
+
+        switch (instruction) {
+            case GOTO:
+            case CALL:
+            case RETURN:
+            case RETFIE:
+            case RETLW:
+                return true;
+        }
+        return false;
     }
 
     public boolean handleZeroFlag(int value) {
