@@ -90,6 +90,7 @@ public class Timer {
 
                     // Sind interrupts enabled ?
                     if(peon.getMemory().getGIE() == 1 && peon.getMemory().getT0IE() == 1) {
+                        System.out.println("ya");
                         triggerTMRInterrupt();
                     }
                 }
@@ -101,9 +102,7 @@ public class Timer {
 
     private void triggerTMRInterrupt() {
         // Setze T0IF
-        System.out.println(peon.getMemory().content()[0][12]);
         peon.getMemory().content()[0][12] = peon.getMemory().content()[0][12] | 4;
-        System.out.println(peon.getMemory().content()[0][12]);
         // Springe zu Interrupt Adresse
         peon.setCurrent(4);
         peon.getMemory().content()[0][2] = 4;

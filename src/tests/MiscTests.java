@@ -481,8 +481,8 @@ assertEquals(2, peon.getWorking());
         // Prescaler auf 0 und TMR
         peon.getMemory().content()[1][2] = 0;
 
-        // 256 *  1
-        for (int i = 1; i < 256; i++) {
+        // 256 *  2
+        for (int i = 1; i < 512; i++) {
             peon.next();
         }
         assertEquals(0,peon.getMemory().content()[0][12] & 4);
@@ -568,12 +568,58 @@ assertEquals(2, peon.getWorking());
     void timerCloseToOverflowTest() {
         // Scaler gesetzt, kurz vor ueberfluss
         // aber ueber standard wert
+        Worker peon = new Worker();
+
+        // TMR auf Clock, Prescaler auf WDT
+        peon.getMemory().content()[1][2] = 0b1000;
+
+        Command nop = new Command(Instruction.NOP, new int[]{});
+        Command jump = new Command(Instruction.GOTO, new int[]{0});
+
+        peon.feed(nop);
+        peon.feed(jump);
+
+        // Kein Vorteiler, also 255 + 1 fuer Ueberfluss
+        for (int i = 1; i < 131; i++) {
+            peon.next();
+        }
+        assertEquals(0, peon.getMemory().content()[0][12] & 4);
     }
 
     @Test
     void timerScalerResetTest(){
-        // Scaler gesetzt, kurz vor ueberfluss
-        // aber ueber standard wert
+        Worker peon = new Worker();
+
+        // TMR auf Clock, Prescaler auf WDT
+        peon.getMemory().content()[1][2] = 0b1000;
+
+        Command nop = new Command(Instruction.NOP, new int[]{});
+        Command jump = new Command(Instruction.GOTO, new int[]{0});
+        Command reset = new Command(Instruction.CLRF, new int[]{1});
+
+        peon.feed(nop);
+        peon.feed(jump);
+
+        // Kein Vorteiler, also 255 + 1 fuer Ueberfluss
+        for (int i = 1; i < 254; i++) {
+            peon.next();
+        }
+
+        // PC zuruecksetzen
+        peon.feed(reset);
+        peon.getMemory().content()[0][2] = 2;
+        peon.setCurrent(2);
+        peon.next();
+
+        peon.feed(jump);
+        peon.next();
+
+        // Kein Vorteiler, also 255 + 1 fuer Ueberfluss
+        for (int i = 1; i < 16; i++) {
+            peon.next();
+        }
+
+        assertEquals(0, peon.getMemory().content()[0][12] & 4);
     }
 
     @Test
@@ -594,12 +640,12 @@ assertEquals(2, peon.getWorking());
         peon.feed(nop);
         peon.feed(nop);
         peon.feed(nop);
-        peon.feed(nop);
 
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < 258; i++) {
             peon.next();
         }
 
+        System.out.println(peon.getCurrent());
         assertEquals(4, peon.getCurrent());
     }
 }
