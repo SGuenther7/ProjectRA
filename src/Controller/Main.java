@@ -22,7 +22,6 @@ public class Main {
     }
 
     public void start() {
-
         view = new Primary();
         view.initialize();
         this.initialiseActionListeners(view);
@@ -35,13 +34,7 @@ public class Main {
     private void initialiseActionListeners(Primary view) {
         JButton buttons[] = view.getButtons();
         buttons[0].addActionListener(e -> {
-            runner = new Thread() {
-                public void run() {
-                    Main.this.run();
-                }
-            };
-            runner.start();
-            //this.update();
+            startThread();
         });
         buttons[1].addActionListener(e -> {
             this.interrupt();
@@ -222,10 +215,21 @@ public class Main {
         return ((target & bit) > 0);
     }
 
+    private void startThread() {
+        if(runner != null) {
+            return;
+        }
+
+        runner = new Thread() {
+            public void run() {
+                Main.this.run();
+            }
+        };
+
+        runner.start();
+    }
 
     private void run() {
-        // TODO: Execute bis Ende, dann update()
-
         // Ist eine .LST Datei geladen ?
         if (states.size() == 0) {
             return;
@@ -242,7 +246,7 @@ public class Main {
             update();
 
             try {
-                runner.sleep(1000);
+                runner.sleep(1000); // TODO: Zeit einstellbar ?
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 runner = null;
@@ -419,7 +423,7 @@ public class Main {
     public static void main(String args[]) {
         Main manager = new Main();
         manager.start();
-        //manager.debug();
+        manager.debug();
     }
 }
 
