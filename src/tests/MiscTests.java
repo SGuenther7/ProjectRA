@@ -641,11 +641,10 @@ assertEquals(2, peon.getWorking());
         peon.feed(nop);
         peon.feed(nop);
 
-        for (int i = 0; i < 258; i++) {
+        for (int i = 0; i < 512; i++) {
             peon.next();
         }
 
-        System.out.println(peon.getCurrent());
         assertEquals(4, peon.getCurrent());
     }
 }

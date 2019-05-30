@@ -328,9 +328,8 @@ public class Worker {
 
                 // Timer und cycles laufen weiter,
                 // PC wird nicht inkrementiert.
-                this.cycles += counter.get(i).getCycles();
-                timer.tick();
-
+                updateCycles(i);
+                updateTimer();
                 return;
             case SLEEP:
                 // Flag : TO, TP
@@ -395,9 +394,9 @@ public class Worker {
 
                 // Timer und cycles laufen weiter,
                 // PC wird nicht inkrementiert.
-                this.cycles += counter.get(i).getCycles();
-                timer.tick();
 
+                updateCycles(i);
+                updateTimer();
                 return;
             case SUBLW:
                 // Var : k
@@ -421,20 +420,26 @@ public class Worker {
                 stack.push(getCurrent()+1);
             case GOTO:
                 // Var : k
-                //memory.content()[0][2] = counter.get(i).getValue()[0];
                 memory.set(0,2, counter.get(i).getValue()[0]);
 
                 // Timer und cycles laufen weiter,
                 // PC wird nicht inkrementiert.
-                this.cycles += counter.get(i).getCycles();
-                timer.tick();
-
+                updateCycles(i);
+                updateTimer();
                 return;
         }
 
-        this.cycles += counter.get(i).getCycles();
-        timer.tick();
+        updateCycles(i);
+        updateTimer();
         updateCurrent();
+    }
+
+    public void updateCycles(int index) {
+        this.cycles += counter.get(index).getCycles();
+    }
+
+    public void updateTimer() {
+        timer.tick();
     }
 
     public void next() {
@@ -445,16 +450,7 @@ public class Worker {
         }
     }
 
-    public void run() {
-
-        // TODO: Break points (?)
-        while (hasNext() && getCurrent() != counter.size() - 1) {
-            next();
-        }
-    }
-
     public boolean hasNext() {
-
         return (getCurrent() < counter.size() - 1 || isJump(getCounter().get(getCurrent()).getInstruction()));
     }
 
@@ -470,10 +466,7 @@ public class Worker {
         return isBreakpoint(getCounter().get(getCurrent()));
     }
 
-
-
     public boolean isJump(Instruction instruction) {
-
         switch (instruction) {
             case GOTO:
             case CALL:

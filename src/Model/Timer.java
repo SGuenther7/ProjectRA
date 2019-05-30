@@ -39,19 +39,29 @@ public class Timer {
     }
 
     public void tick() {
-        tickWDT();
-        tickTMR();
+        tickWDT(fetchCycles());
+        tickTMR(fetchCycles());
     }
 
-    public void tickWDT() {
-        if (wdtEnabled) {
+    public void tick(int cycles) {
+        tickWDT(cycles);
+        tickTMR(cycles);
+    }
 
+    public void tickWDT(int cycles) {
+        if (wdtEnabled) {
             if (wdtCounter == TIMER_COUNTER_DEFAULT) {
                 resetWatchdog();
             }
 
-            wdtCounter -= peon.getCounter().get(peon.getCurrent()).getCycles();
+            // Debug
+            try
+            {
+                // Zyklen von tmr Register runterrechnen
+                tmrCounter -= cycles;
+            } catch (IndexOutOfBoundsException e) {
 
+            }
             if (wdtCounter == 0) {
                 // TO Bit auf 0 setzen (alles ausser bit 4)
                 peon.getMemory().content()[0][3] = peon.getMemory().content()[0][3] & 248;
@@ -60,7 +70,7 @@ public class Timer {
         }
     }
 
-    private void tickTMR() {
+    private void tickTMR(int cycles) {
         // Wird von Befehlstakt beeinflusst ?
         if (getSource() == 0) {
             // Wurde tmrCounter nie gestetzt oder hatte reset ?
@@ -72,7 +82,7 @@ public class Timer {
             try
             {
                 // Zyklen von tmr Register runterrechnen
-                tmrCounter -= peon.getCounter().get(peon.getCurrent()).getCycles();
+                tmrCounter -= cycles;
             } catch (IndexOutOfBoundsException e) {
 
             }
@@ -90,7 +100,6 @@ public class Timer {
 
                     // Sind interrupts enabled ?
                     if(peon.getMemory().getGIE() == 1 && peon.getMemory().getT0IE() == 1) {
-                        System.out.println("ya");
                         triggerTMRInterrupt();
                     }
                 }
@@ -100,9 +109,18 @@ public class Timer {
         }
     }
 
+    private int fetchCycles() {
+        return peon.getCounter().get(peon.getCurrent()).getCycles();
+    }
+
     private void triggerTMRInterrupt() {
+        // TODO: Setze korrekte Bits (auch bei RETFIE)
         // Setze T0IF
         peon.getMemory().content()[0][12] = peon.getMemory().content()[0][12] | 4;
+
+        // Speichere PC in Stack
+        peon.getStack().push(peon.getCurrent());
+
         // Springe zu Interrupt Adresse
         peon.setCurrent(4);
         peon.getMemory().content()[0][2] = 4;
