@@ -114,7 +114,9 @@ public class Timer {
     }
 
     private void triggerTMRInterrupt() {
-        // TODO: Setze korrekte Bits (auch bei RETFIE)
+        // GIE ausschalten
+        peon.getMemory().content()[0][12] = peon.getMemory().content()[0][12] & 127;
+
         // Setze T0IF
         peon.getMemory().content()[0][12] = peon.getMemory().content()[0][12] | 4;
 

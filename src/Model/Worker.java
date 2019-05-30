@@ -315,6 +315,10 @@ public class Worker {
 
                 // Timer und cycles laufen weiter,
                 // PC wird nicht inkrementiert.
+                // TODO: GIE bit auf 1
+                // TODO: Adresse vom Stack holen
+
+
                 this.cycles += counter.get(i).getCycles();
                 timer.tick();
 
