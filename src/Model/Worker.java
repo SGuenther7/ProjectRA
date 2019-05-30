@@ -33,6 +33,9 @@ public class Worker {
 
         current = 0;
         cycles = 0;
+
+        // Option Register auf 1
+        memory.content()[1][2] = 255;
     }
 
     public Worker(int working) {
