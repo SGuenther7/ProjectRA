@@ -5,9 +5,14 @@ import Model.Parser;
 import Model.Worker;
 import View.Primary;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Main {
@@ -56,6 +61,12 @@ public class Main {
             this.update();
         });
 
+        // WDT Button
+        buttons[6].addActionListener(e -> {
+            getCurrentState().getTimer().toggleWDT();
+            view.toggleWDTButtonImage();
+        });
+
         // JList
         view.getJList().addMouseListener(new MouseAdapter() {
             @Override
@@ -71,7 +82,6 @@ public class Main {
                 super.mouseReleased(e);
             }
         });
-
 
         // Ports
         // TRIS A
@@ -170,8 +180,6 @@ public class Main {
                 }
             });
         }
-        /*
-         */
     }
 
     /**
@@ -215,7 +223,7 @@ public class Main {
     }
 
     private void startThread() {
-        if(runner != null) {
+        if (runner != null) {
             return;
         }
 
@@ -254,7 +262,7 @@ public class Main {
     }
 
     private void interrupt() {
-        if(runner != null) {
+        if (runner != null) {
             runner.interrupt();
         }
     }
@@ -331,7 +339,7 @@ public class Main {
     }
 
     /**
-     * Aktualisiert Befehls Liste, Highlighting der Liste, Button Verfuegbarkeit und Register Inhalte.
+     * Aktualisiert GUI Elemente mit jetzigem Worker Object (Befehls Liste, Highlighting der Liste, Button Verfuegbarkeit und Register Inhalte ...)
      */
     public void update() {
 
@@ -386,6 +394,9 @@ public class Main {
         }
     }
 
+    /**
+     * Ist Instruction ein Jump Befehl ?
+     */
     private boolean isJump(Instruction inst) {
         if (inst == Instruction.GOTO || inst == Instruction.CALL || inst == Instruction.RETURN || inst == Instruction.RETFIE || inst == Instruction.RETLW) {
             return true;

@@ -130,6 +130,10 @@ public class Timer {
         wdtCounter *= 18000;
     }
 
+    public boolean toggleWDT() {
+        return this.wdtEnabled = !wdtEnabled;
+    }
+
     public int getWdtCounter() {
         return wdtCounter;
     }

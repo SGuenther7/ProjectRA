@@ -38,6 +38,7 @@ public class Primary {
     private JButton reset;
     private JButton load;
     private JButton watchdog;
+    private boolean watchdogEnabled = true;
 
     private JLabel WorkingContent;
     private JLabel WorkingLabel;
@@ -515,26 +516,8 @@ public class Primary {
         back = new JButton("Backwards");
         reset = new JButton("Reset");
         load = new JButton("Load...");
-
-        try {
-            BufferedImage idleWTD = ImageIO.read(new File("./src/img/idle.png"));
-            BufferedImage enabledWTD = ImageIO.read(new File("./src/img/enabled.png"));
-            watchdog = new JButton(new ImageIcon(idleWTD.getScaledInstance(24,24,Image.SCALE_SMOOTH)));
-            watchdog.setBorder(BorderFactory.createEmptyBorder());
-            watchdog.setContentAreaFilled(false);
-
-            watchdog.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    // TODO: WTD Button verhalten impl.
-                    watchdog.setIcon(new ImageIcon(enabledWTD.getScaledInstance(24,24,Image.SCALE_SMOOTH)));
-                    super.mouseClicked(e);
-                }
-            });
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            watchdog = new JButton("WDT");
-        }
+        watchdog = new JButton();
+        toggleWDTButtonImage();
 
         run.setBounds(10, 5, 90, 30);
         stop.setBounds(90, 5, 90, 30);
@@ -603,7 +586,7 @@ public class Primary {
 
     // Mache Buttons von aussen verfügbar um ActionListener hinzuzufuegen
     public JButton[] getButtons() {
-        return new JButton[]{run, stop, forward, back, reset, load};
+        return new JButton[]{run, stop, forward, back, reset, load, watchdog};
     }
 
     public JButton[] getPortATRIS() {
@@ -648,5 +631,26 @@ public class Primary {
 
     public JLabel getStatus() {
         return status;
+    }
+
+    public void toggleWDTButtonImage() {
+         try {
+             if(watchdogEnabled) {
+                 BufferedImage idleWTD = ImageIO.read(new File("./src/img/idle.png"));
+                 watchdog.setIcon(new ImageIcon(idleWTD.getScaledInstance(24,24, Image.SCALE_SMOOTH)));
+                 watchdog.setBorder(BorderFactory.createEmptyBorder());
+                 watchdog.setContentAreaFilled(false);
+             } else {
+                 BufferedImage enabledWTD = ImageIO.read(new File("./src/img/enabled.png"));
+                 watchdog.setIcon(new ImageIcon(enabledWTD.getScaledInstance(24,24, Image.SCALE_SMOOTH)));
+                 watchdog.setBorder(BorderFactory.createEmptyBorder());
+                 watchdog.setContentAreaFilled(false);
+             }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            watchdog = new JButton("WDT");
+        }
+        watchdog.repaint();
+        watchdogEnabled = !watchdogEnabled;
     }
 }
