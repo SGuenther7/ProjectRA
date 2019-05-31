@@ -18,7 +18,6 @@ public class Worker {
 
     private Timer timer;
 
-    // TODO: Current setzt sich aus PCL und PCLATH zusammen
     private int current;
 
     public Worker() {
@@ -35,7 +34,7 @@ public class Worker {
         cycles = 0;
 
         // Option Register auf 1
-        memory.content()[1][2] = 255;
+        memory.content()[1][1] = 255;
     }
 
     public Worker(int working) {
@@ -310,8 +309,12 @@ public class Worker {
             case NOP:
                 break;
             case CLRWDT:
-                // Flag : TO, TP
-                // TODO: imp. + test
+                // TO und PD setzen
+                getMemory().content()[0][3] = getMemory().content()[0][3] | 24;
+                // Prescaler
+                //getMemory().content()[1][1] = getMemory().content()[0][3] & 248;
+
+                getTimer().resetWatchdog();
                 break;
             case RETFIE:
                 // TODO: imp. + test
@@ -321,10 +324,16 @@ public class Worker {
                 // TODO: GIE bit auf 1
                 // TODO: Adresse vom Stack holen
 
+                if (stack.size() > 0) {
+                    memory.content()[0][2] = (int) stack.pop();
+                    current = memory.content()[0][2];
+                }
 
-                this.cycles += counter.get(i).getCycles();
-                timer.tick();
+                // GIE auf 1
+                getMemory().content()[0][12] = getMemory().content()[0][12] | 128;
 
+                updateCycles(i);
+                updateTimer();
                 return;
             case RETURN:
                 // TODO: imp. + test
@@ -339,8 +348,25 @@ public class Worker {
                 updateTimer();
                 return;
             case SLEEP:
-                // Flag : TO, TP
                 // TODO: imp. + test
+                // Setze TO
+                getMemory().content()[0][3] = getMemory().content()[0][3] | 16;
+                // Loesche PD
+                getMemory().content()[0][3] = getMemory().content()[0][3] & 247;
+
+                if(!getTimer().reset) {
+                    updateCycles(i);
+                    updateTimer();
+                    return;
+                } else {
+                    // Wake up
+                    getTimer().reset = false;
+                    getTimer().resetWatchdog();
+
+                    updateCycles(i);
+                    updateTimer();
+                    updateCurrent();
+                }
                 break;
             case BCF:
                 // Var : f, b
@@ -398,9 +424,12 @@ public class Worker {
             case RETLW:
                 // Var : k
                 // TODO: imp. + test
+                working = command.getValue()[0];
 
-                // Timer und cycles laufen weiter,
-                // PC wird nicht inkrementiert.
+                if (stack.size() > 0) {
+                    memory.content()[0][2] = (int) stack.pop();
+                    current = memory.content()[0][2];
+                }
 
                 updateCycles(i);
                 updateTimer();

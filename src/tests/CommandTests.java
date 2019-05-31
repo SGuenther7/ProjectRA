@@ -353,19 +353,60 @@ class CommandTests {
 		peon.getStack().push(4);
 
 		Command ret = new Command(Instruction.RETURN, new int[]{});
-		peon.feed(ret);
-		peon.next();
+		Command nop = new Command(Instruction.NOP, new int[]{});
 
+		peon.feed(ret);
+		peon.feed(nop);
+		peon.feed(nop);
+		peon.feed(nop);
+		peon.feed(nop);
+
+		peon.next();
 		assertEquals(4,peon.getCurrent());
 	}
 
 
 	@Test
 	void CRLWDTTest() {
+		Worker peon = new Worker();
+
+		// Starte WDT
+        peon.getTimer().wdtEnabled = true;
+        peon.getMemory().content()[1][1] = 0b0;
+
+        Command nop = new Command(Instruction.NOP, new int[]{});
+        Command clrwdt = new Command(Instruction.CLRWDT, new int[]{0});
+
+
+        int total = 18000;
+        int sample = 100;
+
+        for (int i = 0; i < sample; i++) {
+			peon.feed(nop);
+            peon.next();
+        }
+
+		assertEquals(total-sample,peon.getTimer().getWdtCounter());
+        peon.feed(clrwdt);
+        peon.next();
+		assertEquals(total-1,peon.getTimer().getWdtCounter());
 	}
 
 	@Test
 	void GOTOTest() {
+	    Worker peon = new Worker();
+
+		Command jump = new Command(Instruction.GOTO, new int[]{3});
+		Command nop = new Command(Instruction.NOP, new int[]{});
+
+		peon.feed(jump);
+
+		peon.feed(nop);
+		peon.feed(nop);
+		peon.feed(nop);
+		peon.next();
+
+		assertEquals(3,peon.getCurrent());
 	}
 
 	@Test
@@ -396,10 +437,36 @@ class CommandTests {
 
 	@Test
 	void RETFIETest() {
+	    Worker peon = new Worker();
+	    peon.getStack().push(2);
+
+		Command retfie = new Command(Instruction.RETFIE, new int[]{});
+		Command nop = new Command(Instruction.NOP, new int[] {});
+
+		peon.feed(retfie);
+		peon.feed(nop);
+		peon.feed(nop);
+
+		peon.next();
+
+		assertEquals(2,peon.getCurrent());
+		assertEquals(1,peon.getMemory().getGIE());
 	}
 
 	@Test
 	void RETLWTest() {
+		Worker peon = new Worker(5);
+
+		Command retlw = new Command(Instruction.RETLW, new int[]{10});
+		Command call = new Command(Instruction.CALL, new int[]{1});
+
+		peon.feed(call);
+		peon.feed(retlw);
+
+		peon.next();
+		peon.next();
+
+		assertEquals(10,peon.getWorking());
 	}
 
 	@Test

@@ -27,15 +27,15 @@ public class Timer {
         return (int) Math.pow((double) 2, (double) getScale() + 1 - getAssignd());
     }
     private int getAssignd() {
-        return (peon.getMemory().content()[1][2] & 8) > 0 ? 1 : 0;
+        return (peon.getMemory().content()[1][1] & 8) > 0 ? 1 : 0;
     }
 
     private int getScale() {
-        return peon.getMemory().content()[1][2] & 7;
+        return peon.getMemory().content()[1][1] & 7;
     }
 
     private int getSource() {
-        return peon.getMemory().content()[1][2] & 16;
+        return peon.getMemory().content()[1][1] & 16;
     }
 
     public void tick() {

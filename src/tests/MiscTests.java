@@ -356,7 +356,7 @@ assertEquals(2, peon.getWorking());
 
         // Starte WDT
         peon.getTimer().wdtEnabled = true;
-        peon.getMemory().content()[1][2] = 0b0;
+        peon.getMemory().content()[1][1] = 0b0;
 
         Command nop = new Command(Instruction.NOP, new int[]{});
         Command jump = new Command(Instruction.GOTO, new int[]{0});
@@ -385,7 +385,7 @@ assertEquals(2, peon.getWorking());
         peon.getTimer().wdtEnabled = true;
 
         // TMR auf Port, Prescaler auf 128 und WDT
-        peon.getMemory().content()[1][2] = 0b0101111;
+        peon.getMemory().content()[1][1] = 0b0101111;
 
         for (int i = 1; i < 2304000; i++) {
             peon.next();
@@ -410,7 +410,7 @@ assertEquals(2, peon.getWorking());
         peon.getTimer().wdtEnabled = true;
 
         // TMR auf Port, Prescaler auf 8 und WDT
-        peon.getMemory().content()[1][2] = 0b101011;
+        peon.getMemory().content()[1][1] = 0b101011;
 
         for (int i = 1; i < 144000; i++) {
             peon.next();
@@ -434,7 +434,7 @@ assertEquals(2, peon.getWorking());
         peon.feed(jump);
 
         // Prescaler auf 128 und TMR
-        peon.getMemory().content()[1][2] = 0b00111;
+        peon.getMemory().content()[1][1] = 0b00111;
 
         for (int i = 1; i < 65536; i++) {
             peon.next();
@@ -457,7 +457,7 @@ assertEquals(2, peon.getWorking());
         peon.feed(jump);
 
         // Prescaler auf 8 und TMR
-        peon.getMemory().content()[1][2] = 0b00011;
+        peon.getMemory().content()[1][1] = 0b00011;
 
         // 256 * 16
         for (int i = 1; i < 4096; i++) {
@@ -480,7 +480,7 @@ assertEquals(2, peon.getWorking());
         peon.feed(jump);
 
         // Prescaler auf 0 und TMR
-        peon.getMemory().content()[1][2] = 0;
+        peon.getMemory().content()[1][1] = 0;
 
         // 256 *  2
         for (int i = 1; i < 512; i++) {
@@ -503,7 +503,7 @@ assertEquals(2, peon.getWorking());
         peon.feed(jump);
 
         // Prescaler auf 0 und WDT
-        peon.getMemory().content()[1][2] = 0b1000;
+        peon.getMemory().content()[1][1] = 0b1000;
 
         // Timer Register vor setzten
         peon.getMemory().content()[0][1] = 128;
@@ -529,7 +529,7 @@ assertEquals(2, peon.getWorking());
         peon.feed(jump);
 
         // Prescaler auf 256 und TMR
-        peon.getMemory().content()[1][2] = 0b0111;
+        peon.getMemory().content()[1][1] = 0b0111;
 
         // Timer Register vor setzten
         peon.getMemory().content()[0][1] = 128;
@@ -548,7 +548,7 @@ assertEquals(2, peon.getWorking());
         Worker peon = new Worker();
 
         // TMR auf Clock, Prescaler auf WDT
-        peon.getMemory().content()[1][2] = 0b1000;
+        peon.getMemory().content()[1][1] = 0b1000;
 
         Command nop = new Command(Instruction.NOP, new int[]{});
         Command jump = new Command(Instruction.GOTO, new int[]{0});
@@ -572,7 +572,7 @@ assertEquals(2, peon.getWorking());
         Worker peon = new Worker();
 
         // TMR auf Clock, Prescaler auf WDT
-        peon.getMemory().content()[1][2] = 0b1000;
+        peon.getMemory().content()[1][1] = 0b1000;
 
         Command nop = new Command(Instruction.NOP, new int[]{});
         Command jump = new Command(Instruction.GOTO, new int[]{0});
@@ -592,7 +592,7 @@ assertEquals(2, peon.getWorking());
         Worker peon = new Worker();
 
         // TMR auf Clock, Prescaler auf WDT
-        peon.getMemory().content()[1][2] = 0b1000;
+        peon.getMemory().content()[1][1] = 0b1000;
 
         Command nop = new Command(Instruction.NOP, new int[]{});
         Command jump = new Command(Instruction.GOTO, new int[]{0});
@@ -631,7 +631,7 @@ assertEquals(2, peon.getWorking());
         peon.getMemory().content()[0][12] = 160;
 
         // Setze Vorteiler
-        peon.getMemory().content()[1][2] = 0b0;
+        peon.getMemory().content()[1][1] = 0b0;
 
         Command nop = new Command(Instruction.NOP, new int[]{});
         Command jump = new Command(Instruction.GOTO, new int[]{0});
