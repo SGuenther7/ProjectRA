@@ -357,7 +357,6 @@ public class Worker {
                 if(!getTimer().reset) {
                     updateCycles(i);
                     updateTimer();
-                    return;
                 } else {
                     // Wake up
                     getTimer().reset = false;
@@ -367,7 +366,7 @@ public class Worker {
                     updateTimer();
                     updateCurrent();
                 }
-                break;
+                return;
             case BCF:
                 // Var : f, b
                 // TODO: imp. + test

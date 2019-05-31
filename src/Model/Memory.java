@@ -174,6 +174,13 @@ public class Memory {
         return (memory[1][1] & 4) > 0 ? 1: 0;
     }
 
+    public int getPD() {
+        return (memory[0][3] & 8) > 0 ? 1: 0;
+    }
+    public int getTO() {
+        return (memory[0][3] & 16) > 0 ? 1: 0;
+    }
+
     public int getGIE() {
         return (memory[0][12] & 128) > 0 ? 1: 0;
     }

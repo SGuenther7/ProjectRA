@@ -471,6 +471,25 @@ class CommandTests {
 
 	@Test
 	void SLEEPTest() {
+		Worker peon = new Worker(5);
+
+		// Lade WDT
+		peon.getTimer().wdtEnabled = true;
+		peon.getMemory().content()[1][1] = 0b0;
+
+		Command sleep = new Command(Instruction.SLEEP, new int[]{});
+		Command nop = new Command(Instruction.NOP, new int[]{});
+
+		peon.feed(sleep);
+		peon.feed(nop);
+		peon.feed(nop);
+
+		for (int i = 0; i < 18000; i++) {
+			peon.next();
+		}
+		assertEquals(true,peon.getTimer().reset);
+		peon.next();
+		assertEquals(1,peon.getCurrent());
 	}
 
 	@Test
