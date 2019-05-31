@@ -351,17 +351,18 @@ assertEquals(2, peon.getWorking());
     }
 
     @Test
-    void watchdogReset() {
+    void watchdogTest() {
         Worker peon = new Worker();
+
+        // Starte WDT
+        peon.getTimer().wdtEnabled = true;
+        peon.getMemory().content()[1][2] = 0b0;
 
         Command nop = new Command(Instruction.NOP, new int[]{});
         Command jump = new Command(Instruction.GOTO, new int[]{0});
 
         peon.feed(nop);
         peon.feed(jump);
-
-        // Starte WDT
-        peon.getTimer().wdtEnabled = true;
 
         for (int i = 0; i < 18001; i++) {
             peon.next();

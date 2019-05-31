@@ -54,15 +54,10 @@ public class Timer {
                 resetWatchdog();
             }
 
-            // Debug
-            try
-            {
-                // Zyklen von tmr Register runterrechnen
-                tmrCounter -= cycles;
-            } catch (IndexOutOfBoundsException e) {
+            // Zyklen von tmr Register runterrechnen
+            wdtCounter -= cycles;
 
-            }
-            if (wdtCounter == 0) {
+            if (wdtCounter <= 0) {
                 // TO Bit auf 0 setzen (alles ausser bit 4)
                 peon.getMemory().content()[0][3] = peon.getMemory().content()[0][3] & 248;
                 reset();
