@@ -131,7 +131,8 @@ public class Worker {
                 break;
             case COMF:
             	// Var : f, d
-            	result = ~command.getValue()[0] & 0b1111111;
+            	result = ~(memory.get(getBank(),command.getValue()[0])) & 255;
+            	handleZeroFlag(result);
 	
             	 if (command.getValue()[1] == 1) {
                      memory.set(getBank(), command.getValue()[0], result);
@@ -142,8 +143,14 @@ public class Worker {
             case DECF:
                 // Var : f, d
                 // Flag : Z
-                result = memory.get(getBank(), command.getValue()[0]) - 1;
-                handleZeroFlag(working);
+                int beforeDEC = memory.get(getBank(), command.getValue()[0]);
+                if(beforeDEC == 0) {
+                    result = 255;
+                } else {
+                  result = beforeDEC - 1;
+                }
+
+                handleZeroFlag(result);
 
                 if (command.getValue()[1] == 1) {
                     memory.set(getBank(), command.getValue()[0], result);
@@ -201,8 +208,8 @@ public class Worker {
                 break;
             case IORWF:
                 // Var : f, d
-
                 result = working | memory.get(getBank(), command.getValue()[0]);
+                handleZeroFlag(result);
 
                 if (command.getValue()[1] == 1) {
                     memory.set(getBank(), command.getValue()[0], result);
@@ -213,6 +220,8 @@ public class Worker {
             case MOVF:
                 // Var : f, d
                 result = memory.get(getBank(), command.getValue()[0]);
+
+                handleZeroFlag(result);
 
                 if (command.getValue()[1] == 1) {
                     memory.set(getBank(), command.getValue()[0], result);
@@ -270,10 +279,11 @@ public class Worker {
                 // Var : f, d
                 // Flag : C, CD, Z
                 result = memory.get(getBank(), command.getValue()[0]) - working;
+                result = result & 255;
 
-                handleCarryFlagOnSub(working, command.getValue()[0]);
-                handleDigitCarryOnSub(working, command.getValue()[0]);
-                handleZeroFlag(working);
+                handleCarryFlagOnSub(working, memory.get(getBank(), command.getValue()[0]));
+                handleDigitCarryOnSub(working, memory.get(getBank(), command.getValue()[0]));
+                handleZeroFlag(result);
 
                 // Destination Bit gesetzt ?
                 if (command.getValue()[1] == 1) {
@@ -284,8 +294,7 @@ public class Worker {
                 break;
             case SWAPF:
                 // Var : f, d
-                // TODO: imp. + test
-            	result = command.getValue()[0];
+            	result = memory.get(getBank(),command.getValue()[0]);
             	int resultFirst = (0b11110000 & result) >>> 4;
             	int resultSecond = (0b1111 & result) << 4;
             	result = resultFirst + resultSecond;
@@ -315,7 +324,7 @@ public class Worker {
                 // Flag : Z
                 memory.set(getBank(), command.getValue()[0], 0);
 
-                handleZeroFlag(working);
+                handleZeroFlag(0);
                 break;
             case MOVWF:
                 // Var : f

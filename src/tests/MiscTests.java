@@ -648,6 +648,24 @@ assertEquals(2, peon.getWorking());
 
         assertEquals(4, peon.getCurrent());
     }
+
+    @Test
+    void gprMirrorTest() {
+
+        Worker peon = new Worker(10);
+
+        Command mov = new Command(Instruction.MOVWF, new int[]{13});
+        peon.feed(mov);
+        peon.next();
+
+        assertEquals(10,peon.getMemory().get(0,13));
+        assertEquals(10,peon.getMemory().get(1,13));
+    }
+
+    @Test
+    void switchBank() {
+
+    }
 }
 
 

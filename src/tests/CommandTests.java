@@ -70,16 +70,13 @@ class CommandTests {
 
 	@Test
 	void COMFTest() {
-		Worker expected = new Worker(114);
-		expected.getMemory().set(expected.getBank(), 13, 5);
-
 		Worker peon = new Worker(13);
 		peon.getMemory().set(peon.getBank(), 13, 5);
 
-		peon.feed(new Command(Instruction.COMF, new int[] { 13,0 }));
-		peon.execute(0);
+		peon.feed(new Command(Instruction.COMF, new int[] { 13,1 }));
+		peon.next();
 
-		assertEquals(expected.getWorking(), peon.getWorking());
+		assertEquals(250, peon.getMemory().content()[0][13]);
 	}
 
 	@Test
