@@ -338,14 +338,30 @@ public class Main {
         }
     }
 
+    private void updateMemTable() {
+        JTable bank0 = view.getBank0Table();
+        JTable bank1 = view.getBank1Table();
+
+        for (int i = 0; i < 47; i++) {
+            for (int o = 0; o < 8; o++) {
+                int bit = getSingleBit(getCurrentState().getMemory().content()[0][i], 7 - o);
+                bank0.setValueAt(bit, i, 7 - o);
+                bank1.setValueAt(bit, i, 7 - o);
+            }
+        }
+    }
+
+    private int getSingleBit(int whole, int bit) {
+        return (whole & (int) Math.pow(2,bit)) > 0 ? 1 : 0;
+    }
+
     /**
      * Aktualisiert GUI Elemente mit jetzigem Worker Object (Befehls Liste, Highlighting der Liste, Button Verfuegbarkeit und Register Inhalte ...)
      */
     public void update() {
-
-
         if (states.size() > 0) {
             updateLabels();
+            updateMemTable();
         }
 
         //  Haben wir etwas das geladen werden kann ?

@@ -3,11 +3,7 @@ package View;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +23,10 @@ public class Primary {
     private JPanel statusPanel;
     private JPanel optionPanel;
 
-    private JTable mem;
+    private JTable bank0Table;
+    private JTable bank1Table;
+    private JScrollPane bank0Scroll;
+    private JScrollPane bank1Scroll;
 
     private JScrollPane instructionView;
 
@@ -161,8 +160,10 @@ public class Primary {
         // TODO: Richtig in Code platzieren
         registers.add(portALabel);
         registers.add(portBLabel);
-        portALabel.setBounds(0,100,100,15);
-        portBLabel.setBounds(155,100,100,15);
+        portALabel.setBounds(0, 100, 100, 15);
+        portBLabel.setBounds(155, 100, 100, 15);
+
+        initialiseTable();
 
         main.setResizable(false);
         main.setVisible(false);
@@ -179,10 +180,15 @@ public class Primary {
         initializeOptionLabels();
     }
 
-    private void jtableEXP() {
-        // Java == good :)))
-        String[] names = {"0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"};
-        Object[][] values = new Object[24][8];
+    private void initialiseTable() {
+        initialiseBank0Table();
+        initialiseBank1Table();
+    }
+
+    private void initialiseBank0Table() {
+
+        String[] names = {"0", "0", "0", "0", "0", "0", "0", "0"};
+        Object[][] values = new Object[47][8];
 
         for (int i = 0; i < values.length; i++) {
             for (int o = 0; o < values[0].length; o++) {
@@ -190,20 +196,72 @@ public class Primary {
             }
         }
 
-        mem = new JTable(values, names);
-        mem.setTableHeader(null);
-        mem.setFillsViewportHeight(true);
+        bank0Table = new JTable(values, names);
+        bank0Table.setTableHeader(null);
+        bank0Table.setFillsViewportHeight(true);
+        bank0Table.setFocusable(false);
 
-        registers.add(mem);
-        mem.setBounds(0,180,1500,1500);
-        mem.setRowHeight(8);
-        mem.setRowMargin(0);
-        mem.setShowGrid(false);
-        //mem.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        mem.setBackground(new Color(200, 200, 200));
+        bank0Scroll = new JScrollPane(bank0Table);
+        bank0Scroll.setBounds(0, 170, 150, 218);
 
-        for (int i = 0; i < 24 ; i++) {
-            mem.getColumnModel().getColumn(i).setMaxWidth(35);
+        bank0Table.setShowGrid(false);
+
+        for (int i = 0; i < 8; i++) {
+            bank0Table.getColumnModel().getColumn(i).setMaxWidth(10);
+        }
+
+        registers.add(bank0Scroll);
+    }
+
+    private void initialiseBank1Table() {
+
+        String[] names = {"0", "0", "0", "0", "0", "0", "0", "0"};
+        Object[][] values = new Object[47][8];
+
+        for (int i = 0; i < values.length; i++) {
+            for (int o = 0; o < values[0].length; o++) {
+                values[i][o] = 0;
+            }
+        }
+
+        bank1Table = new JTable(values, names);
+        bank1Table.setTableHeader(null);
+        bank1Table.setFillsViewportHeight(true);
+        bank1Table.setFocusable(false);
+
+        bank1Scroll = new JScrollPane(bank1Table);
+        bank1Scroll.setBounds(155, 170, 150, 218);
+
+        bank1Table.setShowGrid(false);
+
+        for (int i = 0; i < 8; i++) {
+            bank1Table.getColumnModel().getColumn(i).setMaxWidth(10);
+        }
+
+        registers.add(bank1Scroll);
+    }
+
+    private void setBankTable(JTable table, JScrollPane scroll, int x, int y) {
+        String[] names = {"0", "0", "0", "0", "0", "0", "0", "0"};
+        Object[][] values = new Object[47][8];
+
+        for (int i = 0; i < values.length; i++) {
+            for (int o = 0; o < values[0].length; o++) {
+                values[i][o] = 0;
+            }
+        }
+
+        table = new JTable(values, names);
+        table.setTableHeader(null);
+        table.setFillsViewportHeight(true);
+        table.setFocusable(false);
+
+        scroll.setBounds(x, y, 180, 218);
+
+        table.setShowGrid(false);
+
+        for (int i = 0; i < 8; i++) {
+            table.getColumnModel().getColumn(i).setMaxWidth(20);
         }
     }
 
@@ -580,7 +638,7 @@ public class Primary {
 
     public void warnOverflow() {
 
-        JOptionPane.showMessageDialog(main,"A Stack overflow has taken place.");
+        JOptionPane.showMessageDialog(main, "A Stack overflow has taken place.");
 
     }
 
@@ -633,19 +691,27 @@ public class Primary {
         return status;
     }
 
+    public JTable getBank0Table() {
+        return bank0Table;
+    }
+
+    public JTable getBank1Table() {
+        return bank1Table;
+    }
+
     public void toggleWDTButtonImage() {
-         try {
-             if(watchdogEnabled) {
-                 BufferedImage idleWTD = ImageIO.read(new File("./src/img/idle.png"));
-                 watchdog.setIcon(new ImageIcon(idleWTD.getScaledInstance(24,24, Image.SCALE_SMOOTH)));
-                 watchdog.setBorder(BorderFactory.createEmptyBorder());
-                 watchdog.setContentAreaFilled(false);
-             } else {
-                 BufferedImage enabledWTD = ImageIO.read(new File("./src/img/enabled.png"));
-                 watchdog.setIcon(new ImageIcon(enabledWTD.getScaledInstance(24,24, Image.SCALE_SMOOTH)));
-                 watchdog.setBorder(BorderFactory.createEmptyBorder());
-                 watchdog.setContentAreaFilled(false);
-             }
+        try {
+            if (watchdogEnabled) {
+                BufferedImage idleWTD = ImageIO.read(new File("./src/img/idle.png"));
+                watchdog.setIcon(new ImageIcon(idleWTD.getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
+                watchdog.setBorder(BorderFactory.createEmptyBorder());
+                watchdog.setContentAreaFilled(false);
+            } else {
+                BufferedImage enabledWTD = ImageIO.read(new File("./src/img/enabled.png"));
+                watchdog.setIcon(new ImageIcon(enabledWTD.getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
+                watchdog.setBorder(BorderFactory.createEmptyBorder());
+                watchdog.setContentAreaFilled(false);
+            }
         } catch (IOException e) {
             System.out.println(e.getMessage());
             watchdog = new JButton("WDT");
