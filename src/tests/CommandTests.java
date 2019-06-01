@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
 class CommandTests {
 	@Test
 	void ADDWFTest() {
@@ -209,6 +210,19 @@ class CommandTests {
 		peon.execute(0);
 
 		assertEquals(expected.getMemory().content()[0][13], peon.getMemory().content()[0][13]);
+		assertEquals(0, peon.getMemory().content()[0][3]);
+	}
+
+	@Test
+	void RLF2Test() {
+		Worker peon = new Worker();
+
+		peon.getMemory().content()[0][12] = 17;
+
+		peon.feed(new Command(Instruction.RLF, new int[] {12, 1}));
+		peon.next();
+
+		assertEquals(34, peon.getMemory().content()[0][12]);
 		assertEquals(0, peon.getMemory().content()[0][3]);
 	}
 

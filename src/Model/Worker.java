@@ -222,11 +222,26 @@ public class Worker {
                 break;
             case RLF:
                 // Var : f, d
-                // TODO: imp. + test
+
+                // Carry speichern
             	int temp = (memory.content()[getBank()][3] & 0b1);
-            	memory.set(getBank(), 3, (command.getValue()[0] & 0b1000000) >>> 6);
-            	result = ((0b111111 & command.getValue()[0]) << 1) + temp;
-            	
+
+            	// Rotate
+            	result = memory.get(getBank(), command.getValue()[0]) << 1;
+
+            	// Altes carry hinzufuegen
+            	result = (result & 511) + temp;
+
+            	// Bit setzen
+            	if(result  >= 256) {
+                    memory.set(getBank(), 3, (memory.get(getBank(),3) | 0b1));
+                } else {
+                    memory.set(getBank(), 3, (memory.get(getBank(),3) & 254));
+                }
+
+            	// Auf 8 bit verkleinern
+                result = (result & 255);
+
             	if (command.getValue()[1] == 1) {
                     memory.set(getBank(), command.getValue()[0], result);
                 } else {
@@ -235,11 +250,16 @@ public class Worker {
                 break;
             case RRF:
                 // Var : f, d
-                // TODO: imp. + test
-            	int temp2 = memory.content()[getBank()][3];
-            	memory.set(getBank(), 3, (command.getValue()[0] & 0b1));
-            	result = (command.getValue()[0] >>> 1) + (temp2 << 6);
-            	
+                // Carry speichern
+            	int tempCarryBit = (memory.content()[getBank()][3] & 0b1) << 7;
+            	// Carry setzen
+            	memory.set(getBank(),3,memory.get(getBank(),command.getValue()[0]) & 0b1);
+            	// Rotate
+            	result = memory.get(getBank(), command.getValue()[0]) >> 1;
+            	result += tempCarryBit;
+            	// Auf 8 bit verkleinern
+                result = (result & 255);
+
             	if (command.getValue()[1] == 1) {
                     memory.set(getBank(), command.getValue()[0], result);
                 } else {
@@ -303,8 +323,8 @@ public class Worker {
                 break;
             case CLRW:
                 // Flag : Z
-                handleZeroFlag(working); // TODO: korrekt behav. ?
                 working = 0;
+                handleZeroFlag(working); // TODO: korrekt behav. ?
                 break;
             case NOP:
                 break;
@@ -396,9 +416,9 @@ public class Worker {
                 // C, CD, Z
                 result = working + command.getValue()[0];
 
-                handleCarryFlagOnAdd(working, memory.get(getBank(), command.getValue()[0]));
-                handleDigitCarryOnAdd(working, memory.get(getBank(), command.getValue()[0]));
-                handleZeroFlag(working);
+                handleCarryFlagOnAdd(working, command.getValue()[0]);
+                handleDigitCarryOnAdd(working, command.getValue()[0]);
+                handleZeroFlag(result);
 
                 working = result;
                 break;
@@ -515,26 +535,32 @@ public class Worker {
 
     public boolean handleZeroFlag(int value) {
         if (value == 0) {
-            memory.set(getBank(), 3, memory.get(getBank(), 3) | 3);
+            memory.set(getBank(), 3, memory.get(getBank(), 3) | 4);
             return true;
+        } else {
+            memory.set(getBank(), 3, memory.get(getBank(), 3) & 251);
+            return false;
         }
-        return false;
     }
 
     public boolean handleCarryFlagOnAdd(int base, int add) {
         if (base + add > 255) {
             memory.set(getBank(), 3, memory.get(getBank(), 3) | 1);
             return true;
+        } else {
+            memory.set(getBank(), 3, memory.get(getBank(), 3) & 254);
+            return false;
         }
-        return false;
     }
 
     public boolean handleCarryFlagOnSub(int base, int sub) {
         if (base - sub >= 0) {
             memory.set(getBank(), 3, memory.get(getBank(), 3) | 1);
             return true;
+        } else {
+            memory.set(getBank(), 3, memory.get(getBank(), 3) & 254);
+            return false;
         }
-        return false;
     }
 
     public boolean handleDigitCarryOnAdd(int base, int add) {
@@ -544,9 +570,10 @@ public class Worker {
         if (base + add > 15) {
             memory.set(getBank(), 3, memory.get(getBank(), 3) | 2);
             return true;
+        } else {
+            memory.set(getBank(), 3, memory.get(getBank(), 3) & 253);
+            return false;
         }
-
-        return false;
     }
 
     public boolean handleDigitCarryOnSub(int base, int sub) {
@@ -556,9 +583,10 @@ public class Worker {
         if (base - sub < 0) {
             memory.set(getBank(), 3, memory.get(getBank(), 3) | 2);
             return true;
+        } else {
+            memory.set(getBank(), 3, memory.get(getBank(), 3) & 253);
+            return false;
         }
-
-        return false;
     }
 
     public int getWorking() {
