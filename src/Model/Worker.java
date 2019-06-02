@@ -104,10 +104,11 @@ public class Worker {
                 // Flag : C, CD, Z
 
                 result = working + memory.get(getBank(), command.getValue()[0]);
+                result = result & 255;
 
                 handleCarryFlagOnAdd(working, memory.get(getBank(), command.getValue()[0]));
                 handleDigitCarryOnAdd(working, memory.get(getBank(), command.getValue()[0]));
-                handleZeroFlag(working);
+                handleZeroFlag(result);
 
                 // Destination Bit gesetzt ?
                 if (command.getValue()[1] == 1) {
@@ -121,6 +122,7 @@ public class Worker {
                 // Flag : Z
 
                 result = working & memory.get(getBank(), command.getValue()[0]);
+                result = result & 255;
                 handleZeroFlag(working);
 
                 if (command.getValue()[1] == 1) {
@@ -131,7 +133,8 @@ public class Worker {
                 break;
             case COMF:
             	// Var : f, d
-            	result = ~(memory.get(getBank(),command.getValue()[0])) & 255;
+            	result = ~(memory.get(getBank(),command.getValue()[0]));
+                result = result & 255;
             	handleZeroFlag(result);
 	
             	 if (command.getValue()[1] == 1) {
@@ -217,6 +220,7 @@ public class Worker {
             case IORWF:
                 // Var : f, d
                 result = working | memory.get(getBank(), command.getValue()[0]);
+                result = result & 255;
                 handleZeroFlag(result);
 
                 if (command.getValue()[1] == 1) {
@@ -228,6 +232,7 @@ public class Worker {
             case MOVF:
                 // Var : f, d
                 result = memory.get(getBank(), command.getValue()[0]);
+                result = result & 255;
 
                 handleZeroFlag(result);
 
@@ -316,7 +321,6 @@ public class Worker {
             case XORWF:
                 // Var : f, d
                 // Flag : Z
-
                 result = working ^ memory.get(getBank(), command.getValue()[0]);
 
                 handleZeroFlag(working);

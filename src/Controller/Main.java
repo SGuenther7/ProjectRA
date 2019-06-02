@@ -22,7 +22,7 @@ public class Main {
     private Thread runner = null;
 
     private void debug() {
-        this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim2.LST");
+        this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim6.LST");
         this.update();
     }
 
@@ -299,26 +299,26 @@ public class Main {
         current--;
     }
 
-    private void updateLabels() {
+    private void updateLabels(Worker current) {
         JLabel[] labels = view.getLabels();
 
-        labels[0].setText("" + getCurrentState().getWorking());
-        labels[2].setText("" + getCurrentState().getMemory().content()[0][2]);
-        labels[4].setText("" + getCurrentState().getMemory().content()[0][10]);
-        labels[6].setText("" + getCurrentState().getCurrent());
-        labels[8].setText("" + getCurrentState().getMemory().content()[0][0]);
-        labels[10].setText("" + getCurrentState().getMemory().getRP1());
-        labels[12].setText("" + getCurrentState().getMemory().getRP0());
-        labels[14].setText("" + getCurrentState().getMemory().getZero());
-        labels[16].setText("" + getCurrentState().getMemory().getDitgitCarry());
-        labels[18].setText("" + getCurrentState().getMemory().getCarry());
-        labels[20].setText("" + getCurrentState().getMemory().getT0CS());
-        labels[22].setText("" + getCurrentState().getMemory().getPSA());
-        labels[24].setText("" + getCurrentState().getMemory().getPS0());
-        labels[26].setText("" + getCurrentState().getMemory().getPS1());
-        labels[28].setText("" + getCurrentState().getMemory().getPS2());
+        labels[0].setText("" + current.getWorking());
+        labels[2].setText("" + current.getMemory().content()[0][2]);
+        labels[4].setText("" + current.getMemory().content()[0][10]);
+        labels[6].setText("" + current.getCurrent());
+        labels[8].setText("" + current.getMemory().content()[0][0]);
+        labels[10].setText("" + current.getMemory().getRP1());
+        labels[12].setText("" + current.getMemory().getRP0());
+        labels[14].setText("" + current.getMemory().getZero());
+        labels[16].setText("" + current.getMemory().getDitgitCarry());
+        labels[18].setText("" + current.getMemory().getCarry());
+        labels[20].setText("" + current.getMemory().getT0CS());
+        labels[22].setText("" + current.getMemory().getPSA());
+        labels[24].setText("" + current.getMemory().getPS0());
+        labels[26].setText("" + current.getMemory().getPS1());
+        labels[28].setText("" + current.getMemory().getPS2());
 
-        updateStatus();
+        updateStatus(current);
     }
 
     private void updateButtons() {
@@ -338,18 +338,18 @@ public class Main {
         }
     }
 
-    private void updateStatus() {
-        String cycles = "Cycles : " + getCurrentState().getCycles();
-        String status = getStackContent();
+    private void updateStatus(Worker current) {
+        String cycles = "Cycles : " + current.getCycles();
+        String status = getStackContent(current);
         view.getStatus().setText(cycles + "   " + status);
     }
 
-    private String getStackContent() {
+    private String getStackContent(Worker current) {
         String status = "";
-        for (int i = 0; i < getCurrentState().getStack().size() ; i++) {
-            status += "" + getCurrentState().getStack().elementAt(i).toString();
+        for (int i = 0; i < current.getStack().size() ; i++) {
+            status += "" + current.getStack().elementAt(i).toString();
 
-            if(i < getCurrentState().getStack().size() - 1) {
+            if(i < current.getStack().size() - 1) {
                 status +=  " > ";
             }
         }
@@ -357,14 +357,26 @@ public class Main {
         return status;
     }
 
-    private void updateMemTable() {
+    private void updateMemTable(Worker current) {
         JTable bank0 = view.getBank0Table();
         JTable bank1 = view.getBank1Table();
+
+        int content[][] = new int[2][47];
+
+        if(states.size() > 0)  {
+            content = current.getMemory().content();
+        } else {
+            for (int i = 0; i < 2; i++) {
+                for (int o = 0; o < 47; o++) {
+                    content[i][o] = 0;
+                }
+            }
+        }
 
         for (int i = 0; i < 47; i++) {
             for (int o = 0; o < 8; o++) {
                 // TODO: Mit calcBit tauschen
-                int bank0Bit = getSingleBit(getCurrentState().getMemory().content()[0][i], o);
+                int bank0Bit = getSingleBit(content[0][i], o);
                 int bank1Bit = 0;
 
                 switch (i) {
@@ -373,9 +385,9 @@ public class Main {
                     case 6:
                     case 7:
                     case 8:
-                        bank1Bit = getSingleBit(getCurrentState().getMemory().content()[1][i], o);
+                        bank1Bit = getSingleBit(content[1][i], o);
                     default:
-                        bank1Bit = getSingleBit(getCurrentState().getMemory().content()[0][i], o);
+                        bank1Bit = getSingleBit(content[0][i], o);
                 }
 
                 bank0.setValueAt(bank0Bit, i, 7 - o);
@@ -392,13 +404,9 @@ public class Main {
      * Aktualisiert GUI Elemente mit jetzigem Worker Object (Befehls Liste, Highlighting der Liste, Button Verfuegbarkeit und Register Inhalte ...)
      */
     public void update() {
-        if (states.size() > 0) {
-            updateLabels();
-            updateMemTable();
-        }
-
         //  Haben wir etwas das geladen werden kann ?
         if (states.size() == 0) {
+            Worker temp = new Worker();
 
             // Buttons inaktiv machen
             view.getButtons()[2].setEnabled(false);
@@ -408,8 +416,14 @@ public class Main {
             view.getList().setModel(new OperationModel());
             view.getList().updateUI();
 
+            updateLabels(temp);
+            updateMemTable(temp);
+
             return;
         }
+
+        updateLabels(getCurrentState());
+        updateMemTable(getCurrentState());
 
         // Update Button
         view.getButtons()[2].setEnabled(true);
@@ -429,7 +443,7 @@ public class Main {
         }
 
         // Setze Register
-        updateLabels();
+        updateLabels(getCurrentState());
         updateButtons();
 
         // Setze JList
@@ -458,6 +472,7 @@ public class Main {
      */
     private void reset() {
         states = new ArrayList<Worker>();
+        current = 0;
         update();
     }
 
