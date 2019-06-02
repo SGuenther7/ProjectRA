@@ -485,6 +485,7 @@ public class Worker {
             case GOTO:
                 // Var : k
                 memory.set(0,2, counter.get(i).getValue()[0]);
+                current = memory.content()[0][2];
 
                 // Timer und cycles laufen weiter,
                 // PC wird nicht inkrementiert.

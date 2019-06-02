@@ -22,7 +22,7 @@ public class Main {
     private Thread runner = null;
 
     private void debug() {
-        this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim1.LST");
+        this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim2.LST");
         this.update();
     }
 
@@ -318,7 +318,7 @@ public class Main {
         labels[26].setText("" + getCurrentState().getMemory().getPS1());
         labels[28].setText("" + getCurrentState().getMemory().getPS2());
 
-        view.getStatus().setText("Cycles : " + getCurrentState().getCycles());
+        updateStatus();
     }
 
     private void updateButtons() {
@@ -338,21 +338,54 @@ public class Main {
         }
     }
 
+    private void updateStatus() {
+        String cycles = "Cycles : " + getCurrentState().getCycles();
+        String status = getStackContent();
+        view.getStatus().setText(cycles + "   " + status);
+    }
+
+    private String getStackContent() {
+        String status = "";
+        for (int i = 0; i < getCurrentState().getStack().size() ; i++) {
+            status += "" + getCurrentState().getStack().elementAt(i).toString();
+
+            if(i < getCurrentState().getStack().size() - 1) {
+                status +=  " > ";
+            }
+        }
+
+        return status;
+    }
+
     private void updateMemTable() {
         JTable bank0 = view.getBank0Table();
         JTable bank1 = view.getBank1Table();
 
         for (int i = 0; i < 47; i++) {
             for (int o = 0; o < 8; o++) {
-                int bit = getSingleBit(getCurrentState().getMemory().content()[0][i], 7 - o);
-                bank0.setValueAt(bit, i, 7 - o);
-                bank1.setValueAt(bit, i, 7 - o);
+                // TODO: Mit calcBit tauschen
+                int bank0Bit = getSingleBit(getCurrentState().getMemory().content()[0][i], o);
+                int bank1Bit = 0;
+
+                switch (i) {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                        bank1Bit = getSingleBit(getCurrentState().getMemory().content()[1][i], o);
+                    default:
+                        bank1Bit = getSingleBit(getCurrentState().getMemory().content()[0][i], o);
+                }
+
+                bank0.setValueAt(bank0Bit, i, 7 - o);
+                bank1.setValueAt(bank1Bit, i, 7 - o);
             }
         }
     }
 
     private int getSingleBit(int whole, int bit) {
-        return (whole & (int) Math.pow(2,bit)) > 0 ? 1 : 0;
+        return (whole & (int) Math.pow(2, bit)) > 0 ? 1 : 0;
     }
 
     /**

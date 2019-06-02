@@ -143,7 +143,7 @@ public class Primary {
 
         status = new JLabel();
         status.setBounds(14, 392, 300, 16);
-        status.setText("hello, I'm underwater.");
+        status.setText("");
 
         status.setForeground(Color.GRAY);
         operations.add(status);
@@ -207,7 +207,7 @@ public class Primary {
         bank0Table.setShowGrid(false);
 
         for (int i = 0; i < 8; i++) {
-            bank0Table.getColumnModel().getColumn(i).setMaxWidth(10);
+            bank0Table.getColumnModel().getColumn(i).setMaxWidth(15);
         }
 
         registers.add(bank0Scroll);
@@ -235,7 +235,7 @@ public class Primary {
         bank1Table.setShowGrid(false);
 
         for (int i = 0; i < 8; i++) {
-            bank1Table.getColumnModel().getColumn(i).setMaxWidth(10);
+            bank1Table.getColumnModel().getColumn(i).setMaxWidth(15);
         }
 
         registers.add(bank1Scroll);
@@ -261,7 +261,7 @@ public class Primary {
         table.setShowGrid(false);
 
         for (int i = 0; i < 8; i++) {
-            table.getColumnModel().getColumn(i).setMaxWidth(20);
+            table.getColumnModel().getColumn(i).setMaxWidth(11);
         }
     }
 
@@ -528,7 +528,6 @@ public class Primary {
     }
 
     private void initializePanels() {
-
         buttons = new JPanel(null);
         operations = new JPanel(null);
         registers = new JPanel(null);
@@ -637,9 +636,7 @@ public class Primary {
     }
 
     public void warnOverflow() {
-
         JOptionPane.showMessageDialog(main, "A Stack overflow has taken place.");
-
     }
 
     // Mache Buttons von aussen verfügbar um ActionListener hinzuzufuegen
