@@ -1,0 +1,284 @@
+0000 3011           00017           movlw 11h           ;in W steht nun 11h, Statusreg. unverändert
+0001 3930           00018           andlw 30h           ;W = 10h, C=x, DC=x, Z=0
+0002 380D           00019           iorlw 0Dh           ;W = 1Dh, C=x, DC=x, Z=0
+0003 3C3D           00020           sublw 3Dh           ;W = 20h, C=1, DC=1, Z=0
+0004 3A20           00021           xorlw 20h           ;W = 00h, C=1, DC=1, Z=1
+0005 3E25           00022           addlw 25h           ;W = 25h, C=0, DC=0, Z=0
+0000 3000           00026           movlw 0             ;Index für Tabellenzugriff in 0FH
+0001 008F           00027           movwf 0fh
+0002 3005           00028           movlw 5             ;insgesamt 5 Tabellenzugriffe
+0003 008E           00029           movwf 0eh
+0004 3010           00030           movlw 10h           ;Ergebnis wird ab 10H abgespeichert
+0005 0084           00031           movwf fsr
+0006 3001           00033           movlw 1             ;PCLATH setzen, damit auf den Bereich 256-511 zugegriffen werden kann
+0000 3000           00027           movlw     0                   ;der EEPROM-Speicher von 0 bis 3FH (63) gefüllt
+0001 008C           00028           movwf     count
+0002 080C           00030           movf      count,w
+0003 0089           00031           movwf     eeaddr              ;diese Adresse soll beschrieben werden
+0004 3AFF           00032           xorlw     255                 ;Adresse invertieren
+0005 0088           00033           movwf     eedata              ;dieser Wert an obige Adresse schreiben
+0006 1683           00035           bsf       status,5            ;auf Bank 1
+0007 1208           00036           bcf       eecon1,4            ;EEIF zurücksetzen, wird überwacht
+0008 1508           00037           bsf       eecon1,2            ;WREN-Bit setzen, sonst kein schreiben möglich
+0009 1488           00038           bsf       eecon1,1            ;WR-Bit setzen
+000A 3055           00040           movlw     55h                 ;State-Machine anwerfen
+000B 0089           00041           movwf     eecon2
+000C 30AA           00042           movlw     0AAh
+000D 0089           00043           movwf     eecon2              ;Schreibvorgang beginnt jetzt
+000E 1E08           00046           btfss     eecon1,4            ;warte bis EEIF auf 1 ist
+000F 280E           00047           goto      warte
+0010 1108           00049           bcf       eecon1,2            ;WREN auf 0
+0011 1283           00051           bcf       status,5            ;zurück auf Bank 0
+0012 0A8C           00053           incf      count
+0013 080C           00054           movf      count,w             ;ist der Wert 40H erreicht
+0014 3C40           00055           sublw     40h
+0015 1D03           00056           btfss     status,2            ;wenn 0, dann fertig
+0016 2802           00057           goto      schreiben
+0017 018C           00060           clrf      count               ;jetzt gesamten Speicher lesen
+0018 080C           00062           movf      count,w
+0019 0089           00063           movwf     eeaddr
+001A 1683           00065           bsf       status,5            ;auf Bank 1
+001B 1408           00066           bsf       eecon1,0            ;RD-Bit auf 1, wird vom PIC wieder auf 0 gesetzt
+001C 1283           00067           bcf       status,5            ;zurück auf Bank 0
+001D 0808           00069           movf      eedata,w            ;Wert ins W-Register
+001E 0A8C           00071           incf      count
+001F 080C           00072           movf      count,w             ;ist der Wert 40H erreicht
+0020 3C40           00073           sublw     40h
+0021 1D03           00074           btfss     status,2            ;wenn 0, dann fertig
+0022 2818           00075           goto      lesen
+0023 2823           00078           goto      ende
+0000 1683           00023           bsf       status,rp0          ;auf Bank 1 umschalten
+0001 0186           00024           clrf      rb                  ;TRIS RB auf 0 = Ausgang setzen
+0002 1283           00025           bcf       status,rp0          ;zurück auf Bank 0
+0003 0186           00026           clrf      rb                  ;Ausgäbge auf 0
+0004 1403           00027           bsf       status,0            ;Carry auf 1 setzen
+0005 1C05           00029           btfss     ra,0                ;in welche Richtung?
+0006 280B           00030           goto      links
+0007 0C86           00032           rrf       rb
+0008 1803           00033           btfsc     status,0            ;ist Carry 1?
+0009 0C86           00034           rrf       rb                  ;ja, dann nochmal schieben
+000A 2805           00035           goto      loop
+000B 0D86           00038           rlf       rb
+000C 1803           00039           btfsc     status,0            ;ist Carry = 1
+0000 1683           00023           bsf       status,rp0          ;auf Bank 1 umschalten
+0001 0186           00024           clrf      rb                  ;TRIS RB auf 0 = Ausgang setzen
+0002 1283           00025           bcf       status,rp0          ;zurück auf Bank 0
+0003 0186           00026           clrf      rb
+0004 1403           00028           bsf       status,0            ;Carry auf 1 setzen
+0005 1C05           00029           btfss     ra,0                ;in welche Richtung?
+0006 280B           00030           goto      links
+0007 0C86           00032           rrf       rb
+0008 1803           00033           btfsc     status,0            ;ist Carry 1?
+0009 0186           00034           clrf      rb                  ;ja, neu starten
+000B 0D86           00038           rlf       rb
+000C 1803           00039           btfsc     status,0            ;ist Carry = 1
+000D 0186           00040           clrf      rb                  ;ja, neu starten
+0001 2006           00017           call up1            ;beim Call wird Rücksprungadresse auf Stack gelegt
+0002 0000           00018           nop                 ;W = 36h, C=0, DC=0, Z=0
+0003 2008           00019           call up2            ;in W steht der Rückgabewert
+0004 0000           00020           nop                 ;W = 77h, DC=0, C=0, Z=0;
+0005 2800           00021           goto loop
+0006 3E25           00024  up1      addlw 25h           ;W = 36h, DC=0, C=0, Z=0
+0007 0008           00025           return
+0000 3011           00034           movlw 11h           ;in W steht nun 11h, DC=?, C=?, Z=?
+0001 008C           00035           movwf wert1         ;diesen Wert abspeichern, DC=?, C=?, Z=?
+0002 3014           00036           movlw 14h           ;W = 14h, DC=?, C=?, Z=?
+0003 070C           00037           addwf wert1,w       ;W = 25h, DC=0, C=0, Z=0
+0004 078C           00038           addwf wert1         ;W = 25h, wert1 = 36h, DC=0, C=0, Z=0
+0005 050C           00039           andwf wert1,w       ;W = 24h, wert1 = 36h, DC=0, C=0, Z=0
+0006 008D           00040           movwf wert2         ;W=24h, wert1=36, wert2=24h
+0007 018C           00041           clrf wert1          ;W=24h, wert1=0, wert2=24h, DC=0, C=0, Z=1
+0008 090D           00042           comf wert2,w        ;W=DBh, wert1=0, wert2=24h, DC=0, C=0, Z=0
+0009 030C           00043           decf wert1,w        ;W=FFh, wert1=0, wert2=24h, DC=0, C=0, Z=0
+000A 0A8D           00044           incf wert2          ;W=FFh, wert1=0, wert2=25h, DC=0, C=0, Z=0
+000B 088C           00045           movf wert1          ;W=FFh, wert1=0, wert2=25h, DC=0, C=0, Z=1
+000C 048C           00046           iorwf wert1         ;W=FFh, wert1=FFh, wert2=25h, DC=0, C=0, Z=0
+000D 020D           00047           subwf wert2,w       ;W=26h, wert1=FFh, wert2=25h, DC=0, C=0, Z=0
+000E 0E8D           00048           swapf wert2         ;W=26h, wert1=FFh, wert2=52h, DC=0, C=0, Z=0
+000F 068C           00049           xorwf wert1         ;W=26h, wert1=D9h, wert2=52h, DC=0, C=0, Z=0
+0010 0100           00050           clrw                ;W=00h, wert1=D9h, wert2=52h, DC=0, C=0, Z=1
+0011 020C           00052           subwf wert1,w       ;W=D9h, wert1=D9h, wert2=52h, DC=0, C=0, Z=0
+0012 020D           00053           subwf wert2,w       ;W=79h, wert1=D9h, wert2=52h, DC=0, C=0, Z=0
+0013 028D           00054           subwf wert2         ;W=79h, wert1=D9h, wert2=D9h, DC=0, C=0, Z=0
+0014 028D           00055           subwf wert2         ;W=79h, wert1=D9h, wert2=60h, DC=1, C=1, Z=0
+0001 008C           00024           movwf wert1         ;diesen Wert abspeichern, DC=?, C=?, Z=?
+0002 3E11           00025           addlw 11h           ;löscht u.a. das Carry-Flag,  DC=0, C=0, Z=0
+0003 0D8C           00026           rlf wert1           ;W=22h, wert1=22h, wert2=?? , DC=0, C=0, Z=0
+0004 0D8C           00027           rlf wert1           ;W=22h, wert1=44h, wert2=?? , DC=0, C=0, Z=0
+0005 0D8C           00028           rlf wert1           ;W=22h, wert1=88h, wert2=?? , DC=0, C=0, Z=0
+0006 0D0C           00029           rlf wert1,w         ;W=10h, wert1=88h, wert2=?? , DC=0, C=1, Z=0
+0007 0D8C           00030           rlf wert1           ;W=10h, wert1=11h, wert2=?? , DC=0, C=1, Z=0
+0008 0D0C           00031           rlf wert1,w         ;W=23h, wert1=11h, wert2=?? , DC=0, C=0, Z=0
+0009 0C8C           00032           rrf wert1           ;W=23h, wert1=08h, wert2=?? , DC=0, C=1, Z=0
+000A 008D           00033           movwf wert2         ;W=23h, wert1=08h, wert2=23h, DC=0, C=1, Z=0
+000B 0C8D           00034           rrf wert2           ;W=23h, wert1=08h, wert2=91h, DC=0, C=1, Z=0
+000C 0C0D           00035           rrf wert2,w         ;W=C8h, wert1=08h, wert2=91h, DC=0, C=1, Z=0
+000D 3009           00037           movlw 9             ;W=09h, wert1=08h, wert2=91h, DC=0, C=1, Z=0
+000E 008C           00038           movwf wert1         ;W=09h, wert1=09h, wert2=91h, DC=0, C=1, Z=0
+000F 0100           00039           clrw                ;W=00h, wert1=09h, wert2=91h, DC=0, C=1, Z=1
+0010 3E01           00041           addlw 1             ;W=01h, DC=0, C=0, Z=0
+0011 078D           00050           addwf wert2         ;wert2=92h, DC=0, C=0, Z=0
+0012 0B8C           00059           decfsz wert1        ;wert1=08h, wert1=07h, ... DC,C und Z bleiben unverändert
+0013 2810           00060           goto loop1
+0014 30F0           00062           movlw 0f0h          ;Wert wird bis 00h (über FFh) hochgezählt
+0015 008C           00063           movwf wert1
+0016 018D           00064           clrf wert2
+0017 0100           00065           clrw
+0018 070C           00067           addwf wert1,w       ;W=F0h, wert1=F0h, wert2=00h, DC=0, C=0, Z=0
+0000 3011           00027           movlw 11h           ;in W steht nun 11h, DC=?, C=?, Z=?
+0001 008C           00028           movwf wert1         ;diesen Wert abspeichern, DC=?, C=?, Z=?
+0002 018D           00029           clrf wert2          ;W=11h, wert1=11h, wert2=00h, DC=?, C=?, Z=1
+0003 178C           00030           bsf wert1,7         ;W=11h, wert1=91h, wert2=00h, DC=?, C=?, Z=1
+0004 158C           00031           bsf wert1,3         ;W=11h, wert1=99h, wert2=00h, DC=?, C=?, Z=1
+0005 120C           00032           bcf wert1,4         ;W=11h, wert1=89h, wert2=00h, DC=?, C=?, Z=1
+0006 100C           00033           bcf wert1,0         ;W=11h, wert1=88h, wert2=00h, DC=?, C=?, Z=1
+0007 180C           00035           btfsc wert1,0
+0008 0A8D           00036           incf wert2
+0009 0A8D           00037           incf wert2
+000A 198C           00038           btfsc wert1,3
+000B 0A8D           00039           incf wert2
+000C 0A8D           00040           incf wert2
+000D 1D0C           00041           btfss wert1,2
+000E 0A8D           00042           incf wert2
+000F 0A8D           00043           incf wert2
+0010 1F8C           00044           btfss wert1,7
+0011 0A8D           00045           incf wert2
+0012 038D           00046           decf wert2          ;in wert2 muss 04h stehen
+0000 3020           00047           movlw 20h           ;in W steht nun 20h, DC=?, C=?, Z=?
+0001 008C           00048           movwf wert1         ;diesen Wert abspeichern, DC=?, C=?, Z=?
+0002 3010           00049           movlw 10h           ;W = 10h, DC=?, C=?, Z=?
+0003 0084           00050           movwf fsr           ;W=10h, FSR=10h, wert1=20h, wert2=?? , DC=?, C=?, Z=?
+0004 008D           00051           movwf wert2         ;W=10h, FSR=10h, wert1=20h, wert2=10h, DC=?, C=?, Z=?
+0005 080C           00052           movf wert1,w        ;W=20h
+0006 0080           00055           movwf indirect      ;W=20h, FSR=10h, F10=20h
+0007 3E01           00056           addlw 1             ;W=20h, 21h, 22h, etc
+0008 0A84           00057           incf fsr            ;FSR=11h, 12h, etc
+0009 0B8D           00058           decfsz wert2
+000B 301F           00061           movlw 1fh           ;FSR-Zeiger wieder auf Anfang stellen
+000C 0084           00062           movwf fsr
+000D 30F0           00063           movlw 0f0h
+000E 008D           00064           movwf wert2
+000F 0100           00065           clrw
+0010 0700           00067           addwf indirect,w
+0011 0384           00068           decf fsr
+0012 0F8D           00069           incfsz wert2
+0013 2810           00070           goto loop2
+0014 008D           00072           movwf wert2
+0015 0A84           00073           incf fsr
+0016 0C80           00074           rrf indirect        ;F10=10h
+0017 0A80           00075           incf indirect       ;F10=11h
+0018 0C80           00076           rrf indirect        ;F10=08h, C=1
+0019 1780           00077           bsf indirect,7      ;F10=88h
+001A 1003           00078           bcf status,0        ;C=0
+001B 0D80           00079           rlf indirect        ;F10=10h, C=1
+001C 0A84           00080           incf fsr            ;fsr=11h
+001D 0D80           00081           rlf indirect        ;F11=43h, C=0
+001E 0E80           00082           swapf indirect      ;F11=34h
+001F 0680           00083           xorwf indirect      ;F11=4Ch
+0020 1A80           00084           btfsc indirect,5
+0021 2800           00085           goto loop
+0022 1D00           00086           btfss indirect,2
+0023 2800           00087           goto loop
+0024 1980           00088           btfsc indirect,3
+0000 3001           00025           movlw 00000001B     ;Option-Register entsp. initialisieren
+0001 1683           00026           bsf status,5        ;Bank umschalten
+0002 0081           00027           movwf 1             ;Option-Register
+0003 1283           00028           bcf status,5
+0004 3001           00029           movlw 1             ;Timer 1 auf 1
+0005 0081           00030           movwf 1
+0006 0190           00031           clrf 10h            ;zähler
+0007 0000           00033           nop
+0008 0000           00034           nop
+0009 0000           00035           nop
+000A 0A90           00036           incf 10h
+000B 0801           00037           movf 1,w            ;lese Timerwert aus
+000C 1D03           00038           btfss status,2      ;wenn Timer = 0, dann fertig
+000D 2807           00039           goto loop1
+000E 3003           00044           movlw 00000011B     ;Option-Register entsp. initialisieren
+000F 1683           00045           bsf status,5        ;Bank umschalten
+0010 0081           00046           movwf 1             ;Option-Register
+0011 1283           00047           bcf status,5
+0012 3001           00048           movlw 1             ;Timer 1 auf 1
+0013 0081           00049           movwf 1
+0014 0190           00050           clrf 10h            ;zähler
+0015 0A90           00052           incf 10h
+0016 0801           00053           movf 1,w            ;lese Timerwert aus
+0017 1D03           00054           btfss status,2      ;wenn Timer = 0, dann fertig
+0018 2815           00055           goto loop2
+0019 3038           00060           movlw 00111000B     ;Option-Register initialisieren
+001A 1683           00061           bsf status,5
+001B 0081           00062           movwf 1             ;Wert ins Option-Register
+001C 1283           00063           bcf status,5
+001D 0181           00064           clrf 1              ;Timer löschen
+001E 1E01           00066           btfss 1,4           ;bis im Timer0 der Wert 16 erreicht wird
+001F 281E           00067           goto loop3
+0020 3031           00070           movlw 00110001B     ;Option-Register initialisieren
+0021 1683           00071           bsf status,5
+0022 0081           00072           movwf 1             ;Wert ins Option-Register
+0023 1283           00073           bcf status,5
+0024 0181           00074           clrf 1              ;Timer löschen
+0025 1D81           00076           btfss 1,3           ;bis im Timer0 der Wert 8 erreicht wird
+0026 2825           00077           goto loop4
+0027 2827           00082           goto ende           ;Endlosschleife, verhindert Nirwana
+0004 1D0B           00029           btfss intcon,2      ;war es ein Timer-Interrupt?
+0005 280B           00030           goto isr1           ;nein
+0006 3054           00031           movlw 54h           ;ja, 54h = T in 20h schreiben
+0007 00A0           00032           movwf 20h
+0008 128B           00033           bcf intcon,5        ;Timer-Interrupt sperren
+0009 110B           00034           bcf intcon,2        ;Interrupt-Flag zurücksetzen
+000A 281B           00035           goto isrend
+000B 1C8B           00037           btfss intcon,1      ;war es ein RB0-Interrupt?
+000C 2812           00038           goto isr2           ;nein
+000D 3049           00039           movlw 'I'           ;schreibe ein I an 21h
+000E 00A1           00040           movwf 21h
+000F 120B           00041           bcf intcon,4        ;RB0-Interrupt sperren
+0010 108B           00042           bcf intcon,1        ;RB0-Interrupt-Flag löschen
+0012 1C0B           00045           btfss intcon,0      ;war es ein RB4-7 Interrupt?
+0013 2819           00046           goto isr3           ;dürfte nie passieren
+0014 3052           00047           movlw 'R'           ;schreibe ein R nach 22h
+0015 00A2           00048           movwf 22h
+0016 118B           00049           bcf intcon,3        ;keine RB4-7 Interrupts erlauben
+0017 100B           00050           bcf intcon,0        ;auch das Flag löschen
+0018 281B           00051           goto isrend
+0019 3046           00053           movlw 'F'           ;Fehlermeldung
+001A 00A3           00054           movwf 23h
+001B 0009           00057           retfie              ;Ende der Inetrrupt-Service-Routine
+001C 3001           00062           movlw 00000001B     ;Option-Register entsp. initialisieren
+001D 1683           00063           bsf status,5        ;Bank umschalten
+001E 0081           00064           movwf 1             ;Option-Register
+001F 1283           00065           bcf status,5
+0020 3020           00066           movlw 20h           ;nur Timer-Interrupt erlauben
+0021 008B           00067           movwf intcon
+0022 178B           00068           bsf intcon,7        ;Globale Freigabe, ab jetzt kann ein Interrupt durchkommen
+0023 1A8B           00070           btfsc intcon,5      ;fertig, wenn ISR dieses Bit zurücksetzt
+0024 2823           00071           goto loop1          ;bis Timer überläuft
+0025 300F           00074           movlw 00001111b
+0026 1683           00075           bsf status,5
+0027 0081           00076           movwf 1
+0028 1283           00077           bcf status,5
+0029 3010           00079           movlw 10h
+002A 008B           00080           movwf intcon
+002B 178B           00081           bsf intcon,7
+002C 1A0B           00083           btfsc intcon,4
+002D 282C           00084           goto loop2
+002E 3008           00087           movlw 08h           ;RB4-7 Interrupt freigeben
+002F 008B           00088           movwf intcon
+0030 178B           00089           bsf intcon,7        ;GIE
+0031 198B           00091           btfsc intcon,3      ;wird in ISR zurückgesetzt
+0032 2831           00092           goto loop3
+0033 308F           00095           movlw 10001111B
+0034 1683           00096           bsf status,5
+0035 0086           00097           movwf 6             ;TRIS RB
+0036 1283           00098           bcf status,5
+0037 3008           00099           movlw 08h           ;RB4-7 Interrupt freigeben
+0038 008B           00100           movwf intcon        ;aber nur RB7 ist aktiv
+0039 178B           00101           bsf intcon,7        ;GIE
+003A 198B           00103           btfsc intcon,3      ;wird in ISR zurückgesetzt
+003C 283C           00114           goto ende           ;Endlosschleife, verhindert Nirwana
+0000 018C           00033           clrf      var                 ;
+0001 0E03           00034           swapf     status,w
+0002 0090           00035           movwf     liste1              ;T0=1 , PD=1
+0003 0063           00036           sleep                         ;warte bis Watchdogtimer anspricht
+0004 0E03           00037           swapf     status,w
+0005 0091           00038           movwf     liste2              ;T0=1 , PD=0 bei Watchdog-Timeout
+0006 2806           00043           goto      ende

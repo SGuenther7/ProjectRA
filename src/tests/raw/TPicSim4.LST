@@ -7,19 +7,19 @@
                     00007           ;mod. 18.10.2018 für HSO
                     00008           ;
                     00009           list c=132          ;Zeilenlänge im LST auf 132 Zeichen setzen
-                    00010           
+                    00010
                     00011           ;Definition einiger Symbole
                     00012           ;für den Benutzer frei verwendbare Register
                     00013           wert1    equ 0ch             ;Variable Nr.1
                     00014           wert2    equ 0dh             ;Variable Nr.2
                     00015           ergeb    equ 0eh             ;Variable Nr.3
-                    00016           
+                    00016
                     00017           ;Definition des Prozessors
                     00018           device 16F84
-                    00019             
+                    00019
                     00020           ;Festlegen des Codebeginns
                     00021           org 0
-                    00022  loop     
+                    00022  loop
 0000 3011           00023           movlw 11h           ;in W steht nun 11h, DC=?, C=?, Z=?
 0001 008C           00024           movwf wert1         ;diesen Wert abspeichern, DC=?, C=?, Z=?
 0002 3E11           00025           addlw 11h           ;löscht u.a. das Carry-Flag,  DC=0, C=0, Z=0
@@ -33,11 +33,11 @@
 000A 008D           00033           movwf wert2         ;W=23h, wert1=08h, wert2=23h, DC=0, C=1, Z=0
 000B 0C8D           00034           rrf wert2           ;W=23h, wert1=08h, wert2=91h, DC=0, C=1, Z=0
 000C 0C0D           00035           rrf wert2,w         ;W=C8h, wert1=08h, wert2=91h, DC=0, C=1, Z=0
-                    00036             
+                    00036
 000D 3009           00037           movlw 9             ;W=09h, wert1=08h, wert2=91h, DC=0, C=1, Z=0
 000E 008C           00038           movwf wert1         ;W=09h, wert1=09h, wert2=91h, DC=0, C=1, Z=0
 000F 0100           00039           clrw                ;W=00h, wert1=09h, wert2=91h, DC=0, C=1, Z=1
-                    00040  loop1    
+                    00040  loop1
 0010 3E01           00041           addlw 1             ;W=01h, DC=0, C=0, Z=0
                     00042           ;W=02h, DC=0, C=0, Z=0
                     00043           ;W=03h, DC=0, C=0, Z=0
@@ -58,13 +58,13 @@
                     00058           ;wert2=BEh, DC=0, C=0, Z=0
 0012 0B8C           00059           decfsz wert1        ;wert1=08h, wert1=07h, ... DC,C und Z bleiben unverändert
 0013 2810           00060           goto loop1
-                    00061             
+                    00061
 0014 30F0           00062           movlw 0f0h          ;Wert wird bis 00h (über FFh) hochgezählt
 0015 008C           00063           movwf wert1
 0016 018D           00064           clrf wert2
 0017 0100           00065           clrw
-                    00066  loop2    
-0018 070C           00067           addwf wert1,w       ;W=F0h, wert1=F0h, wert2=00h, DC=0, C=0, Z=0      
+                    00066  loop2
+0018 070C           00067           addwf wert1,w       ;W=F0h, wert1=F0h, wert2=00h, DC=0, C=0, Z=0
                     00068           ;W=E1h, wert1=F1h, wert2=01h, DC=0, C=1, Z=0
                     00069           ;W=D3h, wert1=F2h, wert2=02h, DC=0, C=1, Z=0
                     00070           ;W=C6h, wert1=F3h, wert2=03h, DC=0, C=1, Z=0
@@ -80,10 +80,10 @@
                     00080           ;W=7Bh, wert1=FDh, wert2=0Dh, DC=1, C=1, Z=0
                     00081           ;W=79h, wert1=FEh, wert2=0Eh, DC=1, C=1, Z=0
                     00082           ;W=78h, wert1=FFh, wert2=0Fh, DC=1, C=1, Z=0
-                    00083             
+                    00083
 0019 0A8D           00084           incf wert2          ;W=F0h, wert1=F0h, wert2=01h, DC=0, C=0, Z=0
                     00085           ;W=E1h, wert1=F1h, wert2=02h, DC=0, C=1, Z=0
-                    00086             
+                    00086
                     00087           ;W=D3h, wert1=F2h, wert2=03h, DC=0, C=1, Z=0
                     00088           ;W=C6h, wert1=F3h, wert2=04h, DC=0, C=1, Z=0
                     00089           ;W=BAh, wert1=F4h, wert2=05h, DC=0, C=1, Z=0
@@ -99,9 +99,9 @@
                     00099           ;W=79h, wert1=FEh, wert2=0Fh, DC=1, C=1, Z=0
                     00100           ;W=78h, wert1=FFh, wert2=10h, DC=1, C=1, Z=0
 001A 0F8C           00101           incfsz wert1        ;wert1=F1h, F2h, F3h .. FFh, 00h, wert2 und Flags bleiben unverändert
-001B 2818           00102           goto loop2         
-                    00103             
-                    00104  ende     
+001B 2818           00102           goto loop2
+                    00103
+                    00104  ende
 001C 281C           00105           goto ende           ;Endlosschleife, verhindert Nirwana
-                    00106           
-                    00107             
+                    00106
+                    00107
