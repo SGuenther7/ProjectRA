@@ -96,16 +96,21 @@ class CommandTests {
 	@Test
 	void DECFSZTest() {
 		Worker expected = new Worker();
-		expected.getMemory().content()[0][12] = 11;
-
+		expected.getMemory().content()[0][12] = 0;
+		expected.setCycles(4);
+		
 		Worker peon = new Worker();
-		peon.getMemory().content()[0][12] = 12;
-
+		peon.getMemory().content()[0][12] = 1;
+		peon.setCycles(2);
+		
 		peon.feed(new Command(Instruction.DECFSZ, new int[] { 12,1 }));
-//		peon.feed(new Command(Instruction.DECF, new int[] { 12,1 }));
+		peon.feed(new Command(Instruction.DECF, new int[] { 12,1 }));
+			
 		peon.execute(0);
-
-		assertEquals(expected.getMemory().content()[0][1], peon.getMemory().content()[0][1]);
+		peon.execute(1);
+	
+		assertEquals(expected.getMemory().content()[0][12], peon.getMemory().content()[0][12]);
+		assertEquals(expected.getCycles(),peon.getCycles());
 	}
 
 	@Test
@@ -124,17 +129,21 @@ class CommandTests {
 
 	@Test
 	void INCFSZTest() {
-		Worker expected = new Worker(14);
-		expected.getMemory().content()[0][13] = 13;
-
-		Worker peon = new Worker(13);
-		peon.getMemory().content()[0][13] = 13;
-
+		Worker expected = new Worker(0);
+		expected.setCycles(4);
+		
+		Worker peon = new Worker();
+		peon.getMemory().content()[0][13] = 255;
+		peon.setCycles(2);
+		
 		peon.feed(new Command(Instruction.INCFSZ, new int[] { 13, 0 }));
-//		peon.feed(new Command(Instruction.INCF, new int[] { 12, 0 }));
+		peon.feed(new Command(Instruction.INCF, new int[] { 13, 0 }));
+		
 		peon.execute(0);
-
+		peon.execute(1);
+		
 		assertEquals(expected.getWorking(), peon.getWorking());
+		assertEquals(expected.getCycles(),peon.getCycles());
 	}
 
 	@Test
@@ -254,11 +263,11 @@ class CommandTests {
 
 	@Test
 	void SWAPFTest() {
-		Worker expected = new Worker(10);
+		Worker expected = new Worker();
 		expected.getMemory().set(expected.getBank(), 0x25, 0x52);
 
-		Worker peon = new Worker(10);
-		peon.getMemory().set(peon.getBank(), 0x25, 0);
+		Worker peon = new Worker();
+		peon.getMemory().set(peon.getBank(), 0x25, 0x25);
 
 		peon.feed(new Command(Instruction.SWAPF, new int[] {0x25, 1}));
 		peon.execute(0);
