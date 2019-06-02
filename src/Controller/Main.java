@@ -63,8 +63,10 @@ public class Main {
 
         // WDT Button
         buttons[6].addActionListener(e -> {
-            getCurrentState().getTimer().toggleWDT();
-            view.toggleWDTButtonImage();
+            if(states.size() > 0) {
+                getCurrentState().getTimer().toggleWDT();
+                view.toggleWDTButtonImage();
+            }
         });
 
         // JList
