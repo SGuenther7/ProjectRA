@@ -26,6 +26,7 @@ public class Timer {
         // WDT bei 0 ist 2^0 = 1
         return (int) Math.pow((double) 2, (double) getScale() + 1 - getAssignd());
     }
+
     private int getAssignd() {
         return (peon.getMemory().content()[1][1] & 8) > 0 ? 1 : 0;
     }
@@ -74,8 +75,7 @@ public class Timer {
             }
 
             // Debug
-            try
-            {
+            try {
                 // Zyklen von tmr Register runterrechnen
                 tmrCounter -= cycles;
             } catch (IndexOutOfBoundsException e) {
@@ -94,7 +94,7 @@ public class Timer {
                     peon.getMemory().content()[0][12] = peon.getMemory().content()[0][12] | 4;
 
                     // Sind interrupts enabled ?
-                    if(peon.getMemory().getGIE() == 1 && peon.getMemory().getT0IE() == 1) {
+                    if (peon.getMemory().getGIE() == 1 && peon.getMemory().getT0IE() == 1) {
                         triggerTMRInterrupt();
                     }
                 }

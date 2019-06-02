@@ -15,7 +15,7 @@ public class Command {
     }
 
     public Command(Instruction instruction, int value[], int cycles) {
-        this(instruction,value);
+        this(instruction, value);
         this.cycles = cycles;
     }
 
