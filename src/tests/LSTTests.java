@@ -548,6 +548,55 @@ public class LSTTests {
 
     @Test
     void LST5Test() {
+        ArrayList<String> lines = new ArrayList<>();
+
+        lines.add("0000 3011           00027           movlw 11h           ;in W steht nun 11h, DC=?, C=?, Z=?");
+        lines.add("0001 008C           00028           movwf wert1         ;diesen Wert abspeichern, DC=?, C=?, Z=?");
+        lines.add("0002 018D           00029           clrf wert2          ;W=11h, wert1=11h, wert2=00h, DC=?, C=?, Z=1");
+        lines.add("0003 178C           00030           bsf wert1,7         ;W=11h, wert1=91h, wert2=00h, DC=?, C=?, Z=1");
+        lines.add("0004 158C           00031           bsf wert1,3         ;W=11h, wert1=99h, wert2=00h, DC=?, C=?, Z=1");
+        lines.add("0005 120C           00032           bcf wert1,4         ;W=11h, wert1=89h, wert2=00h, DC=?, C=?, Z=1");
+        lines.add("0006 100C           00033           bcf wert1,0         ;W=11h, wert1=88h, wert2=00h, DC=?, C=?, Z=1");
+        lines.add("0007 180C           00035           btfsc wert1,0");
+        lines.add("0008 0A8D           00036           incf wert2");
+        lines.add("0009 0A8D           00037           incf wert2");
+        lines.add("000A 198C           00038           btfsc wert1,3");
+        lines.add("000B 0A8D           00039           incf wert2");
+        lines.add("000C 0A8D           00040           incf wert2");
+        lines.add("000D 1D0C           00041           btfss wert1,2");
+        lines.add("000E 0A8D           00042           incf wert2");
+        lines.add("000F 0A8D           00043           incf wert2");
+        lines.add("0010 1F8C           00044           btfss wert1,7");
+        lines.add("0011 0A8D           00045           incf wert2");
+        lines.add("0012 038D           00046           decf wert2          ;in wert2 muss 04h stehen");
+        lines.add("0013 2813           00049           goto ende           ;Endlosschleife, verhindert Nirwana");
+
+        Worker peon = new Worker();
+        peon.feed(Parser.parseMultible(Parser.cut(lines)));
+
+        peon.next();
+        peon.next();
+        assertEquals(0x11, peon.getMemory().content()[0][0xC]);
+        peon.next();
+        assertEquals(0x00, peon.getMemory().content()[0][0xD]);
+        assertEquals(1, peon.getMemory().getZero());
+
+        // BSF 3
+        peon.next();
+        assertEquals(0x91, peon.getMemory().content()[0][0xC]);
+
+        // BSF 4
+        peon.next();
+        assertEquals(0x99, peon.getMemory().content()[0][0xC]);
+
+        // BCF 5
+        peon.next();
+        assertEquals(0x89, peon.getMemory().content()[0][0xC]);
+
+        // BCF 6
+        peon.next();
+        assertEquals(0x88, peon.getMemory().content()[0][0xC]);
+        // TODO: LST5 fertig machen
 
     }
 

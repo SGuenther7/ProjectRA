@@ -359,11 +359,8 @@ public class Worker {
                 break;
             case RETFIE:
                 // TODO: imp. + test
-
                 // Timer und cycles laufen weiter,
                 // PC wird nicht inkrementiert.
-                // TODO: GIE bit auf 1
-                // TODO: Adresse vom Stack holen
 
                 if (stack.size() > 0) {
                     memory.content()[0][2] = (int) stack.pop();
@@ -377,7 +374,6 @@ public class Worker {
                 updateTimer();
                 return;
             case RETURN:
-                // TODO: imp. + test
                 if (stack.size() > 0) {
                     memory.content()[0][2] = (int) stack.pop();
                     current = memory.content()[0][2];
