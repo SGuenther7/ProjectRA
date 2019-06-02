@@ -64,8 +64,8 @@ public class Main {
 
         // WDT Button
         buttons[6].addActionListener(e -> {
-                wdtEnabled = !wdtEnabled;
-                view.toggleWDTButtonImage();
+            wdtEnabled = !wdtEnabled;
+            view.toggleWDTButtonImage();
         });
 
         // JList
@@ -350,11 +350,11 @@ public class Main {
 
     private String getStackContent(Worker current) {
         String status = "";
-        for (int i = 0; i < current.getStack().size() ; i++) {
+        for (int i = 0; i < current.getStack().size(); i++) {
             status += "" + current.getStack().elementAt(i).toString();
 
-            if(i < current.getStack().size() - 1) {
-                status +=  " > ";
+            if (i < current.getStack().size() - 1) {
+                status += " > ";
             }
         }
 
@@ -367,7 +367,7 @@ public class Main {
 
         int content[][] = new int[2][47];
 
-        if(states.size() > 0)  {
+        if (states.size() > 0) {
             content = current.getMemory().content();
         } else {
             for (int i = 0; i < 2; i++) {
@@ -502,7 +502,7 @@ public class Main {
     public static void main(String args[]) {
         Main manager = new Main();
         manager.start();
-        //manager.debug();
+        manager.debug();
     }
 }
 

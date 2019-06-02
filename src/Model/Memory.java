@@ -80,7 +80,7 @@ public class Memory {
         // Extra Funktionen bei Speicherzugriff
         switch (index) {
             case 0:
-                if(memory[0][4] != 0) {
+                if (memory[0][4] != 0) {
                     memory[0][memory[0][4]] = value;
                 }
                 return;
@@ -99,7 +99,7 @@ public class Memory {
             case 5:
             case 6:
                 // TRIS Zugriff
-                if(bank == 1) {
+                if (bank == 1) {
                     // Update Port Register mit Port Zwischenspeicher (an TRIS bits)
                     memory[1][index] = value;
                     memory[0][index] = memory[0][index] | (memory[1][index] & resolvePort(index).get());
@@ -107,7 +107,7 @@ public class Memory {
                 }
 
                 // Port Register Zugriff
-                if(bank == 0) {
+                if (bank == 0) {
                     // Speichere Bits die auch in TRIS gesetzt sind zu Port Register
                     // Speicher Rest in Zwischenspeicher
                     memory[0][index] = memory[1][index] & value;
@@ -122,7 +122,7 @@ public class Memory {
         }
 
         // Aenderung von Wert
-       memory[resolveBank(bank, index)][resolveAddressing(index)] = value;
+        memory[resolveBank(bank, index)][resolveAddressing(index)] = value;
     }
 
     private Port resolvePort(int index) {
@@ -132,11 +132,11 @@ public class Memory {
             case 6:
                 return peon.getPortB();
         }
-            return null;
+        return null;
     }
 
     private boolean accessesTris(int bank, int index) {
-        return (bank == 0 && (index == 5 ||index == 6));
+        return (bank == 0 && (index == 5 || index == 6));
     }
 
     public int[][] content() {
@@ -146,51 +146,61 @@ public class Memory {
     public int getRP1() {
         return (memory[0][3] & 64) > 0 ? 1 : 0;
     }
+
     public int getRP0() {
-        return (memory[0][3] & 32) > 0 ? 1: 0;
+        return (memory[0][3] & 32) > 0 ? 1 : 0;
     }
+
     public int getZero() {
-        return (memory[0][3] & 4) > 0 ? 1: 0;
+        return (memory[0][3] & 4) > 0 ? 1 : 0;
     }
+
     public int getDitgitCarry() {
-        return (memory[0][3] & 2) > 0 ? 1: 0;
+        return (memory[0][3] & 2) > 0 ? 1 : 0;
     }
+
     public int getCarry() {
-        return (memory[0][3] & 1) > 0 ? 1: 0;
+        return (memory[0][3] & 1) > 0 ? 1 : 0;
     }
+
     public int getT0CS() {
-        return (memory[1][3] & 64) > 0 ? 1: 0;
+        return (memory[1][3] & 64) > 0 ? 1 : 0;
     }
+
     public int getPSA() {
-        return (memory[1][1] & 8) > 0 ? 1: 0;
+        return (memory[1][1] & 8) > 0 ? 1 : 0;
     }
+
     public int getPS0() {
-        return (memory[1][1] & 1) > 0 ? 1: 0;
+        return (memory[1][1] & 1) > 0 ? 1 : 0;
     }
+
     public int getPS1() {
-        return (memory[1][1] & 2) > 0 ? 1: 0;
+        return (memory[1][1] & 2) > 0 ? 1 : 0;
     }
+
     public int getPS2() {
-        return (memory[1][1] & 4) > 0 ? 1: 0;
+        return (memory[1][1] & 4) > 0 ? 1 : 0;
     }
 
     public int getPD() {
-        return (memory[0][3] & 8) > 0 ? 1: 0;
+        return (memory[0][3] & 8) > 0 ? 1 : 0;
     }
+
     public int getTO() {
-        return (memory[0][3] & 16) > 0 ? 1: 0;
+        return (memory[0][3] & 16) > 0 ? 1 : 0;
     }
 
     public int getGIE() {
-        return (memory[0][12] & 128) > 0 ? 1: 0;
+        return (memory[0][12] & 128) > 0 ? 1 : 0;
     }
 
     public int getT0IE() {
-        return (memory[0][12] & 32) > 0 ? 1: 0;
+        return (memory[0][12] & 32) > 0 ? 1 : 0;
     }
 
     public int getT0IF() {
-        return (memory[0][12] & 4) > 0 ? 1: 0;
+        return (memory[0][12] & 4) > 0 ? 1 : 0;
     }
 
     public void print() {

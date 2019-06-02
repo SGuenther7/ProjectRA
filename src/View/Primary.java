@@ -207,7 +207,7 @@ public class Primary {
         bank0Table.setShowGrid(false);
 
         for (int i = 0; i < 8; i++) {
-            bank0Table.getColumnModel().getColumn(i).setMaxWidth(15);
+            bank0Table.getColumnModel().getColumn(i).setMaxWidth(10);
         }
 
         registers.add(bank0Scroll);
@@ -235,34 +235,10 @@ public class Primary {
         bank1Table.setShowGrid(false);
 
         for (int i = 0; i < 8; i++) {
-            bank1Table.getColumnModel().getColumn(i).setMaxWidth(15);
+            bank1Table.getColumnModel().getColumn(i).setMaxWidth(10);
         }
 
         registers.add(bank1Scroll);
-    }
-
-    private void setBankTable(JTable table, JScrollPane scroll, int x, int y) {
-        String[] names = {"0", "0", "0", "0", "0", "0", "0", "0"};
-        Object[][] values = new Object[47][8];
-
-        for (int i = 0; i < values.length; i++) {
-            for (int o = 0; o < values[0].length; o++) {
-                values[i][o] = 0;
-            }
-        }
-
-        table = new JTable(values, names);
-        table.setTableHeader(null);
-        table.setFillsViewportHeight(true);
-        table.setFocusable(false);
-
-        scroll.setBounds(x, y, 180, 218);
-
-        table.setShowGrid(false);
-
-        for (int i = 0; i < 8; i++) {
-            table.getColumnModel().getColumn(i).setMaxWidth(11);
-        }
     }
 
     private void initializeSystemLabels() {
