@@ -42,8 +42,8 @@ public class Memory {
                     case 1:
                     case 5:
                     case 6:
-                    case 7:
                     case 8:
+                    case 9:
                         target = 1;
                         break;
                     default:

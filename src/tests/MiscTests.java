@@ -83,41 +83,6 @@ public class MiscTests {
     }
 
     @Test
-    void carryAddSetTest() {
-        // TODO: imp.
-    }
-
-    @Test
-    void carrySubTest() {
-        // TODO: imp.
-    }
-
-    @Test
-    void carryResetTest() {
-        // TODO: imp.
-    }
-
-    @Test
-    void digitCarryAddSetTest() {
-        // TODO: imp.
-    }
-
-    @Test
-    void digitCarrySubTest() {
-        // TODO: imp.
-    }
-
-    @Test
-    void digitCarryResetTest() {
-        // TODO: imp.
-    }
-
-    @Test
-    void DestinationBitTest() {
-        // TODO: imp.
-    }
-
-    @Test
     void multipleCall() {
         Worker peon = new Worker(2);
 
@@ -326,7 +291,6 @@ assertEquals(2, peon.getWorking());
         // Jetzt von Zwischenspei. in Port geladen
         assertEquals(1,peon.getMemory().content()[0][5]);
     }
-
 
     @Test
     void checkCycles() {

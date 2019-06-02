@@ -294,8 +294,8 @@ public class Worker {
                 result = memory.get(getBank(), command.getValue()[0]) - working;
                 result = result & 255;
 
-                handleCarryFlagOnSub(working, memory.get(getBank(), command.getValue()[0]));
-                handleDigitCarryOnSub(working, memory.get(getBank(), command.getValue()[0]));
+                handleCarryFlagOnSub(memory.get(getBank(), command.getValue()[0]), working);
+                handleDigitCarryOnSub(memory.get(getBank(), command.getValue()[0]),working);
                 handleZeroFlag(result);
 
                 // Destination Bit gesetzt ?
@@ -491,9 +491,9 @@ public class Worker {
                 // Flag : C, CD, Z
                 result = command.getValue()[0] - working;
 
-                handleCarryFlagOnSub(working, command.getValue()[0]);
-                handleDigitCarryOnSub(working, command.getValue()[0]);
-                handleZeroFlag(working);
+                handleCarryFlagOnSub(command.getValue()[0], working);
+                handleDigitCarryOnSub(command.getValue()[0], working);
+                handleZeroFlag(result);
 
                 working = result;
                 break;
@@ -588,10 +588,13 @@ public class Worker {
     }
 
     public boolean handleCarryFlagOnSub(int base, int sub) {
-        if (base - sub >= 0) {
+        int s = (~sub + 1) & 255;
+
+        if((base + s) >= 256){
             memory.set(getBank(), 3, memory.get(getBank(), 3) | 1);
             return true;
-        } else {
+        }
+        else {
             memory.set(getBank(), 3, memory.get(getBank(), 3) & 254);
             return false;
         }
@@ -612,9 +615,9 @@ public class Worker {
 
     public boolean handleDigitCarryOnSub(int base, int sub) {
         base = base & 15;
-        sub = sub & 15;
+        sub = (~sub + 1) & 15;
 
-        if (base - sub < 0) {
+        if ((base + sub) >= 16) {
             memory.set(getBank(), 3, memory.get(getBank(), 3) | 2);
             return true;
         } else {

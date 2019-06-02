@@ -253,9 +253,8 @@ public class LSTTests {
         assertEquals(0x26, peon.getWorking());
         assertEquals(0xFF, peon.getMemory().content()[0][0xC]);
         assertEquals(0x25, peon.getMemory().content()[0][0xD]);
-        // TODO: Check
-        //assertEquals(0, peon.getMemory().getCarry());
-        //assertEquals(0, peon.getMemory().getDitgitCarry());
+        assertEquals(0, peon.getMemory().getCarry());
+        assertEquals(0, peon.getMemory().getDitgitCarry());
         assertEquals(0, peon.getMemory().getZero());
 
         // SWAPF (14)
@@ -281,44 +280,36 @@ public class LSTTests {
         assertEquals(0xD9, peon.getWorking());
         assertEquals(0xD9, peon.getMemory().content()[0][0xC]);
         assertEquals(0x52, peon.getMemory().content()[0][0xD]);
-        /*
         assertEquals(0, peon.getMemory().getCarry());
         assertEquals(0, peon.getMemory().getDitgitCarry());
         assertEquals(0, peon.getMemory().getZero());
-         */
 
         // SUBWF (18)
         peon.next();
         assertEquals(0x79, peon.getWorking());
         assertEquals(0xD9, peon.getMemory().content()[0][0xC]);
         assertEquals(0x52, peon.getMemory().content()[0][0xD]);
-        /*
         assertEquals(0, peon.getMemory().getCarry());
         assertEquals(0, peon.getMemory().getDitgitCarry());
         assertEquals(0, peon.getMemory().getZero());
-         */
 
         // SUBWF (19)
         peon.next();
         assertEquals(0x79, peon.getWorking());
         assertEquals(0xD9, peon.getMemory().content()[0][0xC]);
         assertEquals(0xD9, peon.getMemory().content()[0][0xD]);
-        /*
         assertEquals(0, peon.getMemory().getCarry());
         assertEquals(0, peon.getMemory().getDitgitCarry());
         assertEquals(0, peon.getMemory().getZero());
-         */
 
         // SUBWF (20)
         peon.next();
         assertEquals(0x79, peon.getWorking());
         assertEquals(0xD9, peon.getMemory().content()[0][0xC]);
         assertEquals(0x60, peon.getMemory().content()[0][0xD]);
-        /*
         assertEquals(1, peon.getMemory().getCarry());
         assertEquals(1, peon.getMemory().getDitgitCarry());
         assertEquals(0, peon.getMemory().getZero());
-         */
 
         // GOTO (21)
         peon.next();
