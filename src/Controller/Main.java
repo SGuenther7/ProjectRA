@@ -20,6 +20,7 @@ public class Main {
     private Primary view;
     private int current = 0;
     private Thread runner = null;
+    private boolean wdtEnabled = false;
 
     private void debug() {
         this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim6.LST");
@@ -63,10 +64,8 @@ public class Main {
 
         // WDT Button
         buttons[6].addActionListener(e -> {
-            if(states.size() > 0) {
-                getCurrentState().getTimer().toggleWDT();
+                wdtEnabled = !wdtEnabled;
                 view.toggleWDTButtonImage();
-            }
         });
 
         // JList
@@ -290,6 +289,9 @@ public class Main {
                 current++;
                 states.get(current).next();
             }
+
+            // WDT uebernehmen
+            getCurrentState().getTimer().wdtEnabled = wdtEnabled;
         }
     }
 
@@ -475,6 +477,7 @@ public class Main {
     private void reset() {
         states = new ArrayList<Worker>();
         current = 0;
+        wdtEnabled = false;
         update();
     }
 
