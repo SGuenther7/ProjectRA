@@ -57,10 +57,8 @@ class CommandTests {
 	@Test
 	void CLRWTest() {
 		Worker expected = new Worker(0);
-		expected.getMemory().set(expected.getBank(), 13, 13);
 
 		Worker peon = new Worker(5);
-		peon.getMemory().set(peon.getBank(), 13, 13);
 
 		peon.feed(new Command(Instruction.CLRW, new int[] { }));
 		peon.execute(0);
@@ -291,32 +289,54 @@ class CommandTests {
 
 	@Test
 	void BCFTest() {
-		Worker expected = new Worker(5);
-		expected.getMemory().set(expected.getBank(), 3, 0);
+		Worker peon = new Worker();
+		peon.getMemory().set(peon.getBank(), 13, 0b10101010);
 
-		Worker peon = new Worker(5);
-		peon.getMemory().set(peon.getBank(), 3, 5);
-
-		peon.feed(new Command(Instruction.BCF, new int[] { 3,5 }));
+		peon.feed(new Command(Instruction.BCF, new int[] { 13,3 }));
 		peon.execute(0);
 
-		assertEquals(expected.getMemory().content()[0][3], peon.getMemory().content()[0][3]);
+		assertEquals(0b10100010, peon.getMemory().content()[0][13]);
 	}
 
 	@Test
 	void BSFTest() {
-		Worker expected = new Worker(5);
-		expected.getMemory().set(expected.getBank(), 3, 1);
-
 		Worker peon = new Worker(5);
-		peon.getMemory().set(peon.getBank(), 3, 5);
+		peon.getMemory().set(peon.getBank(), 13, 0b10100010);
 
-		peon.feed(new Command(Instruction.BSF, new int[] { 3, 5}));
+		peon.feed(new Command(Instruction.BSF, new int[] { 13, 3}));
 		peon.execute(0);
 
-		assertEquals(expected.getMemory().content()[0][3], peon.getMemory().content()[0][3]);
+		assertEquals(0b10101010, peon.getMemory().content()[0][13]);
 	}
 
+	@Test
+	void BTFSCTest() {
+		Worker peon = new Worker();
+		peon.getMemory().set(peon.getBank(), 13, 0b10100010);
+
+		peon.feed(new Command(Instruction.BTFSC, new int[] { 13, 3}));
+		peon.feed(new Command(Instruction.BSF, new int[] { 13, 3}));
+		peon.execute(0);
+		peon.execute(1);
+
+		assertEquals(0b10100010, peon.getMemory().content()[0][13]);
+		assertEquals(2, peon.getCycles());
+	}
+	
+	@Test
+	void BTFSSTest() {
+		Worker peon = new Worker();
+		peon.getMemory().set(peon.getBank(), 13, 0b10101010);
+
+		peon.feed(new Command(Instruction.BTFSS, new int[] { 13, 3}));
+		peon.feed(new Command(Instruction.BCF, new int[] { 13, 3}));
+		peon.execute(0);
+		peon.execute(1);
+		
+		assertEquals(0b10101010, peon.getMemory().content()[0][13]);
+		assertEquals(2, peon.getCycles());
+	}
+	
 	@Test
 	void ADDLWTest() {
 		Worker expected = new Worker(42);

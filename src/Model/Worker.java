@@ -341,7 +341,7 @@ public class Worker {
             case CLRW:
                 // Flag : Z
                 working = 0;
-                handleZeroFlag(working); // TODO: korrekt behav. ?
+                handleZeroFlag(working);
                 break;
             case NOP:
                 break;
@@ -406,27 +406,37 @@ public class Worker {
                 return;
             case BCF:
                 // Var : f, b
-                // TODO: imp. + test
-            	 memory.set(getBank(), command.getValue()[0], 0);
+            	result = memory.get(getBank(), command.getValue()[0]);
+            	
+            	int bit = (int) Math.pow(2, command.getValue()[1]);
+            	
+            	temp = 0b11111111 - bit;
+            	
+            	memory.content()[getBank()][command.getValue()[0]] = result & temp;
                 break;
             case BSF:
                 // Var : f, b
-                // TODO: imp. + test
-            	memory.set(getBank(), command.getValue()[0], 1);
+            	result = memory.get(getBank(), command.getValue()[0]);
+            	
+            	temp = (int) Math.pow(2, command.getValue()[1]);
+            	
+            	memory.content()[getBank()][command.getValue()[0]] = (result | temp);
+            	
             	break;
             case BTFSS:
                 // Var : f, b
-                // TODO: imp. + test
-            	if(memory.get(getBank(), command.getValue()[0]) == 1) {
-            		//TODO
+            	result = memory.get(getBank(), command.getValue()[0]) & (int) Math.pow(2, command.getValue()[1]);
+            	
+            	if(result != 0) {
             		counter.set(i + 1, new Command(Instruction.NOP, new int[] {}));
             	}
                 break;
             case BTFSC:
                 // Var : f, b
                 // TODO: imp. + test
-            	if(memory.get(getBank(), command.getValue()[0]) == 0) {
-            		//TODO Test
+             	result = memory.get(getBank(), command.getValue()[0]) & (int) Math.pow(2, command.getValue()[1]);
+                
+            	if(result == 0) {
             		counter.set(i + 1, new Command(Instruction.NOP, new int[] {}));
             	}
                 break;
