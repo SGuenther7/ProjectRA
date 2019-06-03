@@ -846,14 +846,14 @@ public class LSTTests {
 
         // MOVF B
         peon.next();
-        assertEquals(0,peon.getMemory().getZero());
+        assertEquals(0, peon.getMemory().getZero());
 
         for (int i = 0; i < 1014; i++) {
             peon.next();
         }
 
         peon.next();
-        assertEquals(1,peon.getMemory().getZero());
+        assertEquals(1, peon.getMemory().getZero());
 
         // BTFSS C
         peon.next();
@@ -863,32 +863,32 @@ public class LSTTests {
 
         // MOVLW E
         peon.next();
-        assertEquals(3,peon.getWorking());
+        assertEquals(3, peon.getWorking());
 
         // BSF F
         peon.next();
 
         // MOVWF 0x10
         peon.next();
-        assertEquals(3,peon.getMemory().content()[1][1]);
+        assertEquals(3, peon.getMemory().content()[1][1]);
 
         // BCF 0x11
         peon.next();
 
         // MOVLW 0x12
         peon.next();
-        assertEquals(1,peon.getWorking());
+        assertEquals(1, peon.getWorking());
 
         // MOVWF 0x13
         peon.next();
 
         // CLRF 0x14
         peon.next();
-        assertEquals(0,peon.getMemory().content()[0][16]);
+        assertEquals(0, peon.getMemory().content()[0][16]);
 
         // INCF 0x15
         peon.next();
-        assertEquals(1,peon.getMemory().content()[0][16]);
+        assertEquals(1, peon.getMemory().content()[0][16]);
 
         // MOVWF 0x16
         peon.next();
@@ -905,13 +905,13 @@ public class LSTTests {
 
         // MOVLW 0x19
         peon.next();
-        assertEquals(0b00111000,peon.getWorking());
+        assertEquals(0b00111000, peon.getWorking());
 
         // BSF 0x1A
         peon.next();
         // MOVWF 0x1B
         peon.next();
-        assertEquals(0b00111000,peon.getMemory().content()[1][1]);
+        assertEquals(0b00111000, peon.getMemory().content()[1][1]);
 
         // Kein RA4 implementiert
     }
@@ -919,6 +919,114 @@ public class LSTTests {
     @Test
     void LST8Test() {
 
+        ArrayList<String> lines = new ArrayList<>();
+
+        lines.add("0000 281C           00022           goto main");
+        lines.add("0001 0000           00024           nop");
+        lines.add("0002 0000           00025           nop");
+        lines.add("0003 0000           00026           nop");
+        lines.add("0004 1D0B           00029           btfss intcon,2      ;war es ein Timer-Interrupt?");
+        lines.add("0005 280B           00030           goto isr1           ;nein");
+        lines.add("0006 3054           00031           movlw 54h           ;ja, 54h = T in 20h schreiben");
+        lines.add("0007 00A0           00032           movwf 20h");
+        lines.add("0008 128B           00033           bcf intcon,5        ;Timer-Interrupt sperren");
+        lines.add("0009 110B           00034           bcf intcon,2        ;Interrupt-Flag zurücksetzen");
+        lines.add("000A 281B           00035           goto isrend");
+        lines.add("000B 1C8B           00037           btfss intcon,1      ;war es ein RB0-Interrupt?");
+        lines.add("000C 2812           00038           goto isr2           ;nein");
+        lines.add("000D 3049           00039           movlw 'I'           ;schreibe ein I an 21h");
+        lines.add("000E 00A1           00040           movwf 21h");
+        lines.add("000F 120B           00041           bcf intcon,4        ;RB0-Interrupt sperren");
+        lines.add("0010 108B           00042           bcf intcon,1        ;RB0-Interrupt-Flag löschen");
+        lines.add("0011 281B           00043           goto isrend");
+        lines.add("0012 1C0B           00045           btfss intcon,0      ;war es ein RB4-7 Interrupt?");
+        lines.add("0013 2819           00046           goto isr3           ;dürfte nie passieren");
+        lines.add("0014 3052           00047           movlw 'R'           ;schreibe ein R nach 22h");
+        lines.add("0015 00A2           00048           movwf 22h");
+        lines.add("0016 118B           00049           bcf intcon,3        ;keine RB4-7 Interrupts erlauben");
+        lines.add("0017 100B           00050           bcf intcon,0        ;auch das Flag löschen");
+        lines.add("0018 281B           00051           goto isrend");
+        lines.add("0019 3046           00053           movlw 'F'           ;Fehlermeldung");
+        lines.add("001A 00A3           00054           movwf 23h");
+        lines.add("001B 0009           00057           retfie              ;Ende der Inetrrupt-Service-Routine");
+        lines.add("001C 3001           00062           movlw 00000001B     ;Option-Register entsp. initialisieren");
+        lines.add("001D 1683           00063           bsf status,5        ;Bank umschalten");
+        lines.add("001E 0081           00064           movwf 1             ;Option-Register");
+        lines.add("001F 1283           00065           bcf status,5");
+        lines.add("0020 3020           00066           movlw 20h           ;nur Timer-Interrupt erlauben");
+        lines.add("0021 008B           00067           movwf intcon");
+        lines.add("0022 178B           00068           bsf intcon,7        ;Globale Freigabe, ab jetzt kann ein Interrupt durchkommen");
+        lines.add("0023 1A8B           00070           btfsc intcon,5      ;fertig, wenn ISR dieses Bit zurücksetzt");
+        lines.add("0024 2823           00071           goto loop1          ;bis Timer überläuft");
+
+        Worker peon = new Worker();
+        peon.feed(Parser.parseMultible(Parser.cut(lines)));
+
+        // GOTO
+        peon.next();
+
+        // MOVLW 0x1C
+        peon.next();
+        assertEquals(1,peon.getWorking());
+
+        // BSF 0x1D
+        peon.next();
+
+        // MOVWF 0x1E
+        peon.next();
+
+        // BCF 0x1F
+        peon.next();
+
+        // MOVLW 0x20
+        peon.next();
+        assertEquals(0x20, peon.getWorking());
+
+        // MOVWF 0x21
+        peon.next();
+        assertEquals(0x20,peon.getMemory().content()[0][0xB]);
+
+        // BSF 0x22
+        peon.next();
+        assertEquals(160,peon.getMemory().content()[0][0xB]);
+        assertEquals(1, peon.getMemory().getGIE());
+
+        for (int i = 0; i < 1019; i++) {
+            peon.next();
+        }
+
+        // ISR
+        assertEquals(4,peon.getCurrent());
+
+        // BTFS 0x4
+        peon.next();
+
+        // NOP 0x5
+        peon.next();
+
+        // MOVLW 0x6
+        peon.next();
+        assertEquals(0x54,peon.getWorking());
+
+        // MOVWF 0x7
+        peon.next();
+        assertEquals(0x54, peon.getMemory().content()[0][0x20]);
+
+        // BCF 0x8
+        peon.next();
+        assertEquals(0,peon.getMemory().getT0IE());
+
+        // BCF 0x9
+        peon.next();
+        assertEquals(0,peon.getMemory().getT0IF());
+
+        // GOTO 0xA
+        peon.next();
+        assertEquals(0x1B, peon.getCurrent());
+
+        // RETFIE 0x1B
+        peon.next();
+        assertEquals(1, peon.getMemory().getGIE());
     }
 
 

@@ -17,6 +17,15 @@ public class Timer {
         this.peon = peon;
     }
 
+    public Timer(Worker peon, Timer timer) {
+        this.peon = peon;
+        this.wdtEnabled = timer.wdtEnabled;
+        this.reset = timer.reset;
+        this.wdtCounter = timer.wdtCounter;
+        this.tmrCounter = timer.tmrCounter;
+        this.TIMER_COUNTER_DEFAULT = timer.TIMER_COUNTER_DEFAULT;
+    }
+
     private int scale() {
         // TMR0 faengt bei 2^1, WDT bei 2^0 an.
         // TMR0 im Prescaler ist 0.
@@ -114,17 +123,18 @@ public class Timer {
 
     private void triggerTMRInterrupt() {
         // GIE ausschalten
-        peon.getMemory().content()[0][12] = peon.getMemory().content()[0][12] & 127;
+        peon.getMemory().content()[0][11] = peon.getMemory().content()[0][11] & 127;
 
         // Setze T0IF
-        peon.getMemory().content()[0][12] = peon.getMemory().content()[0][12] | 4;
+        peon.getMemory().content()[0][11] = peon.getMemory().content()[0][11] | 4;
 
         // Speichere PC in Stack
         peon.getStack().push(peon.getCurrent());
 
         // Springe zu Interrupt Adresse
-        peon.setCurrent(4);
-        peon.getMemory().content()[0][2] = 4;
+        // ISR Adresse bei 3 + 1 (inc) = 4
+        peon.setCurrent(3);
+        peon.getMemory().content()[0][2] = 3;
     }
 
     private void resetTMR0() {

@@ -68,7 +68,7 @@ public class Worker {
 
         this.counter = new ArrayList<>();
         this.counter.addAll(clone.counter);
-
+        this.timer = new Timer(this, clone.getTimer());
         this.stack = new Stack(clone.stack);
         this.current = clone.getCurrent();
         this.cycles = clone.getCycles();
@@ -368,7 +368,7 @@ public class Worker {
                 }
 
                 // GIE auf 1
-                getMemory().content()[0][12] = getMemory().content()[0][12] | 128;
+                getMemory().content()[0][11] = getMemory().content()[0][11] | 128;
 
                 updateCycles(i);
                 updateTimer();
@@ -434,7 +434,7 @@ public class Worker {
                 // Var : f, b
                 // TODO: imp. + test
              	result = memory.get(getBank(), command.getValue()[0]) & (int) Math.pow(2, command.getValue()[1]);
-                System.out.println(result);
+                //System.out.println(result);
                 
             	if(result == 0) {
             		counter.set(i + 1, new Command(Instruction.NOP, new int[] {}));

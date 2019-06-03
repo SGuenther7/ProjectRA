@@ -193,15 +193,15 @@ public class Memory {
     }
 
     public int getGIE() {
-        return (memory[0][12] & 128) > 0 ? 1 : 0;
+        return (memory[0][11] & 128) > 0 ? 1 : 0;
     }
 
     public int getT0IE() {
-        return (memory[0][12] & 32) > 0 ? 1 : 0;
+        return (memory[0][11] & 32) > 0 ? 1 : 0;
     }
 
     public int getT0IF() {
-        return (memory[0][12] & 4) > 0 ? 1 : 0;
+        return (memory[0][11] & 4) > 0 ? 1 : 0;
     }
 
     public void print() {
