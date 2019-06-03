@@ -93,24 +93,13 @@ public class Main {
             buttons[i].addActionListener(e -> {
 
                 if (states.size() == 0) {
-                    // TODO: Fehlermeldung/Bitanweisung vorspeichern
                     return;
                 }
 
                 int bit = calculateBit(temp);
-                // Aender Bit in TRIS
                 invertPortBit(0, true, bit);
-
-                // TODO loeschen ?
-                // Update Port Bit
-                boolean internal = checkBit(getCurrentState().getPortB().get(), bit);
-                boolean port = checkPortBit(0, false, bit);
-
-                if (port != internal) {
-                    invertPortBit(0, false, bit);
-                }
-
                 updateButtons();
+                updateMemTable(getCurrentState());
             });
         }
 
@@ -121,23 +110,13 @@ public class Main {
             final int temp = i;
             buttons[i].addActionListener(e -> {
                 if (states.size() == 0) {
-                    // TODO: Fehlermeldung/Bitanweisung vorspeichern
                     return;
                 }
 
                 int bit = calculateBit(temp);
-                // Aender Bit in TRIS
                 invertPortBit(1, true, bit);
-                // TODO loeschen ?
-                // Update Port Bit
-                boolean internal = checkBit(getCurrentState().getPortB().get(), bit);
-                boolean port = checkPortBit(1, false, bit);
-
-                if (port != internal) {
-                    invertPortBit(1, false, bit);
-                }
-
                 updateButtons();
+                updateMemTable(getCurrentState());
             });
         }
 
@@ -148,14 +127,12 @@ public class Main {
             final int temp = i;
             buttons[i].addActionListener(e -> {
                 if (states.size() == 0) {
-                    // TODO: Fehlermeldung/Bitanweisung vorspeichern
                     return;
                 }
 
-                // TODO:
                 invertPortBit(0, false, calculateBit(temp));
                 updateButtons();
-                System.out.println(Integer.toBinaryString(getCurrentState().getMemory().get(0,5)));
+                updateMemTable(getCurrentState());
             });
         }
 
@@ -170,11 +147,9 @@ public class Main {
                     return;
                 }
 
-                // TODO:
                 invertPortBit(1, false, calculateBit(temp));
                 updateButtons();
                 updateMemTable(getCurrentState());
-                System.out.println(Integer.toBinaryString(getCurrentState().getMemory().get(0,6)));
             });
         }
     }
