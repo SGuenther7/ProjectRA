@@ -101,6 +101,7 @@ public class Main {
                 // Aender Bit in TRIS
                 invertPortBit(0, true, bit);
 
+                // TODO loeschen ?
                 // Update Port Bit
                 boolean internal = checkBit(getCurrentState().getPortB().get(), bit);
                 boolean port = checkPortBit(0, false, bit);
@@ -127,7 +128,7 @@ public class Main {
                 int bit = calculateBit(temp);
                 // Aender Bit in TRIS
                 invertPortBit(1, true, bit);
-
+                // TODO loeschen ?
                 // Update Port Bit
                 boolean internal = checkBit(getCurrentState().getPortB().get(), bit);
                 boolean port = checkPortBit(1, false, bit);
@@ -151,14 +152,10 @@ public class Main {
                     return;
                 }
 
-                if (checkPortBit(0, true, calculateBit(temp))) {
-                    invertPortBit(0, false, calculateBit(temp));
-                } else {
-                    // Speicher in Zwischenregister
-                    getCurrentState().getPortA().add(calculateBit(temp));
-                }
-
+                // TODO:
+                invertPortBit(0, false, calculateBit(temp));
                 updateButtons();
+                System.out.println(Integer.toBinaryString(getCurrentState().getMemory().get(0,5)));
             });
         }
 
@@ -173,12 +170,11 @@ public class Main {
                     return;
                 }
 
-                if (checkPortBit(1, true, calculateBit(temp))) {
-                    invertPortBit(1, false, calculateBit(temp));
-                } else {
-                    // Speicher in Zwischenregister
-                    getCurrentState().getPortB().add(calculateBit(temp));
-                }
+                // TODO:
+                invertPortBit(1, false, calculateBit(temp));
+                updateButtons();
+                updateMemTable(getCurrentState());
+                System.out.println(Integer.toBinaryString(getCurrentState().getMemory().get(0,6)));
             });
         }
     }
@@ -187,7 +183,7 @@ public class Main {
      * Helfer Funktion um aus einem Index (0-7) ein Bit des Registers zu machen
      */
     private int calculateBit(int index) {
-        return (int) Math.pow(2, (8 - index));
+        return (int) Math.pow(2, (7 - index));
     }
 
     /**
@@ -379,16 +375,16 @@ public class Main {
 
         for (int i = 0; i < 47; i++) {
             for (int o = 0; o < 8; o++) {
-                // TODO: Mit calcBit tauschen
                 int bank0Bit = getSingleBit(content[0][i], o);
                 int bank1Bit = 0;
 
+                // TODO: irgendwas stimmt nicht
                 switch (i) {
                     case 1:
                     case 5:
                     case 6:
-                    case 7:
                     case 8:
+                    case 9:
                         bank1Bit = getSingleBit(content[1][i], o);
                     default:
                         bank1Bit = getSingleBit(content[0][i], o);
@@ -502,7 +498,7 @@ public class Main {
     public static void main(String args[]) {
         Main manager = new Main();
         manager.start();
-        manager.debug();
+        //manager.debug();
     }
 }
 

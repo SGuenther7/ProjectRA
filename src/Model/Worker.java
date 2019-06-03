@@ -412,7 +412,7 @@ public class Worker {
             	
             	temp = 0b11111111 - bit;
             	
-            	memory.content()[getBank()][command.getValue()[0]] = result & temp;
+            	memory.set(getBank(),command.getValue()[0], result & temp);
                 break;
             case BSF:
                 // Var : f, b
@@ -420,8 +420,7 @@ public class Worker {
             	
             	temp = (int) Math.pow(2, command.getValue()[1]);
             	
-            	memory.content()[getBank()][command.getValue()[0]] = (result | temp);
-            	
+            	memory.set(getBank(),command.getValue()[0], result | temp);
             	break;
             case BTFSS:
                 // Var : f, b
@@ -435,6 +434,7 @@ public class Worker {
                 // Var : f, b
                 // TODO: imp. + test
              	result = memory.get(getBank(), command.getValue()[0]) & (int) Math.pow(2, command.getValue()[1]);
+                System.out.println(result);
                 
             	if(result == 0) {
             		counter.set(i + 1, new Command(Instruction.NOP, new int[] {}));

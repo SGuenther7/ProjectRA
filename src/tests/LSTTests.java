@@ -682,20 +682,12 @@ public class LSTTests {
         assertEquals(0x10, peon.getMemory().content()[0][0x4]);
         assertEquals(0x20, peon.getMemory().content()[0][0x10]);
 
-        // addlw 7
-        peon.next();
         // Loop Kondition
 
-        //return;
-
-        // incf 8
-        peon.next();
-
-        // decfsz 9
-        peon.next();
-
-        // goto A
-        peon.next();
+        for (int i = 0; i < 79; i++) {
+            peon.next();
+        }
+        assertEquals(0x0, peon.getMemory().content()[0][0xD]);
 
         // movlw B
         peon.next();
@@ -712,168 +704,61 @@ public class LSTTests {
         // movwf E
         peon.next();
 
-        // movlw 0
+        // CLRW F
         peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
+        assertEquals(0x0, peon.getWorking());
 
+        // Loop kondition
+        for (int i = 0; i < 65; i++) {
+            peon.next();
+        }
 
-        // movlw 0
         peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
+        assertEquals(0x78, peon.getMemory().content()[0][0xD]);
 
-
-        // movlw 0
+        // RRF 22
         peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
+        assertEquals(0x10, peon.getMemory().content()[0][0x10]);
 
-
-        // movlw 0
+        // INCF 23
         peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
+        assertEquals(0x11, peon.getMemory().content()[0][0x10]);
 
-
-        // movlw 0
+        // RRF 24
         peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
+        assertEquals(0x08, peon.getMemory().content()[0][0x10]);
 
-
-        // movlw 0
+        // BSF 25
         peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
+        assertEquals(0x88, peon.getMemory().content()[0][0x10]);
 
-
-        // movlw 0
+        // BCF 26
         peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
+        assertEquals(0x0, peon.getMemory().getCarry());
 
-
-        // movlw 0
+        // RLF 27
         peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
+        assertEquals(0x10, peon.getMemory().content()[0][0x10]);
+        assertEquals(0x1, peon.getMemory().getCarry());
 
-
-        // movlw 0
+        // INCF 28
         peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
+        assertEquals(0x11, peon.getMemory().content()[0][0x4]);
 
-
-        // movlw 0
+        // RLF 29
         peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
+        assertEquals(0x43, peon.getMemory().content()[0][0x11]);
+        assertEquals(0x0, peon.getMemory().getCarry());
 
-
-        // movlw 0
+        // SWAPF 30
         peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
+        assertEquals(0x34, peon.getMemory().content()[0][0x11]);
 
-
-        // movlw 0
+        // XORWF 31
         peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
+        assertEquals(0x4C, peon.getMemory().content()[0][0x11]);
 
-
-        // movlw 0
-        peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
-
-
-        // movlw 0
-        peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
-
-
-        // movlw 0
-        peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
-
-
-        // movlw 0
-        peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
-
-
-        // movlw 0
-        peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
-
-
-        // movlw 0
-        peon.next();
-        assertEquals(0x22, peon.getWorking());
-        assertEquals(0x22, peon.getMemory().content()[0][0xC]);
-        assertEquals(0, peon.getMemory().getCarry());
-        assertEquals(0, peon.getMemory().getDitgitCarry());
-        assertEquals(0, peon.getMemory().getZero());
-        /*
-         */
+        // TODO: BTFSC und BTFSS Teile einfuegen
     }
 
     @Test
