@@ -188,7 +188,7 @@ public class Primary {
     private void initialiseBank0Table() {
 
         String[] names = {"0", "0", "0", "0", "0", "0", "0", "0"};
-        Object[][] values = new Object[47][8];
+        Object[][] values = new Object[48][8];
 
         for (int i = 0; i < values.length; i++) {
             for (int o = 0; o < values[0].length; o++) {
@@ -216,7 +216,7 @@ public class Primary {
     private void initialiseBank1Table() {
 
         String[] names = {"0", "0", "0", "0", "0", "0", "0", "0"};
-        Object[][] values = new Object[47][8];
+        Object[][] values = new Object[48][8];
 
         for (int i = 0; i < values.length; i++) {
             for (int o = 0; o < values[0].length; o++) {

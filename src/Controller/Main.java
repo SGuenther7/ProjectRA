@@ -361,22 +361,22 @@ public class Main {
         JTable bank0 = view.getBank0Table();
         JTable bank1 = view.getBank1Table();
 
-        int content[][] = new int[2][47];
+        int content[][] = new int[2][48];
 
         if (states.size() > 0) {
-            content = getCurrentState().getMemory().content();
+            content = current.getMemory().content();
         } else {
             for (int i = 0; i < 2; i++) {
-                for (int o = 0; o < 47; o++) {
+                for (int o = 0; o < 48; o++) {
                     content[i][o] = 0;
                 }
             }
         }
 
-        for (int i = 0; i < 47; i++) {
+        for (int i = 0; i < 48; i++) {
             for (int o = 0; o < 8; o++) {
                 int bank0Bit = getSingleBit(content[0][i], o);
-                int bank1Bit = 0;
+                int bank1Bit = 2;
 
                 // TODO: irgendwas stimmt nicht
                 switch (i) {
@@ -386,8 +386,10 @@ public class Main {
                     case 8:
                     case 9:
                         bank1Bit = getSingleBit(content[1][i], o);
+                        break;
                     default:
                         bank1Bit = getSingleBit(content[0][i], o);
+                        break;
                 }
 
                 bank0.setValueAt(bank0Bit, i, 7 - o);

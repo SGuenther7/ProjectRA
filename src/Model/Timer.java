@@ -156,7 +156,8 @@ public class Timer {
         }
         // Basis Interval 18ms
         // Abarbeitung von Befehl betraegt 1µs
-        wdtCounter *= 18000;
+        // TODO: war 18000
+        wdtCounter *= 18;
     }
 
     public boolean toggleWDT() {

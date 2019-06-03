@@ -358,7 +358,6 @@ public class Worker {
                 getTimer().resetWatchdog();
                 break;
             case RETFIE:
-                // TODO: imp. + test
                 // Timer und cycles laufen weiter,
                 // PC wird nicht inkrementiert.
 
@@ -385,7 +384,6 @@ public class Worker {
                 updateTimer();
                 return;
             case SLEEP:
-                // TODO: imp. + test
                 // Setze TO
                 getMemory().content()[0][3] = getMemory().content()[0][3] | 16;
                 // Loesche PD
