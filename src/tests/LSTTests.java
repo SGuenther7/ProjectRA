@@ -893,14 +893,8 @@ public class LSTTests {
         // MOVWF 0x16
         peon.next();
 
-        for (int i = 0; i < 1200; i++) {
+        for (int i = 0; i < 4076; i++) {
             peon.next();
-
-            if(peon.getMemory().getZero() == 1) {
-                System.out.println(peon.getCurrentCommand().getInstruction());
-                System.out.println(i);
-                break;
-            }
         }
 
         // BTFSS 0x17
@@ -918,16 +912,8 @@ public class LSTTests {
         // MOVWF 0x1B
         peon.next();
         assertEquals(0b00111000,peon.getMemory().content()[1][1]);
-        // BCF 0x1C
-        peon.next();
 
-        // CLRF 0x1D
-        peon.next();
-        assertEquals(0,peon.getMemory().content()[0][1]);
-
-
-
-
+        // Kein RA4 implementiert
     }
 
     @Test

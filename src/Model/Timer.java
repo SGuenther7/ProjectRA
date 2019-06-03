@@ -70,7 +70,7 @@ public class Timer {
         // Wird von Befehlstakt beeinflusst ?
         if (getSource() == 0) {
             // Wurde tmrCounter nie gestetzt oder hatte reset ?
-            if (tmrCounter == TIMER_COUNTER_DEFAULT || tmrCounter == 0) {
+            if (tmrCounter == TIMER_COUNTER_DEFAULT) {
                 resetTMR0();
             }
 
@@ -84,6 +84,7 @@ public class Timer {
 
             // Dec. TMR0 Register
             if (tmrCounter <= 0) {
+                resetTMR0();
                 peon.getMemory().content()[0][1]++;
 
                 // TMR0 uebergeloffen ?
@@ -99,6 +100,9 @@ public class Timer {
                     }
                 }
             }
+            //System.out.println(peon.getMemory().content()[0][1]);
+            //System.out.println(peon.getCurrentCommand().getInstruction());
+
         } else {
             // TODO: Port abfragen
         }
