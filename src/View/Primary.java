@@ -692,4 +692,25 @@ public class Primary {
         watchdog.repaint();
         watchdogEnabled = !watchdogEnabled;
     }
+
+    public void setWDTButtonImage(boolean toggle) {
+         try {
+            if (!toggle) {
+                BufferedImage idleWTD = ImageIO.read(new File("./src/img/idle.png"));
+                watchdog.setIcon(new ImageIcon(idleWTD.getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
+                watchdog.setBorder(BorderFactory.createEmptyBorder());
+                watchdog.setContentAreaFilled(false);
+            } else {
+                BufferedImage enabledWTD = ImageIO.read(new File("./src/img/enabled.png"));
+                watchdog.setIcon(new ImageIcon(enabledWTD.getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
+                watchdog.setBorder(BorderFactory.createEmptyBorder());
+                watchdog.setContentAreaFilled(false);
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            watchdog = new JButton("WDT");
+        }
+        watchdog.repaint();
+        watchdogEnabled = toggle;
+    }
 }

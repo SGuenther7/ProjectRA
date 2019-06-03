@@ -23,7 +23,7 @@ public class Main {
     private boolean wdtEnabled = false;
 
     private void debug() {
-        this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim6.LST");
+        this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim9.LST");
         this.update();
     }
 
@@ -250,7 +250,7 @@ public class Main {
             update();
 
             try {
-                runner.sleep(1000); // TODO: Zeit einstellbar ?
+                runner.sleep(100); // TODO: Zeit einstellbar ?
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 runner = null;
@@ -364,7 +364,7 @@ public class Main {
         int content[][] = new int[2][47];
 
         if (states.size() > 0) {
-            content = current.getMemory().content();
+            content = getCurrentState().getMemory().content();
         } else {
             for (int i = 0; i < 2; i++) {
                 for (int o = 0; o < 47; o++) {
@@ -474,6 +474,7 @@ public class Main {
         states = new ArrayList<Worker>();
         current = 0;
         wdtEnabled = false;
+        view.setWDTButtonImage(false);
         update();
     }
 
