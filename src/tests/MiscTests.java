@@ -46,7 +46,7 @@ public class MiscTests {
         base.set(0, 5, 3);
         base.set(1, 7, 9);
 
-        assertTrue(base.equals(new Memory(base)));
+        assertTrue(base.equals(new Memory(new Worker(), base)));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class MiscTests {
     @Test
     void memoryCloneTest() {
         Memory wild = new Memory(new Worker());
-        Memory clone = new Memory(wild);
+        Memory clone = new Memory(new Worker(), wild);
 
         assertEquals(wild, clone);
     }

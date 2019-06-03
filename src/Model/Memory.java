@@ -10,8 +10,9 @@ public class Memory {
         this.peon = peon;
     }
 
-    public Memory(Memory clone) {
+    public Memory(Worker peon, Memory clone) {
         this(clone.getWorker());
+        this.peon = peon;
 
         for (int y = 0; y < clone.content().length; y++) {
             for (int x = 0; x < clone.content()[0].length; x++) {
@@ -88,7 +89,7 @@ public class Memory {
                 // Zugriff auf TMR0
                 // TODO: Setzt Vorteiler zurueck falls
                 //       TMR0 ihn hat.
-                peon.setCycles(peon.getCycles() + 1);
+                peon.getCurrentCommand().addCycles(1);
                 break;
             case 2:
                 // PCL oder PCLATH wurde beschrieben

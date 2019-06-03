@@ -103,4 +103,8 @@ public class Command {
     public void setCycles(int cycles) {
         this.cycles = cycles;
     }
+
+    public void addCycles(int cycles) {
+        this.cycles += cycles;
+    }
 }

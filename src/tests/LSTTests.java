@@ -830,11 +830,11 @@ public class LSTTests {
 
         // MOVWF 5
         peon.next();
-        assertEquals(1, peon.getMemory().content()[1][1] & 1);
+        assertEquals(1, peon.getMemory().content()[0][1]);
 
         // CLRF 6
         peon.next();
-        assertEquals(0, peon.getMemory().content()[1][10]);
+        assertEquals(0, peon.getMemory().content()[0][16]);
 
         peon.next();
         peon.next();
@@ -842,7 +842,92 @@ public class LSTTests {
 
         // INCF A
         peon.next();
-        assertEquals(1, peon.getMemory().content()[1][10]);
+        assertEquals(1, peon.getMemory().content()[0][16]);
+
+        // MOVF B
+        peon.next();
+        assertEquals(0,peon.getMemory().getZero());
+
+        for (int i = 0; i < 1014; i++) {
+            peon.next();
+        }
+
+        peon.next();
+        assertEquals(1,peon.getMemory().getZero());
+
+        // BTFSS C
+        peon.next();
+
+        // NOP D
+        peon.next();
+
+        // MOVLW E
+        peon.next();
+        assertEquals(3,peon.getWorking());
+
+        // BSF F
+        peon.next();
+
+        // MOVWF 0x10
+        peon.next();
+        assertEquals(3,peon.getMemory().content()[1][1]);
+
+        // BCF 0x11
+        peon.next();
+
+        // MOVLW 0x12
+        peon.next();
+        assertEquals(1,peon.getWorking());
+
+        // MOVWF 0x13
+        peon.next();
+
+        // CLRF 0x14
+        peon.next();
+        assertEquals(0,peon.getMemory().content()[0][16]);
+
+        // INCF 0x15
+        peon.next();
+        assertEquals(1,peon.getMemory().content()[0][16]);
+
+        // MOVWF 0x16
+        peon.next();
+
+        for (int i = 0; i < 1200; i++) {
+            peon.next();
+
+            if(peon.getMemory().getZero() == 1) {
+                System.out.println(peon.getCurrentCommand().getInstruction());
+                System.out.println(i);
+                break;
+            }
+        }
+
+        // BTFSS 0x17
+        peon.next();
+
+        // NOP 0x18
+        peon.next();
+
+        // MOVLW 0x19
+        peon.next();
+        assertEquals(0b00111000,peon.getWorking());
+
+        // BSF 0x1A
+        peon.next();
+        // MOVWF 0x1B
+        peon.next();
+        assertEquals(0b00111000,peon.getMemory().content()[1][1]);
+        // BCF 0x1C
+        peon.next();
+
+        // CLRF 0x1D
+        peon.next();
+        assertEquals(0,peon.getMemory().content()[0][1]);
+
+
+
+
     }
 
     @Test

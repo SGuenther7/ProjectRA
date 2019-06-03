@@ -64,7 +64,7 @@ public class Worker {
 
         this.working = clone.working;
 
-        this.memory = new Memory(clone.getMemory());
+        this.memory = new Memory(this,clone.getMemory());
 
         this.counter = new ArrayList<>();
         this.counter.addAll(clone.counter);
@@ -524,7 +524,7 @@ public class Worker {
     }
 
     public void updateTimer() {
-        timer.tick();
+        timer.tick(getCurrentCommand().getCycles());
     }
 
     public void next() {
@@ -667,6 +667,10 @@ public class Worker {
 
     public int getCurrent() {
         return current;
+    }
+
+    public Command getCurrentCommand() {
+        return counter.get(current);
     }
 
     @Override
