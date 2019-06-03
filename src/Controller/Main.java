@@ -306,7 +306,7 @@ public class Main {
         labels[2].setText("" + current.getMemory().content()[0][2]);
         labels[4].setText("" + current.getMemory().content()[0][10]);
         labels[6].setText("" + current.getCurrent());
-        labels[8].setText("" + current.getMemory().content()[0][0]);
+        labels[8].setText("" + current.getMemory().content()[0][4]);
         labels[10].setText("" + current.getMemory().getRP1());
         labels[12].setText("" + current.getMemory().getRP0());
         labels[14].setText("" + current.getMemory().getZero());
