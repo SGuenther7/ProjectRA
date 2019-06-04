@@ -120,6 +120,9 @@ public class Memory {
                     return;
                 }
                 break;
+            case 10:
+                memory[resolveBank(bank, index)][resolveAddressing(index)] = 0x1F & value;
+                return;
         }
 
         // Aenderung von Wert
