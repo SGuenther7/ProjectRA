@@ -154,7 +154,7 @@ public class MiscTests {
 
         peon.execute(0);
         peon.execute(peon.getCurrent());
-assertEquals(2, peon.getWorking());
+        assertEquals(2, peon.getWorking());
     }
 
     @Test

@@ -848,8 +848,13 @@ public class LSTTests {
         peon.next();
         assertEquals(0, peon.getMemory().getZero());
 
-        for (int i = 0; i < 1014; i++) {
+        for (int i = 0; i < 20114; i++) {
             peon.next();
+
+            if(peon.getMemory().getZero() == 1) {
+                System.out.println(i);
+                break;
+            }
         }
 
         peon.next();
@@ -962,6 +967,9 @@ public class LSTTests {
         Worker peon = new Worker();
         peon.feed(Parser.parseMultible(Parser.cut(lines)));
 
+        // Vorteiler auf WDT setzen
+        peon.getMemory().content()[1][1] = 255;
+
         // GOTO
         peon.next();
 
@@ -991,7 +999,7 @@ public class LSTTests {
         assertEquals(160,peon.getMemory().content()[0][0xB]);
         assertEquals(1, peon.getMemory().getGIE());
 
-        for (int i = 0; i < 1019; i++) {
+        for (int i = 0; i < 765; i++) {
             peon.next();
         }
 

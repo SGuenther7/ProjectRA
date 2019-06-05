@@ -23,7 +23,7 @@ public class Main {
     private boolean wdtEnabled = false;
 
     private void debug() {
-        this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim9.LST");
+        this.load("/Users/akira/Projects/java/ProjectRa/src/tests/raw/TPicSim8.LST");
         this.update();
     }
 
@@ -130,7 +130,21 @@ public class Main {
                     return;
                 }
 
-                invertPortBit(0, false, calculateBit(temp));
+                // if set :
+                // change Bit in Reg 5
+                // else :
+                // change bit in Port
+
+
+                // Check ob TRIS Bit gesetzt
+                if (checkPortBit(0, true, calculateBit(temp))) {
+                    // Aendere  Register 5
+                    invertPortBit(0, false, calculateBit(temp));
+                } else {
+                    // Aendere Internes Register
+                    getCurrentState().getPortA().invert(calculateBit(temp));
+                }
+
                 updateButtons();
                 updateMemTable(getCurrentState());
             });
@@ -147,7 +161,15 @@ public class Main {
                     return;
                 }
 
-                invertPortBit(1, false, calculateBit(temp));
+                // Check ob TRIS Bit gesetzt
+                if (checkPortBit(1, true, calculateBit(temp))) {
+                    // Aendere Register 6
+                    invertPortBit(1, false, calculateBit(temp));
+                } else {
+                    // Aendere Internes Register
+                    getCurrentState().getPortB().invert(calculateBit(temp));
+                }
+
                 updateButtons();
                 updateMemTable(getCurrentState());
             });
@@ -297,19 +319,39 @@ public class Main {
     }
 
     private void updateButtons() {
-        setButtons(view.getPortATRIS(), 0, true);
-        setButtons(view.getPortBTRIS(), 1, true);
-        setButtons(view.getPortAPins(), 0, false);
-        setButtons(view.getPortBPins(), 1, false);
+        setTRIS(view.getPortATRIS(), 0);
+        setTRIS(view.getPortBTRIS(), 1);
+        setPort(view.getPortAPins(), 0);
+        setPort(view.getPortBPins(), 1);
     }
 
-    private void setButtons(JButton[] buttons, int port, boolean tris) {
+    private void setPort(JButton[] buttons, int port) {
         for (int i = 0; i < buttons.length; i++) {
-            if (checkPortBit(port, tris, calculateBit(i))) {
+            buttons[i].setText("3");    // DEBUG VIEW
+            if (getInteralPortBit(port, calculateBit(i)) >= 1) {
                 buttons[i].setText("1");
             } else {
                 buttons[i].setText("0");
             }
+        }
+    }
+
+    private void setTRIS(JButton[] buttons, int port) {
+        for (int i = 0; i < buttons.length; i++) {
+            if (checkPortBit(port, true, calculateBit(i))) {
+                buttons[i].setText("1");
+            } else {
+                buttons[i].setText("0");
+            }
+        }
+
+    }
+
+    private int getInteralPortBit(int port, int bit) {
+        if (port == 0) {
+            return getCurrentState().getPortA().getBit(bit);
+        } else {
+            return getCurrentState().getPortB().getBit(bit);
         }
     }
 

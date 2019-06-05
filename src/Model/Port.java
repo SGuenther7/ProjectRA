@@ -27,8 +27,21 @@ public class Port {
         return internalRegister;
     }
 
+    public int getBit(int bit) {
+        return internalRegister & bit;
+    }
+
     public int add(int value) {
         internalRegister = internalRegister | value;
+        return internalRegister;
+    }
+
+    public int invert(int bit) {
+        if ((internalRegister & bit) > 0) {
+            internalRegister -= bit;
+        } else {
+            internalRegister += bit;
+        }
         return internalRegister;
     }
 }

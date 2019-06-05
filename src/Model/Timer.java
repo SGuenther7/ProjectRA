@@ -48,11 +48,6 @@ public class Timer {
         return peon.getMemory().content()[1][1] & 16;
     }
 
-    public void tick() {
-        tickWDT(fetchCycles());
-        tickTMR(fetchCycles());
-    }
-
     public void tick(int cycles) {
         tickWDT(cycles);
         tickTMR(cycles);
@@ -109,16 +104,10 @@ public class Timer {
                     }
                 }
             }
-            //System.out.println(peon.getMemory().content()[0][1]);
-            //System.out.println(peon.getCurrentCommand().getInstruction());
 
         } else {
             // TODO: Port abfragen
         }
-    }
-
-    private int fetchCycles() {
-        return peon.getCounter().get(peon.getCurrent()).getCycles();
     }
 
     private void triggerTMRInterrupt() {
@@ -137,7 +126,7 @@ public class Timer {
         peon.getMemory().content()[0][2] = 3;
     }
 
-    private void resetTMR0() {
+    public void resetTMR0() {
         // Wurde tmrCounter schon beladen ?
         if (getAssignd() == 0) {
             tmrCounter = scale();
@@ -147,7 +136,6 @@ public class Timer {
     }
 
     public void resetWatchdog() {
-
         // Haben wir den Vorteiler ?
         if (getAssignd() == 1) {
             wdtCounter = scale();
@@ -156,8 +144,8 @@ public class Timer {
         }
         // Basis Interval 18ms
         // Abarbeitung von Befehl betraegt 1µs
-        // TODO: war 18000
-        wdtCounter *= 18;
+        // TODO: Normallerweise 18000
+        wdtCounter *= 18000;
     }
 
     public boolean toggleWDT() {
@@ -170,6 +158,10 @@ public class Timer {
 
     public int getTmrCounter() {
         return tmrCounter;
+    }
+
+    public boolean isReset() {
+        return reset;
     }
 
     private void reset() {

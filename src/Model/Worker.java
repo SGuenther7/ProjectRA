@@ -21,20 +21,8 @@ public class Worker {
     private int current;
 
     public Worker() {
-        this.working = 0;
-        this.memory = new Memory(this);
+        reset();
         this.counter = new ArrayList<>();
-        this.stack = new Stack();
-        this.timer = new Timer(this);
-
-        portA = new Port();
-        portB = new Port();
-
-        current = 0;
-        cycles = 0;
-
-        // Option Register auf 1
-        memory.content()[1][1] = 255;
     }
 
     public Worker(int working) {
@@ -370,7 +358,7 @@ public class Worker {
                 getMemory().content()[0][11] = getMemory().content()[0][11] | 128;
 
                 updateCycles(i);
-                updateTimer();
+                updateTimer(i);
                 return;
             case RETURN:
                 if (stack.size() > 0) {
@@ -381,7 +369,7 @@ public class Worker {
                 // Timer und cycles laufen weiter,
                 // PC wird nicht inkrementiert.
                 updateCycles(i);
-                updateTimer();
+                updateTimer(i);
                 return;
             case SLEEP:
                 // Setze TO
@@ -391,14 +379,14 @@ public class Worker {
 
                 if(!getTimer().reset) {
                     updateCycles(i);
-                    updateTimer();
+                    updateTimer(i);
                 } else {
                     // Wake up
                     getTimer().reset = false;
                     getTimer().resetWatchdog();
 
                     updateCycles(i);
-                    updateTimer();
+                    updateTimer(i);
                     updateCurrent();
                 }
                 return;
@@ -432,8 +420,7 @@ public class Worker {
                 // Var : f, b
                 // TODO: imp. + test
              	result = memory.get(getBank(), command.getValue()[0]) & (int) Math.pow(2, command.getValue()[1]);
-                //System.out.println(result);
-                
+
             	if(result == 0) {
             		counter.set(i + 1, new Command(Instruction.NOP, new int[] {}));
             	}
@@ -469,7 +456,6 @@ public class Worker {
                 break;
             case RETLW:
                 // Var : k
-                // TODO: imp. + test
                 working = command.getValue()[0];
 
                 if (stack.size() > 0) {
@@ -478,7 +464,7 @@ public class Worker {
                 }
 
                 updateCycles(i);
-                updateTimer();
+                updateTimer(i);
                 return;
             case SUBLW:
                 // Var : k
@@ -508,21 +494,44 @@ public class Worker {
                 // Timer und cycles laufen weiter,
                 // PC wird nicht inkrementiert.
                 updateCycles(i);
-                updateTimer();
+                updateTimer(i);
                 return;
         }
 
         updateCycles(i);
-        updateTimer();
+        checkWDT();
+        updateTimer(i);
         updateCurrent();
+    }
+
+    public void checkWDT() {
+        if(timer.isReset()) {
+            reset();
+        }
+    }
+
+    private void reset() {
+        this.working = 0;
+        this.memory = new Memory(this);
+        this.stack = new Stack();
+        this.timer = new Timer(this);
+
+        portA = new Port();
+        portB = new Port();
+
+        current = 0;
+        cycles = 0;
+
+        // Option Register auf 1
+        memory.content()[1][1] = 255;
     }
 
     public void updateCycles(int index) {
         this.cycles += counter.get(index).getCycles();
     }
 
-    public void updateTimer() {
-        timer.tick(getCurrentCommand().getCycles());
+    public void updateTimer(int index) {
+        timer.tick(counter.get(index).getCycles());
     }
 
     public void next() {

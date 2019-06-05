@@ -86,11 +86,16 @@ public class Memory {
                 }
                 return;
             case 1:
-                // Zugriff auf TMR0
-                // TODO: Setzt Vorteiler zurueck falls
-                //       TMR0 ihn hat.
-                peon.getCurrentCommand().addCycles(1);
-                break;
+                memory[resolveBank(bank, index)][resolveAddressing(index)] = value;
+                if (bank == 1) {
+                    // Zugriff auf Options
+                    peon.getTimer().resetWatchdog();
+                } else {
+                    // Zugriff auf TMR0
+                    peon.getCurrentCommand().addCycles(2);
+                }
+                peon.getTimer().resetTMR0();
+                return;
             case 2:
                 // PCL oder PCLATH wurde beschrieben
                 // Aenderung von Wert
@@ -101,22 +106,18 @@ public class Memory {
             case 6:
                 // TRIS Zugriff
                 if (bank == 1) {
-                    // Update Port Register mit Port Zwischenspeicher (an TRIS bits)
                     memory[1][index] = value;
-                    memory[0][index] = memory[0][index] | (memory[1][index] & resolvePort(index).get());
+                    // Lade Bits die als Ausgang gesetzt sind in Cache
+                    resolvePort(index).set(~memory[1][index] & memory[0][index]);
+                    // TODO : Bits in inter. Port loeschen
                     return;
                 }
 
                 // Port Register Zugriff
                 if (bank == 0) {
-                    // Speichere Bits die auch in TRIS gesetzt sind zu Port Register
-                    // Speicher Rest in Zwischenspeicher
-                    memory[0][index] = memory[1][index] & value;
-                    resolvePort(index).set(memory[1][index] ^ value);
-
-                    //1010 tris
-                    //1111 value
-                    //0101 cache
+                    memory[0][index] = value;
+                    // Speichere Bits die als Ausgang gesetzt sind in Cache
+                    resolvePort(index).set(~memory[1][index] & value);
                     return;
                 }
                 break;
